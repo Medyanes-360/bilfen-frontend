@@ -42,9 +42,39 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  
+  --color-orange: oklch(0.68 0.2 34.29);
+  --color-lila: oklch(0.66 0.08 288.12);
+  --color-darklila: oklch(0.32 0.14 287.43);
+  --color-antrasit: oklch(0.31 0 0);
+  --color-darkGray: oklch(0.39 0.01 0);
+  --color-lightGreen: oklch(0.75 0.13 174.06);
+  --color-lightYellow: oklch(0.86 0.14 85.17);
+  
+}
+
+@theme {
+  --font-nunito: "Nunito", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-fredoka: "Fredoka", sans-serif;
+}
+
+.font-nunito {
+  font-family: var(--font-nunito);
+}
+
+.font-poppins {
+  font-family: var(--font-poppins);
+}
+
+.font-fredoka {
+  font-family: var(--font-fredoka);
 }
 
 :root {
+  --font-nunito: "Nunito", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-fredoka: "Fredoka", sans-serif;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -77,6 +107,10 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+
+
+
+
 }
 
 .dark {
