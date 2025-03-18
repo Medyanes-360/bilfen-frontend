@@ -9,6 +9,7 @@ import {
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Icons from "@/public/icons/Icons";
+import Link from "next/link";
 
 const slides = [
   {
@@ -44,11 +45,18 @@ const SlideSection = () => {
   const [api, setApi] = useState(null);
   const [current, setCurrent] = useState(0);
 
+  // Scroll to next section function
+  const scrollToNextSection = () => {
+    const nextSection = document.getElementById('next-section');
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   // Set up auto-rotation
   useEffect(() => {
     if (!api) return;
 
-    // Update current slide when the carousel changes
     const onSelect = () => {
       setCurrent(api.selectedScrollSnap());
     };
@@ -65,10 +73,51 @@ const SlideSection = () => {
   }, [api]);
 
   return (
-    <div className="bg-darklila py-4 md:py-12 px-8">
+    <div className="relative md:bg-[url(/images/header-slider-home2.jpg)] bg-darklila py-4 md:py-12 px-8 overflow-hidden">
+      {/* Decorative stars */}
+      <div className="absolute bottom-12 left-[85%] w-16 h-16 hidden md:block">
+        <Image src="/images/star4.png" alt="Star" width={64} height={64} />
+      </div>
+      
+      <div className="absolute top-[20%] left-[1%] w-14 h-14 hidden md:block">
+        <Image src="/images/star4.png" alt="Star" width={56} height={56} />
+      </div>
+      
+      <div className="absolute top-24 right-[5%] w-10 h-10 hidden md:block">
+        <Image src="/images/star4.png" alt="Star" width={40} height={40} />
+      </div>
+
+      {/* Social media icons visible only on xl screens*/}
+      <div className="hidden xl:flex flex-col gap-4 fixed right-6 top-1/2 -translate-y-1/2 z-20">
+        <Link href="https://www.instagram.com/themerex_net/#" target="_blank" aria-label="Instagram">
+          <div className="bg-white rounded-full p-2.5 hover:bg-orange transition-colors duration-300 shadow-md">
+            <Icons.Instagram className="w-5 h-5 text-darklila" />
+          </div>
+        </Link>
+        <Link href="https://x.com/ThemerexThemes" target="_blank" aria-label="Twitter">
+          <div className="bg-white rounded-full p-2.5 hover:bg-orange transition-colors duration-300 shadow-md">
+            <Icons.Twitter className="w-5 h-5 text-darklila" />
+          </div>
+        </Link>
+        <Link href="https://www.facebook.com/ThemeRexStudio" target="_blank" aria-label="Facebook">
+          <div className="bg-white rounded-full p-2.5 hover:bg-orange transition-colors duration-300 shadow-md">
+            <Icons.Facebook className="w-5 h-5 text-darklila" />
+          </div>
+        </Link>
+      </div>
+
+      {/* Scroll indicator */}
+      <div className="hidden xl:flex flex-col items-center absolute left-2 bottom-8 z-20 cursor-pointer" onClick={scrollToNextSection}>
+        <span className="text-white font-poppins text-sm tracking-widest rotate-90 mb-4">SCROLL</span>
+        <div className="animate-bounce w-px h-10 bg-white"></div>
+        <div className="animate-bounce mt-1">
+          <Icons.ChevronDown className="w-6 h-6 text-white" />
+        </div>
+      </div>
+
       <Carousel 
         setApi={setApi}
-        className="w-full max-w-6xl mx-auto"
+        className="w-full max-w-6xl mx-auto px-4 md:px-5 lg:px-16"
         opts={{
           loop: true,
         }}
@@ -84,12 +133,12 @@ const SlideSection = () => {
                       alt={slide.title}
                       width={512}
                       height={337}
-                      className="w-full h-[200px] md:h-[400px] object-cover"
+                      className="w-full h-[200px] md:h-[390px] object-cover"
                     />
                   </div>
                 </div>
                 
-                <div className="flex flex-col items-center md:items-start gap-5 text-white md:h-[337px] px-4 md:px-5 lg:px-12">
+                <div className="flex flex-col items-center md:items-start gap-2 lg:gap-5 text-white md:h-[337px] px-4 md:px-5 lg:px-12">
                   <div className={`transition-all duration-1000 delay-300 ${current === index ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'}`}>
                     <h2 className="text-4xl md:text-5xl font-semibold">
                       {slide.title}{" "}
