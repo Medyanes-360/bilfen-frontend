@@ -12,9 +12,9 @@ import StarIcon from "../starIcon";
     return (
       <NavigationMenu className="hidden lg:block">
         <NavigationMenuList className="flex items-center gap-6">
-          <NavigationMenuItem className="relative group">
-            <StarIcon className="absolute z-0 opacity-100" />
-            <NavigationMenuTrigger className="group relative z-10 hover:text-white active:text-white font-poppins font-medium text-base text-[#8c898a] bg-transparent hover:bg-transparent focus:bg-transparent">
+          <NavigationMenuItem className="relative">
+            <StarIcon className="absolute z-0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+            <NavigationMenuTrigger className="relative z-10 hover:text-white active:text-white font-poppins font-medium text-base text-[#8c898a] bg-transparent hover:bg-transparent focus:bg-transparent hover:opacity-100">
               Home
             </NavigationMenuTrigger>
             <NavigationMenuContent>
@@ -56,8 +56,8 @@ import StarIcon from "../starIcon";
           </NavigationMenuItem>
   
           {Object.entries(menuItems).map(([key, items]) => (
-            <NavigationMenuItem key={key} className="relative group">
-              <StarIcon className="absolute z-0 opacity-0 hover:opacity-100 transform duration-300" />
+            <NavigationMenuItem key={key} className="relative">
+              <StarIcon className="absolute z-0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
               <NavigationMenuTrigger className="relative z-20 hover:text-white active:text-white font-poppins font-medium text-base text-[#8c898a] bg-transparent hover:bg-transparent focus:bg-transparent">
                 {key.charAt(0).toUpperCase() + key.slice(1)}
               </NavigationMenuTrigger>
@@ -83,8 +83,8 @@ import StarIcon from "../starIcon";
               </NavigationMenuContent>
             </NavigationMenuItem>
           ))}
-          <NavigationMenuItem className="relative group">
-            <StarIcon className="absolute z-0 opacity-0 hover:opacity-100 transform duration-300" />
+          <NavigationMenuItem className="relative">
+            <StarIcon className="absolute z-0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
             <Link
               href="/events"
               className="relative z-10 hover:text-white active:text-white font-poppins font-medium text-base text-[#8c898a]"
@@ -92,8 +92,8 @@ import StarIcon from "../starIcon";
               Events
             </Link>
           </NavigationMenuItem>
-          <NavigationMenuItem className="relative group">
-            <StarIcon className="absolute z-0 opacity-0 hover:opacity-100 transform duration-300" />
+          <NavigationMenuItem className="relative">
+            <StarIcon className="absolute z-0 opacity-0 hover:opacity-100 transition-opacity duration-300" />
             <Link
               href="/contacts"
               className="relative z-10 hover:text-white active:text-white font-poppins font-medium text-base text-[#8c898a]"
