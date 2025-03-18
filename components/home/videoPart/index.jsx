@@ -10,7 +10,7 @@ const VideoPart = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (   
-      <div className="relative py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-[#b2eaee] overflow-hidden group">
+      <div className="relative py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8 bg-[#b2eaee] overflow-hidden group xl:py-42 lg:h-screen xl:h-full">
       {/* stars and the moon will move */}
       <div className="absolute top-10 left-10 w-12 h-12 transition-transform duration-300 group-hover:translate-x-2 group-hover:animate-out group-hover:-translate-y-2">
         <Image src="/images/star_2.png" alt="Star" width={48} height={48} />

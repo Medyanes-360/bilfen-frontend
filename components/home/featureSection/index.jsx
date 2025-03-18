@@ -29,7 +29,7 @@ const FeatureSection = () => {
   ];
 
   return (
-    <div className="relative text-white py-16 md:py-32">
+    <div className="relative text-white py-16 md:py-32 xl:py-44 lg:h-screen xl:h-full">
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/bg-4-copyright.jpg"
