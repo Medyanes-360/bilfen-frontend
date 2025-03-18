@@ -46,8 +46,16 @@ const partyPackages = [
 
 const PartyPackagesSection = () => {
   return (
-    <div className="bg-[#fff6e9] py-16 px-8 relative overflow-hidden"> 
-      <div className="container mx-auto">
+    <div className="bg-[#fff6e9] py-16 px-8 relative overflow-hidden group"> 
+      <div className="absolute top-[12%] right-[8%] w-10 h-10 transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2">
+        <Image src="/images/star2.png" alt="Star" width={40} height={40} />
+      </div>
+      
+      <div className="absolute top-[14%] left-[3%] w-14 h-14 transition-transform duration-400 group-hover:translate-x-2 group-hover:translate-y-2">
+        <Image src="/images/star4.png" alt="Star" width={56} height={56} />
+      </div>
+      
+      <div className="relative z-20 container mx-auto">
         <h2 className="text-4xl md:text-5xl font-nunito font-bold text-center text-antrasit mb-16">
           Children Party Packages
         </h2>
@@ -78,7 +86,6 @@ const PartyPackagesSection = () => {
                 <ul className="space-y-2 mb-6">
                   {pkg.features.map((feature, index) => (
                     <li key={index} className="text-gray-700 text-base md:text-lg flex items-center">
-                      <span className="text-orange-500 mr-2">•</span>
                       {feature}
                     </li>
                   ))}

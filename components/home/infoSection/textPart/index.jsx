@@ -3,10 +3,10 @@ import React from "react";
 
 const TextPart = () => {
   return (
-    <div className="my-5">
+    <div className="z-10 my-5">
       <div className="flex flex-col gap-8 mb-12">
         <div>
-          <h2 className="font-nunito text-antrasit font-bold text-3xl md:text-5xl break-words">
+          <h2 className="font-nunito text-antrasit font-bold text-3xl md:text-6xl break-words">
             The Great Way to Celebrate a Birthday
           </h2>
         </div>

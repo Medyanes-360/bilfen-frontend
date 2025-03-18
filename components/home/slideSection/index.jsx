@@ -88,19 +88,19 @@ const SlideSection = () => {
       </div>
 
       {/* Social media icons visible only on xl screens*/}
-      <div className="hidden xl:flex flex-col gap-4 fixed right-6 top-1/2 -translate-y-1/2 z-20">
+      <div className="hidden 2xl:flex flex-col gap-4 absolute right-6 top-1/2 -translate-y-1/2 z-20">
         <Link href="https://www.instagram.com/themerex_net/#" target="_blank" aria-label="Instagram">
-          <div className="bg-white rounded-full p-2.5 hover:bg-orange transition-colors duration-300 shadow-md">
+          <div className="bg-white/45 rounded-full p-2.5 hover:bg-white transition-colors duration-300 shadow-md">
             <Icons.Instagram className="w-5 h-5 text-darklila" />
           </div>
         </Link>
         <Link href="https://x.com/ThemerexThemes" target="_blank" aria-label="Twitter">
-          <div className="bg-white rounded-full p-2.5 hover:bg-orange transition-colors duration-300 shadow-md">
+          <div className="bg-white/45 rounded-full p-2.5 hover:bg-white transition-colors duration-300 shadow-md">
             <Icons.Twitter className="w-5 h-5 text-darklila" />
           </div>
         </Link>
         <Link href="https://www.facebook.com/ThemeRexStudio" target="_blank" aria-label="Facebook">
-          <div className="bg-white rounded-full p-2.5 hover:bg-orange transition-colors duration-300 shadow-md">
+          <div className="bg-white/45 rounded-full p-2.5 hover:bg-white transition-colors duration-300 shadow-md">
             <Icons.Facebook className="w-5 h-5 text-darklila" />
           </div>
         </Link>
