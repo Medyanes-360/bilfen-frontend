@@ -1,3 +1,5 @@
+import FeatureSection from "@/components/home/featureSection";
+import GallerySection from "@/components/home/gallerySection";
 import InfoSection from "@/components/home/infoSection";
 import PartyAddOnsSection from "@/components/home/partyAddOnsSection";
 import PartyPackagesSection from "@/components/home/partyPackagesSection";
@@ -12,6 +14,8 @@ export default function HomePageContainer() {
           <PartyPackagesSection/>
           <PartyAddOnsSection/>
           <VideoPart/>
+          <FeatureSection/>
+          <GallerySection/>
         </>
     );
 }

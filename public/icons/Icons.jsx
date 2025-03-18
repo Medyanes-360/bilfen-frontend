@@ -387,7 +387,7 @@ export default class Icons {
   static Play({ className }) {
     return (
       <svg
-       className={className}
+        className={className}
         width="228px"
         height="228px"
         viewBox="0 0 24.00 24.00"
@@ -431,4 +431,99 @@ export default class Icons {
       </svg>
     );
   }
+  static Shield({ className }) {
+    return (
+      <svg
+        className={className}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z"
+          stroke="#fb5c38"
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  static Clean({ className }) {
+    return (
+      <svg
+        className={className}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7 16H3V12M17 8H21V12M7 8H3V4M17 16H21V20M12 3V21"
+          stroke="#fb5c38"
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  static Wifi({ className }) {
+    return (
+      <svg
+        className={className}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M5 12.55C6.97656 10.9037 9.46761 10.0021 12.04 10.0021C14.6124 10.0021 17.1034 10.9037 19.08 12.55M1.63 9.11C4.54 6.75 8.14 5.44 12 5.44C15.86 5.44 19.46 6.75 22.37 9.11M8.53 16.11C9.55 15.37 10.75 15 12 15C13.25 15 14.45 15.37 15.47 16.11M12 20H12.01"
+          stroke="#fb5c38"
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  static NutFree({ className }) {
+    return (
+      <svg
+        className={className}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19 5L5 19M9 9C9 7.34315 10.3431 6 12 6C13.6569 6 15 7.34315 15 9C15 10.6569 13.6569 12 12 12C10.3431 12 9 10.6569 9 9ZM9 15C9 13.3431 10.3431 12 12 12C13.6569 12 15 13.3431 15 15C15 16.6569 13.6569 18 12 18C10.3431 18 9 16.6569 9 15Z"
+          stroke="#fb5c38"
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  static EcoFriendly({ className }) {
+    return (
+      <svg
+        className={className}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M2 22L16 8M6.5 17.5L17.5 6.5M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+          stroke="#fb5c38"
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
 }
