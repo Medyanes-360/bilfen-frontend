@@ -73,74 +73,60 @@ const SlideSection = () => {
   }, [api]);
 
   return (
-    <div className="relative md:bg-[url(/images/header-slider-home2.jpg)] bg-darklila py-4 md:py-12 px-8 overflow-hidden">
-      {/* Decorative stars */}
-      <div className="absolute bottom-12 left-[85%] w-16 h-16 hidden md:block">
-        <Image src="/images/star4.png" alt="Star" width={64} height={64} />
-      </div>
-      
-      <div className="absolute top-[20%] left-[1%] w-14 h-14 hidden md:block">
-        <Image src="/images/star4.png" alt="Star" width={56} height={56} />
-      </div>
-      
-      <div className="absolute top-24 right-[5%] w-10 h-10 hidden md:block">
-        <Image src="/images/star4.png" alt="Star" width={40} height={40} />
-      </div>
-
+    <div className="relative lg:bg-[url(/images/header-slider-home2.jpg)] bg-no-repeat bg-darklila py-4 md:py-12 2xl:py-20 px-8 overflow-hidden">
       {/* Social media icons visible only on xl screens*/}
-      <div className="hidden 2xl:flex flex-col gap-4 absolute right-6 top-1/2 -translate-y-1/2 z-20">
+      <div className="z-10 hidden xxl:flex flex-col gap-4 absolute right-12 -bottom-5 -translate-y-1/2">
         <Link href="https://www.instagram.com/themerex_net/#" target="_blank" aria-label="Instagram">
-          <div className="bg-white/45 rounded-full p-2.5 hover:bg-white transition-colors duration-300 shadow-md">
-            <Icons.Instagram className="w-5 h-5 text-darklila" />
+          <div className="bg-[#4a4294] opacity-[1] rounded-full p-3 hover:bg-white hover:opacity-100 transition-colors duration-300 shadow-md">
+            <Icons.Instagram className="z-27 w-8 h-8 opacity-100 text-white hover:text-darklila" />
           </div>
         </Link>
         <Link href="https://x.com/ThemerexThemes" target="_blank" aria-label="Twitter">
-          <div className="bg-white/45 rounded-full p-2.5 hover:bg-white transition-colors duration-300 shadow-md">
-            <Icons.Twitter className="w-5 h-5 text-darklila" />
+          <div className="bg-[#4a4294] opacity-[1] rounded-full p-3 hover:bg-white hover:opacity-100 transition-colors duration-300 shadow-md">
+            <Icons.Twitter className="z-20 w-8 h-8 opacity-100 text-white hover:text-darklila" />
           </div>
         </Link>
         <Link href="https://www.facebook.com/ThemeRexStudio" target="_blank" aria-label="Facebook">
-          <div className="bg-white/45 rounded-full p-2.5 hover:bg-white transition-colors duration-300 shadow-md">
-            <Icons.Facebook className="w-5 h-5 text-darklila" />
+          <div className="bg-[#4a4294] opacity-[1] rounded-full p-3 hover:bg-white hover:opacity-100 transition-colors duration-300 shadow-md">
+            <Icons.Facebook className="z-20 w-8 h-8 opacity-100 text-white hover:text-darklila" />
           </div>
         </Link>
       </div>
 
       {/* Scroll indicator */}
-      <div className="hidden xl:flex flex-col items-center absolute left-2 bottom-8 z-20 cursor-pointer" onClick={scrollToNextSection}>
-        <span className="text-white font-poppins text-sm tracking-widest rotate-90 mb-4">SCROLL</span>
-        <div className="animate-bounce w-px h-10 bg-white"></div>
-        <div className="animate-bounce mt-1">
-          <Icons.ChevronDown className="w-6 h-6 text-white" />
+      <div className="group hidden xl:flex flex-col items-center absolute left-3 bottom-8 z-20 cursor-pointer" onClick={scrollToNextSection}>
+        <span className="text-white group-hover:text-orange font-nunito text-lg font-bold rotate-90 mb-4">Scroll</span>
+        <div className="mt-1">
+          <Icons.SlideArrow className="rotate-90 fill-white group-hover:fill-orange w-6 h-6" />
         </div>
       </div>
 
       <Carousel 
         setApi={setApi}
-        className="w-full max-w-6xl mx-auto px-4 md:px-5 lg:px-16"
+        className="w-full max-w-7xl mx-auto px-4 md:px-5"
         opts={{
           loop: true,
         }}
       >
         <CarouselContent>
           {slides.map((slide, index) => (
-            <CarouselItem key={index} className="pl-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-3 md:p-6 font-poppins">
+            <CarouselItem key={index} className="pl-0 px-2">
+              <div className="cursor-pointer grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-3 md:px-4 xl:px-12 font-poppins">
                 <div className="flex items-center justify-center relative overflow-hidden rounded-2xl">
                   <div className={`transition-all duration-1000 ${current === index ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}`}>
                     <Image
                       src={slide.image}
                       alt={slide.title}
-                      width={512}
-                      height={337}
-                      className="w-full h-[200px] md:h-[390px] object-cover"
+                      width={712}
+                      height={464}
+                      className="w-full sm:w-[280px] h-[184px] md:w-[378px] md:h-[250px] lg:w-[512px] lg:h-[337px] xl:w-[705px] xl:h-[464px]"
                     />
                   </div>
                 </div>
                 
-                <div className="flex flex-col items-center md:items-start gap-2 lg:gap-5 text-white md:h-[337px] px-4 md:px-5 lg:px-12">
+                <div className="max-w-lg flex flex-col items-center md:items-start gap-2 lg:gap-5 text-white md:max-h-[444px] px-2 lg:px-8">
                   <div className={`transition-all duration-1000 delay-300 ${current === index ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'}`}>
-                    <h2 className="text-4xl md:text-5xl font-semibold">
+                    <h2 className="text-3xl md:text-[37px] lg:text-5xl xl:text-6xl font-semibold text-center md:text-left">
                       {slide.title}{" "}
                       <span className="text-orange">{slide.highlight}</span>
                       <br />
@@ -149,7 +135,7 @@ const SlideSection = () => {
                   </div>
                   
                   <div className={`hidden md:flex transition-all duration-1000 delay-500 ${current === index ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'}`}>
-                    <p className="text-base md:text-lg opacity-90">
+                    <p className="text-base md:text-[15px] lg:text-lg xl:text-xl opacity-90 text-center md:text-left">
                       {slide.description}
                     </p>
                   </div>
@@ -157,7 +143,7 @@ const SlideSection = () => {
                   <div className={`transition-all duration-1000 delay-700 ${current === index ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'}`}>
                     <Button 
                       asChild
-                      className="bg-orange py-8 hover:bg-white hover:text-black text-white mt-4"
+                      className="bg-orange py-5 md:py-8 hover:bg-white hover:text-black text-white mt-4"
                     >
                       <a href={slide.buttonLink}>{slide.buttonText}</a>
                     </Button>
@@ -168,7 +154,7 @@ const SlideSection = () => {
           ))}
         </CarouselContent>
         
-        <div className="abolute -left-2 -bottom-4 hidden md:flex gap-1 mt-4">
+        <div className="abolute -left-2 -bottom-4 hidden md:flex gap-1 mt-4 ml-3">
           {slides.map((_, index) => (
             <button
               key={index}
@@ -177,7 +163,7 @@ const SlideSection = () => {
               aria-label={`Go to slide ${index + 1}`}
             >
               <Icons.SlideArrow 
-                className={`hover:fill-orange w-6 h-6 ${current === index ? 'text-orange fill-orange-500' : 'text-white fill-white'}`} 
+                className={`cursor-pointer hover:fill-orange w-6 h-6 ${current === index ? 'text-orange fill-orange-500' : 'text-white fill-white'}`} 
               />
             </button>
           ))}

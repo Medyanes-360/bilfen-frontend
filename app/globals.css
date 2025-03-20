@@ -4,6 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -50,7 +51,7 @@
   --color-darkGray: oklch(0.39 0.01 0);
   --color-lightGreen: oklch(0.75 0.13 174.06);
   --color-lightYellow: oklch(0.86 0.14 85.17);
-  
+  --breakpoint-xxl: 90rem;
 }
 
 @theme {
@@ -107,9 +108,6 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
-
-
-
 
 }
 
