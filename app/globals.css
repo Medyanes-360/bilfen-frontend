@@ -169,3 +169,11 @@
 .animate-slide-up {
   animation: slide-up 0.7s ease-out forwards;
 }
+
+
+@layer components {
+  .parallax-element {
+    @apply transition-transform duration-300 ease-out;
+    will-change: transform;
+  }
+}

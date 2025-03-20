@@ -3,7 +3,7 @@ import React from "react";
 
 const TextPart = () => {
   return (
-    <div className="z-10 my-5">
+    <div className="z-30 my-5">
       <div className="flex flex-col gap-8 mb-12">
         <div>
           <h2 className="font-nunito text-antrasit font-bold text-3xl md:text-6xl break-words">
@@ -20,8 +20,8 @@ const TextPart = () => {
       </div>
 
       {/* IconSection */}
-      <div className="flex flex-col sm:flex-row items-center justify-start gap-8">
-        <div className="flex flex-col items-center text-center gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 xxl:gap-1 ">
+        <div className="flex flex-col items-center md:items-start md:text-start text-center gap-2">
           <Icons.birthdayCake className="w-16 h-16"/>
           <span className="font-medium text-lg text-antrasit">
             Customized <br /> for You!
@@ -29,14 +29,14 @@ const TextPart = () => {
         </div>
 
         
-        <div className="flex flex-col items-center text-center gap-2">
+        <div className="flex flex-col items-center md:items-start md:text-start text-center gap-2">
           <Icons.person className="w-16 h-16"/>
           <span className="font-medium text-lg text-antrasit">
             In a 100% <br /> Private Space
           </span>
         </div>
 
-        <div className="flex flex-col items-center text-center gap-2">
+        <div className="flex flex-col items-center md:items-start md:text-start text-center gap-2">
           <Icons.fun className="w-16 h-16"/>
           <span className="font-medium text-lg text-antrasit">
             Easy, <br /> Fast, Fun

@@ -74,8 +74,8 @@ const SlideSection = () => {
 
   return (
     <div className="relative lg:bg-[url(/images/header-slider-home2.jpg)] bg-no-repeat bg-darklila py-4 md:py-12 2xl:py-20 px-8 overflow-hidden">
-      {/* Social media icons visible only on xl screens*/}
-      <div className="z-10 hidden xxl:flex flex-col gap-4 absolute right-12 -bottom-5 -translate-y-1/2">
+      {/* Social media icons visible only on xxl (1440px) screens*/}
+      <div className="z-10 hidden xxl:flex flex-col gap-4 absolute right-12 -bottom-18 -translate-y-1/2">
         <Link href="https://www.instagram.com/themerex_net/#" target="_blank" aria-label="Instagram">
           <div className="bg-[#4a4294] opacity-[1] rounded-full p-3 hover:bg-white hover:opacity-100 transition-colors duration-300 shadow-md">
             <Icons.Instagram className="z-27 w-8 h-8 opacity-100 text-white hover:text-darklila" />
