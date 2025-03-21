@@ -2,6 +2,7 @@ import React from "react";
 import Icons from "@/public/icons/Icons";
 import PageContainer from "@/containers/pageContainer";
 import Image from "next/image";
+import { Parallax } from "@/globalElements/Parallax";
 
 const addOns = [
   {
@@ -56,23 +57,25 @@ const PartyAddOnsSection = () => {
   return (
     <PageContainer>
       <div className="relative group mx-auto flex flex-col items-center justify-center max-w-8xl py-16 px-6 ">
-        <div className="absolute top-[12%] right-[8%] w-12 h-10 transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2">
+        <Parallax className="hidden md:block absolute top-[12%] right-[8%] w-12 h-10 ">
           <Image src="/images/star5.png" alt="Star" width={50} height={40} />
-        </div>
-        <div className="absolute top-[72%] left-[12%] w-10 h-10 transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2">
+        </Parallax>
+        <Parallax className="hidden xxl:block absolute top-[82%] left-[18%] w-10 h-10 ">
           <Image src="/images/star5.png" alt="Star" width={40} height={40} />
-        </div>
-        <div className="absolute top-[42%] right-[2%] w-12 h-10 transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2">
+        </Parallax>
+        <Parallax className="hidden md:block absolute top-[42%] right-[2%] w-12 h-10 ">
           <Image src="/images/star5.png" alt="Star" width={40} height={40} />
-        </div>
-        <div className="absolute top-[72%] right-[8%] w-10 h-10 transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2">
+        </Parallax>
+        <Parallax className="hidden xxl:block absolute top-[72%] right-[8%] w-10 h-10 ">
           <Image src="/images/star2.png" alt="Star" width={40} height={40} />
-        </div>
-        
-        <div className="absolute top-[14%] left-[3%] w-14 h-14 transition-transform duration-400 group-hover:translate-x-2 group-hover:translate-y-2">
-          <Image src="/images/star4.png" alt="Star" width={56} height={56} />
-        </div>
-        <h2 className="text-3xl md:text-5xl font-bold font-nunito text-center text-orange mb-20">
+        </Parallax>
+        <Parallax className="hidden xxl:block absolute top-[54%] left-[8%] w-14 h-14">
+          <Image src="/images/star4.png" alt="Star" width={80} height={80} />
+        </Parallax>
+        <Parallax className="hidden xxl:block absolute top-[9%] left-[3%] w-32 h-32 rotate-90">
+          <Image src="/images/comet_2.png" alt="Star" width={260} height={256} />
+        </Parallax>
+        <h2 className="text-3xl md:text-5xl font-bold font-nunito text-center text-[#fd5c37] mb-20">
           Our Party Add-Ons
         </h2>
 
@@ -96,11 +99,11 @@ const PartyAddOnsSection = () => {
                 </div>
               </div>
 
-              <h3 className="text-xl font-normal font-poppins text-gray-800 mb-2">
+              <h3 className="text-xl font-normal font-poppins text-[#312F30] mb-2">
                 {addon.title}
               </h3>
 
-              <div className="max-w-52 px-3 font-light text-lg text-gray-600">
+              <div className="max-w-52 px-3 font-light text-lg text-[#474446]">
                 {addon.description}
               </div>
             </div>
