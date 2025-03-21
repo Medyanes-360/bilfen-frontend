@@ -9,7 +9,6 @@ import ScrollToTopButton from "./scrollToTopButton";
 import DesktopNav from "./desktopNav.jsx";
 import MobileNav from "./mobileNav";
 
-
 const menuItems = {
   pages: [
     { title: "Typography", href: "/typography" },
@@ -26,11 +25,14 @@ const menuItems = {
   ],
   news: [
     { title: "All Posts", href: "/posts" },
-    { title: "Classic Style", href: "/classic-style", hasSubmenu: true, 
+    {
+      title: "Classic Style",
+      href: "/classic-style",
+      hasSubmenu: true,
       submenu: [
         { title: "2 Columns", href: "/classic-style/2-columns" },
         { title: "3 Columns", href: "/classic-style/3-columns" },
-      ] 
+      ],
     },
     { title: "Portfolio", href: "/portfolio", hasSubmenu: true },
     { title: "Chess Style", href: "/chess-style", hasSubmenu: true },
@@ -65,15 +67,17 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <DesktopNav menuItems={menuItems} />
-
-            <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
-              <Link href="/book-party" className="flex items-center gap-2">
-                Book A Party
-                <div className="relative">
-                  <Icons.Sparkles className="absolute w-40 h-22 -top-10 -right-5 hover:scale-90 transition duration-300"/>
-                </div>
-              </Link>
+            <div className="flex items-center justify-between gap-8">
+              <DesktopNav menuItems={menuItems} />
+              <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
+                <Link
+                  href="/#"
+                  className="relative flex items-center gap-2"
+                >
+                  Book A Party
+                  <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-7 hover:scale-85 transition duration-300" />
+                </Link>
+              </div>
             </div>
 
             {/* Mobile Menu Button */}
