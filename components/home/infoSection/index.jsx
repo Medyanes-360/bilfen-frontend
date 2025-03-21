@@ -33,7 +33,7 @@ const InfoSection = () => {
           <Image src="/images/star4.png" alt="Star" width={36} height={46} />
         </Parallax>
         <Parallax
-          sensitivity={0.1}
+          sensitivity={0.03}
           rotate={6}
           className="absolute top-[23%] 2xl:-left-[19%] -left-8 hidden xxl:block"
         >
@@ -56,7 +56,7 @@ const InfoSection = () => {
                 Most trusted playground
               </h3>
               <p className="flex md:flex-col gap-2 text-2xl md:text-4xl font-bold font-nunito">
-                20 Years of <span>Experience</span>
+                20 Years of<span>Experience</span>
               </p>
             </div>
           </div>
