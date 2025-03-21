@@ -29,7 +29,7 @@ const FeatureSection = () => {
   ];
 
   return (
-    <div className="relative text-white py-16 md:py-32 xl:py-44 lg:h-screen xl:h-full">
+    <div className="relative text-white py-16 md:py-32 xl:py-46">
       <div className="absolute inset-0 z-0">
         <Image
           src="/images/bg-4-copyright.jpg"
@@ -38,6 +38,7 @@ const FeatureSection = () => {
           className="object-cover"
           priority
         />
+        <div className='absolute inset-0 bg-black opacity-[0.3] transation '></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
