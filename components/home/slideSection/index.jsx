@@ -119,7 +119,7 @@ const SlideSection = () => {
                       alt={slide.title}
                       width={712}
                       height={464}
-                      className="w-full sm:w-[280px] h-[184px] md:w-[378px] md:h-[250px] lg:w-[512px] lg:h-[337px] xl:w-[705px] xl:h-[464px]"
+                      className="w-full sm:w-[280px] h-auto md:w-[378px] md:h-auto lg:w-[512px] lg:h-auto xl:w-[705px] xl:h-auto object-cover"
                     />
                   </div>
                 </div>
