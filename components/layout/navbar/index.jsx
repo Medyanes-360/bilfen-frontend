@@ -10,6 +10,12 @@ import DesktopNav from "./desktopNav.jsx";
 import MobileNav from "./mobileNav";
 
 const menuItems = {
+  home: [
+    { title: "Home #1 - Soft Play Area", href: "/#" },
+    { title: "Home #2 - Birthday Party", href: "/#" },
+    { title: "Home #3 - Child Care Center", href: "/#" },
+    { title: "Home Boxed", href: "/#" },
+  ],
   pages: [
     { title: "Typography", href: "/typography" },
     { title: "Shortcodes", href: "/shortcodes" },
@@ -23,6 +29,7 @@ const menuItems = {
     { title: "Cafe", href: "/cafe" },
     { title: "Book a Party", href: "/book-party" },
   ],
+  events: [],
   news: [
     { title: "All Posts", href: "/posts" },
     {
@@ -37,6 +44,7 @@ const menuItems = {
     { title: "Portfolio", href: "/portfolio", hasSubmenu: true },
     { title: "Chess Style", href: "/chess-style", hasSubmenu: true },
   ],
+  contacts: [],
 };
 
 const Navbar = () => {
@@ -67,7 +75,7 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="flex items-center justify-between gap-8">
+            <div className="flex items-center justify-between gap-7">
               <DesktopNav menuItems={menuItems} />
               <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
                 <Link
