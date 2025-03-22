@@ -1,52 +1,35 @@
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+"use client";
 import Link from "next/link";
 import StarIcon from "../starIcon";
 
-const DesktopNav = ({ menuItems }) => {
-  return (
-    <NavigationMenu className="hidden lg:block">
-      <NavigationMenuList className="flex items-center gap-2">
-        {Object.entries(menuItems).map(([key, items], index) => (
-          <NavigationMenuItem key={`${key}-${index}`} className="mx-auto relative">
-            <div>
-            <NavigationMenuTrigger
-              className={`group/key cursor-pointer relative z-20 hover:text-white active:text-white font-fredoka font-medium text-base text-[#8c898a] bg-transparent hover:bg-transparent focus:bg-transparent`}
-            >
-              <span className="z-20">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
-              <StarIcon
-                className={`absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover/key:opacity-100 transition-opacity duration-500`}
-              />
-            </NavigationMenuTrigger>
-            {items.length > 0 && (
-              <NavigationMenuContent className="absolute !left-1/2 transform !-translate-x-1/2 mt-2 min-w-[260px] max-w-[320px] w-fit
-             bg-white rounded-xl shadow-lg z-50">
-                <ul className="p-8 space-y-2">
-                  {items.map((item, subIndex) => (
-                    <li key={`${key}-${subIndex}`} className="flex justify-between items-center">
-                      <Link
-                        href={item.href}
-                        className="block w-full text-base font-fredoka font-medium text-[#1e1e1e] hover:text-orange-500 transition"
-                      >
-                        {item.title}
-                      </Link>
-                      {item.hasSubmenu && <span className="text-gray-400">›</span>}
-                    </li>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            )}
-            </div>
-          </NavigationMenuItem>
-        ))}
-      </NavigationMenuList>
-    </NavigationMenu>
-  );
-};
 
-export default DesktopNav;
+export function DesktopNav({ menuItems, className = "" }) {
+  return (
+    <div className={`flex items-center gap-2 ${className}`}>
+      {menuItems &&
+        menuItems.map((menu, index) => (
+          <div key={index} className="relative group">
+            <button className="flex items-center justify-center px-4 py-2 text-[#8E89C0] hover:text-white font-fredoka font-medium transition-colors relative">
+              <span className="relative z-10">{menu.title}</span>
+              <StarIcon className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
+            </button>
+            {menu.items && menu.items.length > 0 && (
+              <div className="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white text-darklila opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <div className=" rounded-md p-8 gap-2">
+                  {menu.items?.map((item, idx) => (
+                    <Link
+                      key={idx}
+                      href={item.href || "#"}
+                      className="block w-full text-base font-fredoka font-medium text-[#1e1e1e] hover:text-orange-500 transition"
+                    >
+                      {item.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+    </div>
+  );
+}

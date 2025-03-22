@@ -6,46 +6,64 @@ import Image from "next/image";
 import Icons from "@/public/icons/Icons";
 
 import ScrollToTopButton from "./scrollToTopButton";
-import DesktopNav from "./desktopNav.jsx";
-import MobileNav from "./mobileNav";
 
-const menuItems = {
-  home: [
-    { title: "Home #1 - Soft Play Area", href: "/#" },
-    { title: "Home #2 - Birthday Party", href: "/#" },
-    { title: "Home #3 - Child Care Center", href: "/#" },
-    { title: "Home Boxed", href: "/#" },
-  ],
-  pages: [
-    { title: "Typography", href: "/typography" },
-    { title: "Shortcodes", href: "/shortcodes" },
-    { title: "Privacy Policy", href: "/privacy-policy" },
-    { title: "Service Plus", href: "/service-plus" },
-  ],
-  about: [
-    { title: "About Us", href: "/about-us" },
-    { title: "Prices", href: "/prices" },
-    { title: "Rules of Play", href: "/rules" },
-    { title: "Cafe", href: "/cafe" },
-    { title: "Book a Party", href: "/book-party" },
-  ],
-  events: [],
-  news: [
-    { title: "All Posts", href: "/posts" },
-    {
-      title: "Classic Style",
-      href: "/classic-style",
-      hasSubmenu: true,
-      submenu: [
-        { title: "2 Columns", href: "/classic-style/2-columns" },
-        { title: "3 Columns", href: "/classic-style/3-columns" },
-      ],
-    },
-    { title: "Portfolio", href: "/portfolio", hasSubmenu: true },
-    { title: "Chess Style", href: "/chess-style", hasSubmenu: true },
-  ],
-  contacts: [],
-};
+import MobileNav from "./mobileNav";
+import { DesktopNav } from "./desktopNav.jsx";
+
+const menuItems = [
+  {
+    title: "Home",
+    items: [
+      { title: "Home #1 - Soft Play Area", href: "/#" },
+      { title: "Home #2 - Birthday Party", href: "/#" },
+      { title: "Home #3 - Child Care Center", href: "/#" },
+      { title: "Home Boxed", href: "/#" },
+    ],
+  },
+  {
+    title: "Pages",
+    items: [
+      { title: "Typography", href: "/typography" },
+      { title: "Shortcodes", href: "/shortcodes" },
+      { title: "Privacy Policy", href: "/privacy-policy" },
+      { title: "Service Plus", href: "/service-plus" },
+    ],
+  },
+  {
+    title: "About",
+    items: [
+      { title: "About Us", href: "/about-us" },
+      { title: "Prices", href: "/prices" },
+      { title: "Rules of Play", href: "/rules" },
+      { title: "Cafe", href: "/cafe" },
+      { title: "Book a Party", href: "/book-party" },
+    ],
+  },
+  {
+    title: "Events",
+    items: [],
+  },
+  {
+    title: "News",
+    items: [
+      { title: "All Posts", href: "/posts" },
+      {
+        title: "Classic Style",
+        href: "/classic-style",
+        hasSubmenu: true,
+        submenu: [
+          { title: "2 Columns", href: "/classic-style/2-columns" },
+          { title: "3 Columns", href: "/classic-style/3-columns" },
+        ],
+      },
+      { title: "Portfolio", href: "/portfolio", hasSubmenu: true },
+    ],
+  },
+  {
+    title: "Contacts",
+    items: [],
+  },
+];
 
 const Navbar = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -75,7 +93,7 @@ const Navbar = () => {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="flex items-center justify-between gap-7">
+            <div className="hidden md:flex items-center justify-between gap-7">
               <DesktopNav menuItems={menuItems} />
               <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
                 <Link
