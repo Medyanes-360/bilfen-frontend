@@ -60,16 +60,16 @@ const PartyAddOnsSection = () => {
         <Parallax className="hidden md:block absolute top-[12%] right-[8%] w-12 h-10 ">
           <Image src="/images/star5.png" alt="Star" width={50} height={40} />
         </Parallax>
-        <Parallax className="hidden xxl:block absolute top-[82%] left-[18%] w-10 h-10 ">
+        <Parallax className="hidden xl:block absolute top-[82%] left-[18%] w-10 h-10 ">
           <Image src="/images/star5.png" alt="Star" width={40} height={40} />
         </Parallax>
         <Parallax className="hidden md:block absolute top-[42%] right-[2%] w-12 h-10 ">
           <Image src="/images/star5.png" alt="Star" width={40} height={40} />
         </Parallax>
-        <Parallax className="hidden xxl:block absolute top-[72%] right-[8%] w-10 h-10 ">
+        <Parallax className="hidden xl:block absolute top-[72%] right-[8%] w-10 h-10 ">
           <Image src="/images/star2.png" alt="Star" width={40} height={40} />
         </Parallax>
-        <Parallax className="hidden xxl:block absolute top-[54%] left-[8%] w-14 h-14">
+        <Parallax className="hidden xl:block absolute top-[54%] left-[8%] w-14 h-14">
           <Image src="/images/star4.png" alt="Star" width={80} height={80} />
         </Parallax>
         <Parallax className="hidden xxl:block absolute top-[9%] left-[3%] w-32 h-32 rotate-90">
