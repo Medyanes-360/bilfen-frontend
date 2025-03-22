@@ -1,0 +1,213 @@
+{
+    "users": [
+      {
+        "id": "1",
+        "name": "Admin User",
+        "email": "admin@example.com",
+        "password": "Admin1990.",
+        "role": "ADMIN",
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "2",
+        "name": "Teacher One",
+        "email": "teacher1@example.com",
+        "password": "Teacher1985.",
+        "role": "TEACHER",
+        "branchId": "defaultBranchId",
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "3",
+        "name": "Teacher Two",
+        "email": "teacher2@example.com",
+        "password": "Teacher1987.",
+        "role": "TEACHER",
+        "branchId": "defaultBranchId",
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "4",
+        "name": "Student One",
+        "tcNo": "12345678912",
+        "password": "Student2000.",
+        "role": "STUDENT",
+        "groupId": "defaultGroupId",
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "5",
+        "name": "Student Two",
+        "tcNo": "23456789123",
+        "password": "Student2002.",
+        "role": "STUDENT",
+        "groupId": "defaultGroupId",
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      }
+    ],
+  
+    "contents": [
+      {
+        "id": "1",
+        "title": "Video 1",
+        "description": "Educational video for kids aged 3-4",
+        "type": "VIDEO",
+        "url": "https://www.youtube.com/watch?v=T1U7gALIV_E",
+        "branchId": "defaultBranchId",
+        "ageGroup": "3-4",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "2",
+        "title": "Video 2",
+        "description": "Fun learning video for 3-4 year olds",
+        "type": "VIDEO",
+        "url": "https://www.youtube.com/watch?v=qQHzIhn8UoU",
+        "branchId": "defaultBranchId",
+        "ageGroup": "3-4",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "3",
+        "title": "Video 3",
+        "description": "Learning content for 4-5 year olds",
+        "type": "VIDEO",
+        "url": "https://www.youtube.com/watch?v=F32r84fRnWE",
+        "branchId": "defaultBranchId",
+        "ageGroup": "4-5",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "4",
+        "title": "Video 4",
+        "description": "Interactive learning video for 4-5 year olds",
+        "type": "VIDEO",
+        "url": "https://www.youtube.com/watch?v=imXka8ohuuQ",
+        "branchId": "defaultBranchId",
+        "ageGroup": "4-5",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "5",
+        "title": "Video 5",
+        "description": "Engaging video content for 5-6 year olds",
+        "type": "VIDEO",
+        "url": "https://www.youtube.com/watch?v=tkViO164zZ4",
+        "branchId": "defaultBranchId",
+        "ageGroup": "5-6",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "6",
+        "title": "Video 6",
+        "description": "Fun activities for 5-6 year olds",
+        "type": "VIDEO",
+        "url": "https://www.youtube.com/watch?v=I_SnSzBOCMc",
+        "branchId": "defaultBranchId",
+        "ageGroup": "5-6",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "7",
+        "title": "Document 1",
+        "description": "PDF document for 3-4 year olds",
+        "type": "DOCUMENT",
+        "fileName": "document1.pdf",
+        "url": "/pdf/document1.pdf",
+        "r2key": "doc1_key",
+        "branchId": "defaultBranchId",
+        "ageGroup": "3-4",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "8",
+        "title": "Document 2",
+        "description": "Learning material for 3-4 year olds",
+        "type": "DOCUMENT",
+        "fileName": "document2.pdf",
+        "url": "/pdf/document2.pdf",
+        "r2key": "doc2_key",
+        "branchId": "defaultBranchId",
+        "ageGroup": "3-4",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "9",
+        "title": "Document 3",
+        "description": "Activity sheets for 4-5 year olds",
+        "type": "DOCUMENT",
+        "fileName": "document3.pdf",
+        "url": "/pdf/document3.pdf",
+        "r2key": "doc3_key",
+        "branchId": "defaultBranchId",
+        "ageGroup": "4-5",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "10",
+        "title": "Document 4",
+        "description": "Worksheets for 4-5 year olds",
+        "type": "DOCUMENT",
+        "fileName": "document4.pdf",
+        "url": "/pdf/document4.pdf",
+        "r2key": "doc4_key",
+        "branchId": "defaultBranchId",
+        "ageGroup": "4-5",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "11",
+        "title": "Document 5",
+        "description": "Printable worksheets for 5-6 year olds",
+        "type": "DOCUMENT",
+        "fileName": "document5.pdf",
+        "url": "/pdf/document5.pdf",
+        "r2key": "doc5_key",
+        "branchId": "defaultBranchId",
+        "ageGroup": "5-6",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      },
+      {
+        "id": "12",
+        "title": "Document 6",
+        "description": "Fun learning activities for 5-6 year olds",
+        "type": "DOCUMENT",
+        "fileName": "document6.pdf",
+        "url": "/pdf/document6.pdf",
+        "r2key": "doc6_key",
+        "branchId": "defaultBranchId",
+        "ageGroup": "5-6",
+        "isArchived": false,
+        "createdAt": "2025-03-22T12:00:00Z",
+        "updatedAt": "2025-03-22T12:00:00Z"
+      }
+    ]
+  }
+  
