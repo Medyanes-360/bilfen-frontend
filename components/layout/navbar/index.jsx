@@ -100,8 +100,8 @@ const Navbar = () => {
                   href="/#"
                   className="relative flex items-center gap-2"
                 >
-                  Book A Party
-                  <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-7 hover:scale-85 transition duration-300" />
+                  Login
+                  <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-14 hover:scale-85 transition duration-300" />
                 </Link>
               </div>
             </div>

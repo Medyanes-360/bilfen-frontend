@@ -48,8 +48,8 @@ const GuideSection = () => {
             </h2>
             <div className="pl-4 border-l border-[#ff621f] lg:max-w-[500px]">
               <p className="text-lg md:text-xl text-[#595959] font-semibold">
-                We've prepared a compelling video containing every step to help
-                you start your journey in our wonderful system.
+                Discover how easy it is to get started! Watch this quick guide
+                and explore the magic of the Bilfen learning experience.
               </p>
             </div>
           </div>
