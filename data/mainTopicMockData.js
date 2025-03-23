@@ -34,6 +34,18 @@ const mainTopicMockData = [
         description:
           "Evet, sistemimizin iOS ve Android uygulamaları vardır. Uygulama üzerinden bildirimleri alabilir ve dersleri takip edebilirsiniz.",
       },
+      {
+        id: 6,
+        title: "Sistemde kullanıcı rollerini kim belirliyor?",
+        description:
+          "Kullanıcı rolleri (öğretmen, öğrenci, veli) okul yönetimi tarafından atanır ve doğrulanır.",
+      },
+      {
+        id: 7,
+        title: "Mobil uygulamanız var mı?",
+        description:
+          "Evet, sistemimizin iOS ve Android uygulamaları vardır. Uygulama üzerinden bildirimleri alabilir ve dersleri takip edebilirsiniz.",
+      },
     ],
   },
   {

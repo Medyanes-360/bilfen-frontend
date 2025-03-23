@@ -1,6 +1,6 @@
 const FaqSearch = () => {
   return (
-    <div className="flex flex-col items-left p-6">
+    <div className="flex flex-col items-left sm:p-6">
       {/* Başlık */}
       <p className="text-xl text-center sm:text-start sm:text-2xl font-Inter font-medium sm:font-bold text-purple-400 mb-4 leading-6 sm:leading-[54px]">
         Nasıl size yardımcı olabiliriz?
