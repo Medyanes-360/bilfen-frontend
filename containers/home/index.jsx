@@ -7,15 +7,15 @@ import SlideSection from "@/components/home/slideSection";
 import VideoPart from "@/components/home/videoPart";
 
 export default function HomePageContainer() {
-    return(
-        <>
-          <SlideSection/>
-          <InfoSection/>
-          <PartyPackagesSection/>
-          <PartyAddOnsSection/>
-          <VideoPart/>
-          <FeatureSection/>
-          <GallerySection/>
-        </>
-    );
+  return (
+    <>
+      <SlideSection />
+      <InfoSection />
+      <PartyPackagesSection />
+      <PartyAddOnsSection />
+      <VideoPart />
+      <FeatureSection />
+      <GallerySection />
+    </>
+  );
 }
