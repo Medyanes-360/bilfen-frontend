@@ -3,9 +3,6 @@ export const mockUserData = {
   id: 1,
   name: 'Ayşe',
   avatar: '👧',
-  level: 7,
-  emoji: '🌈',
-  totalPoints: 1250,
   completedTasks: 13,
   totalTasks: 20
 };
@@ -15,9 +12,9 @@ export const mockLearningPathData = [
     id: 1,
     title: 'Matematik Bulmacası',
     description: 'Eğlenceli sayı oyunları',
+    date: "2025-03-23",
     icon: '🧮',
     typeIcon: '🎮',
-    points: 50,
     completed: true,
     current: false,
     isNew: false
@@ -26,9 +23,9 @@ export const mockLearningPathData = [
     id: 2,
     title: 'Günlük Okuma Etkinliği',
     description: '"Küçük Kaşifler" hikayesi',
+    date: "2025-03-23",
     icon: '📚',
     typeIcon: '📖',
-    points: 30,
     completed: true,
     current: false,
     isNew: false
@@ -37,9 +34,9 @@ export const mockLearningPathData = [
     id: 3,
     title: 'Bilim Deneyi İzleme',
     description: 'Mıknatısların gücü (5 dk)',
+    date: "2025-03-23",
     icon: '🧪',
     typeIcon: '🎬',
-    points: 40,
     completed: false,
     current: true,
     isNew: true
@@ -48,9 +45,9 @@ export const mockLearningPathData = [
     id: 4,
     title: 'İngilizce Çalışması',
     description: 'Hayvan isimleri aktivitesi',
+    date: "2025-03-22",
     icon: '🇬🇧',
     typeIcon: '🧩',
-    points: 35,
     completed: false,
     current: false,
     isNew: false

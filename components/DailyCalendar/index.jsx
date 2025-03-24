@@ -41,12 +41,6 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
           <span className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center transition-transform hover:scale-110">📅</span>
           Günlük Takvim
         </h2>
-        <button className="text-sm text-orange-500 font-medium hover:text-orange-600 transition-colors flex items-center gap-1">
-          <span>Tümünü Gör</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-          </svg>
-        </button>
       </div>
       
       <div className="relative">
@@ -127,20 +121,6 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
             <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
           </svg>
         </div>
-      </div>
-      
-      {/* Today's Focus Section */}
-      <div className="mt-3 p-3 bg-orange-50 rounded-lg border border-orange-100 flex items-center gap-3">
-        <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-500">
-          🎯
-        </div>
-        <div className="flex-1">
-          <h3 className="text-sm font-bold text-gray-700">Bugünün Odak Noktası</h3>
-          <p className="text-xs text-gray-600">Tamamlanacak görevlere odaklan!</p>
-        </div>
-        <button className="text-xs font-medium bg-orange-200 text-orange-700 px-3 py-1 rounded-full hover:bg-orange-300 transition-colors">
-          Göster
-        </button>
       </div>
       
       <style jsx global>{`
