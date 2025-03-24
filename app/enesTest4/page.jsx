@@ -95,7 +95,7 @@ const LoginPopupV2 = () => {
             <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-6 text-center">
               <div className="relative">
                 <h2 className="text-3xl font-bold text-white mb-2">Macera Başlıyor!</h2>
-                <p className="text-white text-lg">Arkadaşlarınla buluşmaya hazır mısın?</p>
+                <p className="text-white text-lg">Dijtal İçerikler ile hem eğlen hem öğren.</p>
               </div>
             </div>
 
