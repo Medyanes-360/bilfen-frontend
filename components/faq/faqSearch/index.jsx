@@ -1,4 +1,18 @@
-const FaqSearch = () => {
+"use client";
+import useDebounce from "@/hooks/useDebounce";
+import { useState } from "react";
+
+const FaqSearch = ({ onSearch }) => {
+  const [value, setValue] = useState("");
+
+  const debouncedSearch = useDebounce(300, onSearch);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setValue(val);
+    debouncedSearch(val);
+  };
+
   return (
     <div className="flex flex-col items-left p-6">
       {/* Başlık */}
@@ -19,6 +33,8 @@ const FaqSearch = () => {
           type="text"
           placeholder="Aramak istediğiniz konuyu yazın"
           className="flex-1 text-sm bg-transparent focus:outline-none ml-5 pr-2"
+          value={value}
+          onChange={handleChange}
         />
 
         {/* Buton */}

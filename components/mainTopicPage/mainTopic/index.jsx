@@ -1,9 +1,12 @@
 "use client";
-import { useState } from "react";
-import mainTopicMockData from "@/data/mainTopicMockData";
+import { useEffect, useState } from "react";
 
-const MainTopic = ({ onTopicSelect, activeId }) => {
+const MainTopic = ({ onTopicSelect, activeId, topics }) => {
   const [activeTopic, setActiveTopic] = useState(activeId || null);
+
+  useEffect(() => {
+    if (activeId) setActiveTopic(activeId);
+  }, [activeId]);
 
   const handleTopicClick = (topic) => {
     setActiveTopic(topic.id);
@@ -22,18 +25,15 @@ const MainTopic = ({ onTopicSelect, activeId }) => {
       </h2>
       <div className="flex flex-col space-y-4 w-full mb-10 md:mb-0">
         {/* Ana Topikler */}
-        {mainTopicMockData.map((topic, index) => (
+        {topics.map((topic, index) => (
           <div
             key={index}
             onClick={() => handleTopicClick(topic)}
             className={`flex items-center gap-3 cursor-pointer px-6 md:px-4 lg:px-6 rounded-md ${
               activeTopic === topic.id ? "bg-white" : "hover:bg-purple-100"
             }`}
-            style={{
-              position: "relative",
-            }}
+            style={{ position: "relative" }}
           >
-            {/* Aktif Çizgi */}
             {activeTopic === topic.id && (
               <div
                 style={{
@@ -48,12 +48,9 @@ const MainTopic = ({ onTopicSelect, activeId }) => {
                 }}
               />
             )}
-            {/* icon */}
             <div className="size-16 text-3xl flex items-center justify-center rounded-full bg-white m-2 p-2 drop-shadow-custom-combined leading-none aspect-square">
               {topic.icon}
             </div>
-
-            {/* Ana Konu Başlığı */}
             <div
               className={`font-lexend font-bold text-start text-sm lg:text-base ${
                 activeTopic === topic.id

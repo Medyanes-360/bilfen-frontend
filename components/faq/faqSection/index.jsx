@@ -1,9 +1,13 @@
+"use client";
 import FaqPage from "@/components/faq";
 import MainTopicPage from "@/components/mainTopicPage";
 import { Parallax } from "@/globalElements/Parallax";
 import Image from "next/image";
+import { useState } from "react";
 
 const FaqSection = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  
   return (
     <section className="relative py-16 xl:py-26">
       <Parallax
@@ -30,8 +34,8 @@ const FaqSection = () => {
       >
         <Image src="/images/star4.png" alt="Star" width={36} height={46} />
       </Parallax>
-      <FaqPage />
-      <MainTopicPage />
+      <FaqPage onSearch={setSearchTerm} />
+      <MainTopicPage searchTerm={searchTerm} />
     </section>
   );
 };

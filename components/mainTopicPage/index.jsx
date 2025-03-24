@@ -1,16 +1,48 @@
 "use client";
 import PageContainer from "@/containers/pageContainer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TopicDetails from "./topicDetails";
 import MainTopic from "./mainTopic";
 import mainTopicMockData from "@/data/mainTopicMockData";
 
-const MainTopicPage = () => {
+const MainTopicPage = ({ searchTerm }) => {
+  const [filteredTopics, setFilteredTopics] = useState(mainTopicMockData);
   const [selectedTopic, setSelectedTopic] = useState(mainTopicMockData[0]);
 
   const handleTopicSelect = (topic) => {
     setSelectedTopic(topic);
   };
+
+  useEffect(() => {
+    const term = searchTerm?.toLowerCase() || "";
+
+    if (!term) {
+      setFilteredTopics(mainTopicMockData);
+      setSelectedTopic(mainTopicMockData[0]);
+      return;
+    }
+
+    const result = mainTopicMockData
+      .map((mainTopic) => {
+        const matchingSubTopics = mainTopic.subTopics.filter(
+          (sub) =>
+            sub.title.toLowerCase().includes(term) ||
+            sub.description.toLowerCase().includes(term)
+        );
+
+        if (matchingSubTopics.length > 0) {
+          return {
+            ...mainTopic,
+            subTopics: matchingSubTopics,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    setFilteredTopics(result);
+    setSelectedTopic(result[0] || null);
+  }, [searchTerm]);
 
   return (
     <section className="my-6 z-20">
@@ -27,11 +59,12 @@ const MainTopicPage = () => {
             <MainTopic
               onTopicSelect={handleTopicSelect}
               activeId={selectedTopic?.id}
+              topics={filteredTopics}
             />
           </div>
           {/* main content */}
           <div className="w-full md:basis-[65%]">
-            <TopicDetails selectedTopic={selectedTopic} />
+            <TopicDetails selectedTopic={selectedTopic} searchTerm={searchTerm} />
           </div>
         </div>
       </PageContainer>
