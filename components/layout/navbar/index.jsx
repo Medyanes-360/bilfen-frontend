@@ -61,7 +61,9 @@ const menuItems = [
   },
   {
     title: "Contacts",
-    items: [],
+    items: [
+      { title: "Contact Me", href: "/contact-me" },
+    ],
   },
 ];
 
