@@ -8,23 +8,23 @@ const FeatureSection = () => {
   const features = [
     {
       icon: Icons.Shield,
-      title: 'Safe'
+      title: 'Güvenli'
     },
     {
       icon: Icons.Clean,
-      title: 'Clean'
+      title: 'Nezih'
     },
     {
       icon: Icons.Wifi,
-      title: 'Free Wi-Fi'
+      title: 'Ücretsiz WiFi'
     },
     {
       icon: Icons.NutFree,
-      title: 'Nut-Free'
+      title: 'Kalite'
     },
     {
       icon: Icons.EcoFriendly,
-      title: 'Eco-Friendly'
+      title: 'Çevre Dostu'
     }
   ];
 
@@ -43,8 +43,8 @@ const FeatureSection = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-nunito font-bold text-center mb-16 max-w-5xl mx-auto">
-          Enjoy Unlimited Fun at Tediss Park 
-          <div className='md:pt-4'>Playland & Cafe!</div>
+          BİLFEN ile ÖZGÜN EĞİTİMİN TADINI ÇIKARIN
+          <div className='md:pt-4'>Eğlen & Öğren</div>
         </h2>
 
         {/* Features */}

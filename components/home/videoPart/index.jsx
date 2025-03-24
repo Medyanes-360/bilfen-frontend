@@ -65,34 +65,34 @@ const VideoPart = () => {
 
             <div className="absolute bottom-2 left-12 md:left-0 p-4 sm:p-5 md:p-6">
               <h3 className="font-nunito text-5xl font-bold text-white">
-                Birthday
+                BİLFEN
                 <br />
-                Parties
+                EĞİTİM
               </h3>
               <Button
                 className="mt-3 md:mt-4 py-2 px-4 sm:py-3 sm:px-5 md:py-8 bg-orange hover:bg-darklila text-white text-sm sm:text-base md:text-lg"
                 onClick={() => (window.location.href = "/#")}
               >
-                Book A Party
+                TIKLA İZLE!
               </Button>
             </div>
           </div>
 
           <div className="text-[#341c77] w-full max-w-lg mx-auto md:mx-0 mt-6 md:mt-0">
             <h2 className="text-3xl lg:text-5xl font-nunito font-bold mb-4 sm:mb-5 md:mb-6">
-              We're Committed to
-              <br className="hidden sm:block"/> Our Values
+              Değerlerimize
+              <br className="hidden sm:block" /> Bağlıyız
             </h2>
             <p className="text-antrasit font-extralight text-base sm:text-lg mb-6 sm:mb-7 md:mb-8">
-              Our center was built as a safe place for your children to play and
-              learn, celebrate Birthdays and meet new friends in the positive
-              environment under the professional supervision.
+              Merkezimiz, çocuklarınızın güvenli bir şekilde oynayıp öğrenebileceği,
+              verimli vakit geçirebileceği ve yeni arkadaşlar edinebileceği,
+              uzman gözetiminde pozitif bir eğitim ortamı sunmak için tasarlanmıştır.
             </p>
             <Button
               className="px-6 py-8 xl:px-8 xl:py-9 text-base sm:text-lg bg-darklila hover:bg-orange text-white"
               onClick={() => (window.location.href = "/#")}
             >
-              More About Services
+              Hakkımızda bilgi alın
             </Button>
           </div>
         </div>

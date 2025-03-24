@@ -25,7 +25,7 @@ const MobileNav = ({ menuItems }) => {
             <Link href="/" className="flex items-center">
               <Image
                 src="/images/logo2.webp"
-                alt="Tediss Park"
+                alt="BİLFEN"
                 width={100}
                 height={60}
               />

@@ -63,7 +63,7 @@ const PartyPackagesSection = () => {
       
       <div className="relative z-20 xxl:container mx-auto">
         <h2 className="text-[34px] sm:text-4xl md:text-5xl font-nunito font-bold text-center text-[#312F30] mb-12">
-          Children Party Packages
+          Her seviyeye uygun eğitimler
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">

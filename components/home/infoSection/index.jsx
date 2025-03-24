@@ -53,10 +53,10 @@ const InfoSection = () => {
             <div className="space-y-2 text-white">
               <Icons.StarBadge className="w-32 h-32 md:w-20 md:h-20 text-light" />
               <h3 className="text-lg text-darklila font-poppins">
-                Most trusted playground
+                Güvenilir Eğitimin Adresi
               </h3>
               <p className="flex md:flex-col gap-2 text-2xl md:text-4xl font-bold font-nunito">
-                20 Years of<span>Experience</span>
+                BİLFEN
               </p>
             </div>
           </div>
