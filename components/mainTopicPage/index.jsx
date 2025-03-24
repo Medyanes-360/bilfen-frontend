@@ -53,20 +53,30 @@ const MainTopicPage = ({ searchTerm }) => {
         }}
         className="bg-[#fff] rounded-3xl p-6 z-20"
       >
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* sidebar componenet */}
-          <div className="w-full md:basis-[35%]">
-            <MainTopic
-              onTopicSelect={handleTopicSelect}
-              activeId={selectedTopic?.id}
-              topics={filteredTopics}
-            />
+        {filteredTopics.length === 0 && searchTerm ? (
+          <div className="w-full flex flex-col items-center justify-center py-20 text-center gap-4 text-gray-500">
+            <p className="text-lg font-semibold">Sonuç bulunamadı</p>
+            <p className="text-sm text-gray-400">
+              Aramanızla eşleşen herhangi bir içerik bulunamadı.
+            </p>
           </div>
-          {/* main content */}
-          <div className="w-full md:basis-[65%]">
-            <TopicDetails selectedTopic={selectedTopic} searchTerm={searchTerm} />
+        ) : (
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="w-full md:basis-[35%]">
+              <MainTopic
+                onTopicSelect={setSelectedTopic}
+                activeId={selectedTopic?.id}
+                topics={filteredTopics}
+              />
+            </div>
+            <div className="w-full md:basis-[65%]">
+              <TopicDetails
+                selectedTopic={selectedTopic}
+                searchTerm={searchTerm}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </PageContainer>
     </section>
   );

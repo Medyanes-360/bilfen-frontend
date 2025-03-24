@@ -14,7 +14,7 @@ const FaqSearch = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex flex-col items-left p-6">
+    <div className="flex flex-col items-left px-3 sm:p-6">
       {/* Başlık */}
       <p className="text-xl text-center sm:text-start sm:text-2xl font-Inter font-medium sm:font-bold text-purple-400 mb-4 leading-6 sm:leading-[54px]">
         Nasıl size yardımcı olabiliriz?
@@ -31,7 +31,7 @@ const FaqSearch = ({ onSearch }) => {
         {/* Input */}
         <input
           type="text"
-          placeholder="Aramak istediğiniz konuyu yazın"
+          placeholder="Konuyu yazın"
           className="flex-1 text-sm bg-transparent focus:outline-none ml-5 pr-2"
           value={value}
           onChange={handleChange}

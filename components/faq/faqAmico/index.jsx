@@ -6,7 +6,7 @@ const FaqAmico = () => {
       <img
         src="/images/faq.png"
         alt="Amico"
-        className="w-[168.27px] h-[165px] md:w-[276.37px] md:h-[271px]"
+        className="w-[168.27px] h-[165px] md:w-[276.37px] md:h-[271px] object-contain"
       />
     </div>
   );
