@@ -63,7 +63,7 @@ const LoginPopupV2 = () => {
         onClick={() => setIsOpen(true)}
         className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-full shadow-lg transform hover:scale-105 hover:shadow-xl transition duration-300 flex items-center cursor-pointer"
       >
-        <span className="mr-2">Oyuna Başla</span>
+        <span className="mr-2">Giriş Yap</span>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
         </svg>
