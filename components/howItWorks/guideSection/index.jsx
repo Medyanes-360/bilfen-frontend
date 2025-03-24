@@ -44,12 +44,12 @@ const GuideSection = () => {
           </Parallax>
           <div className="flex flex-col lg:flex-row justify-between w-full mb-10 lg:mb-6">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-4">
-              <span className="text-[#ff621f]">Bilfen</span> System Usage
+              <span className="text-[#ff621f]">Bilfen</span> Sisteminin Kullanılması.
             </h2>
             <div className="pl-4 border-l border-[#ff621f] lg:max-w-[500px]">
               <p className="text-lg md:text-xl text-[#595959] font-semibold">
-                Discover how easy it is to get started! Watch this quick guide
-                and explore the magic of the Bilfen learning experience.
+                Başlamanın ne kadar kolay olduğunu keşfedin! Videoyu izleyerek
+                Bilfen öğrenme deneyimini keşfedin.
               </p>
             </div>
           </div>

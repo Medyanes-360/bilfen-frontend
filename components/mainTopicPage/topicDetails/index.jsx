@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 const ITEMS_PER_PAGE = 4;
 
-const TopicDetails = ({ selectedTopic }) => {
+const TopicDetails = ({ selectedTopic, searchTerm }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -15,6 +15,26 @@ const TopicDetails = ({ selectedTopic }) => {
       <div className="text-gray-500 text-sm">Lütfen bir ana başlık seçin.</div>
     );
   }
+
+  const highlightText = (text, term) => {
+    if (!term) return text;
+
+    const regex = new RegExp(`(${term})`, "gi");
+    const parts = text.split(regex);
+
+    return parts.map((part, index) =>
+      part.toLowerCase() === term.toLowerCase() ? (
+        <mark
+          key={index}
+          className="bg-yellow-200 text-black font-semibold rounded px-1"
+        >
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
 
   const totalItems = selectedTopic.subTopics.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -41,13 +61,13 @@ const TopicDetails = ({ selectedTopic }) => {
               {/* İçerik */}
               <div className="flex flex-col gap-5">
                 <h4 className="font-Inter font-semibold md:font-bold lg:leading-10 text-base lg:text-[24px] text-tertiary-800">
-                  {subTopic.title}
+                  {highlightText(subTopic.title, searchTerm)}
                 </h4>
                 <p
                   className="font-lexend font-medium leading-6 text-[16px] text-gray-500"
                   style={{ whiteSpace: "pre-line" }}
                 >
-                  {subTopic.description}
+                  {highlightText(subTopic.description, searchTerm)}
                 </p>
               </div>
             </div>
