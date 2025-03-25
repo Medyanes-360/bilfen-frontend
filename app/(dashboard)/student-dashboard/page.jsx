@@ -1,34 +1,69 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Head from "next/head"
-import { mockUserData, mockLearningPathData, mockRecommendationsData, mockCalendarData } from "@/data/mockData"
-import DailyCalendar from "@/components/DailyCalendar"
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import {
+  mockUserData,
+  mockLearningPathData,
+  mockRecommendationsData,
+  mockCalendarData,
+} from "@/data/mockData";
+import DailyCalendar from "@/components/DailyCalendar";
+import { getSession } from "next-auth/react";
 
 export default function Home() {
-  const [userData, setUserData] = useState(mockUserData)
-  const [learningPath, setLearningPath] = useState(mockLearningPathData)
-  const [recommendations, setRecommendations] = useState(mockRecommendationsData)
-  const [calendarData, setCalendarData] = useState(mockCalendarData)
-  const [selectedDay, setSelectedDay] = useState(calendarData.find((day) => day.isToday))
+  const [userData, setUserData] = useState(mockUserData);
+  const [learningPath, setLearningPath] = useState(mockLearningPathData);
+  const [recommendations, setRecommendations] = useState(
+    mockRecommendationsData
+  );
+  const [calendarData, setCalendarData] = useState(mockCalendarData);
+  const [selectedDay, setSelectedDay] = useState(
+    calendarData.find((day) => day.isToday)
+  );
 
   // Progress hesaplamaları
-  const completedTasks = learningPath.filter((task) => task.completed).length
-  const totalTasks = learningPath.length
-  const progressPercentage = (completedTasks / totalTasks) * 100
+  const completedTasks = learningPath.filter((task) => task.completed).length;
+  const totalTasks = learningPath.length;
+  const progressPercentage = (completedTasks / totalTasks) * 100;
 
   const handleDaySelect = (day) => {
-    setSelectedDay(day)
+    setSelectedDay(day);
 
     // Filter assignments for the selected day
     const filteredAssignments = mockLearningPathData.filter((task) => {
-      if (!task.date) return false
-      const taskDate = new Date(task.date)
-      return taskDate.getDate() === day.date
-    })
+      if (!task.date) return false;
+      const taskDate = new Date(task.date);
+      return taskDate.getDate() === day.date;
+    });
 
-    setLearningPath(filteredAssignments)
-  }
+    setLearningPath(filteredAssignments);
+  };
+
+  const [user, setUser] = useState(null);
+  const [currentDate, setCurrentDate] = useState("");
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession();
+      if (session) {
+        setUser(session.user);
+      }
+    };
+
+    fetchSession();
+
+    // Set dynamic date
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString("tr-TR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    setCurrentDate(formattedDate);
+  }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -42,52 +77,6 @@ export default function Home() {
         {/* Main container with 3-column layout for desktop */}
         <div className="lg:flex lg:flex-row lg:justify-center">
           {/* Left sidebar - only visible on desktop */}
-          {/* 
-        <div className="hidden lg:block lg:w-1/4 border-r border-gray-200 p-6">
-          <div className="sticky top-4">
-            <h2 className="text-xl font-bold text-orange-600 mb-5 flex items-center gap-2">
-              <span className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center transition-transform hover:scale-110">👋</span>
-              Menüler
-            </h2>
-
-            <ul className="space-y-3 mb-8">
-              {[
-                { label: 'Ana Sayfa', icon: '🏠', active: true },
-                { label: 'Keşfet', icon: '🧭', active: false },
-                { label: 'Kütüphane', icon: '📚', active: false },
-                { label: 'Başarılar', icon: '🏆', active: false, badge: 3 },
-                { label: 'Profil', icon: '👤', active: false }
-              ].map((item, index) => (
-                <li
-                  key={index}
-                  className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all duration-200 ${item.active
-                      ? 'bg-orange-100 text-orange-600 scale-[1.02] shadow-sm'
-                      : 'hover:bg-gray-100 hover:scale-[1.01]'
-                    }`}
-                >
-                  <span className="text-2xl transition-transform hover:scale-110">{item.icon}</span>
-                  <span className="font-medium">{item.label}</span>
-                  {item.badge && (
-                    <span className="ml-auto bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center animate-pulse">
-                      {item.badge}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
-
-            <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl transform transition-all hover:scale-[1.02] hover:shadow-md">
-              <h3 className="font-bold mb-2">Günlük Hedef</h3>
-              <p className="text-sm mb-3">3 aktivite daha tamamla ve günlük hedefine ulaş!</p>
-              <div className="w-full bg-white/30 h-2 rounded-full overflow-hidden">
-                <div className="bg-white h-full relative" style={{ width: '65%' }}>
-                  <div className="absolute top-0 bottom-0 right-0 w-2 h-2 bg-white rounded-full animate-ping"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-          */}
 
           {/* Main content - centered when sidebar is hidden */}
           <div className="lg:w-2/4 mx-auto">
@@ -108,15 +97,12 @@ export default function Home() {
                   <div className="w-16 h-16 rounded-full border-3 border-white bg-orange-100 flex items-center justify-center text-3xl transition-transform transform group-hover:scale-110">
                     {userData.avatar}
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold border-2 border-white group-hover:scale-110 transition-transform">
-                    {userData.level}
-                  </div>
                 </div>
                 <div>
                   <div className="text-lg font-bold">Merhaba!</div>
-                  <div className="text-2xl font-bold flex items-center gap-2">
-                    {userData.name}{" "}
-                    <span className="transition-transform hover:scale-125 inline-block">{userData.emoji}</span>
+                  <div className="text-2xl font-bold flex flex-col gap-2">
+                    <h2 className="font-bold">Merhaba, {user ? user.name : "Misafir"}</h2>
+                    <p className="text-xs">{currentDate}</p>
                   </div>
                 </div>
               </div>
@@ -132,7 +118,10 @@ export default function Home() {
                 <div className="h-8 bg-white/20 rounded-full overflow-hidden relative backdrop-blur-sm">
                   {/* Progress Bar */}
                   {totalTasks > 0 ? (
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${progressPercentage}%` }}>
+                    <div
+                      className="h-full bg-green-500 rounded-full"
+                      style={{ width: `${progressPercentage}%` }}
+                    >
                       <div className="absolute inset-0 overflow-hidden">
                         <div className="w-full h-full bg-white/20 transform -translate-x-full animate-shimmer"></div>
                       </div>
@@ -160,8 +149,14 @@ export default function Home() {
                       <div
                         key={index}
                         className={`w-2 h-2 rounded-full ${
-                          (index + 1) * 20 <= progressPercentage ? "bg-white" : "bg-white/30"
-                        } ${(index + 1) * 20 <= progressPercentage ? "scale-100" : "scale-75"} transition-all`}
+                          (index + 1) * 20 <= progressPercentage
+                            ? "bg-white"
+                            : "bg-white/30"
+                        } ${
+                          (index + 1) * 20 <= progressPercentage
+                            ? "scale-100"
+                            : "scale-75"
+                        } transition-all`}
                       ></div>
                     ))}
                   </div>
@@ -172,18 +167,27 @@ export default function Home() {
             {/* Main Content */}
             <div className="px-5 py-4 md:px-6">
               {/* Calendar Component */}
-              <DailyCalendar days={calendarData} selectedDay={selectedDay} onSelectDay={handleDaySelect} />
+              <DailyCalendar
+                days={calendarData}
+                selectedDay={selectedDay}
+                onSelectDay={handleDaySelect}
+              />
 
               {/* Daily Goal Section */}
               <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl transform transition-all hover:scale-[1.02] hover:shadow-md mb-6 mt-4">
                 <h3 className="font-bold mb-2">Günlük Hedef</h3>
                 <p className="text-sm mb-3">
                   {totalTasks - completedTasks > 0
-                    ? `${totalTasks - completedTasks} aktivite daha tamamla ve günlük hedefine ulaş!`
+                    ? `${
+                        totalTasks - completedTasks
+                      } aktivite daha tamamla ve günlük hedefine ulaş!`
                     : "Tüm aktiviteleri tamamladın! Harika iş!"}
                 </p>
                 <div className="w-full bg-white/30 h-2 rounded-full overflow-hidden">
-                  <div className="bg-white h-full relative" style={{ width: `${progressPercentage}%` }}>
+                  <div
+                    className="bg-white h-full relative"
+                    style={{ width: `${progressPercentage}%` }}
+                  >
                     <div className="absolute top-0 bottom-0 right-0 w-2 h-2 bg-white rounded-full animate-ping"></div>
                   </div>
                 </div>
@@ -209,7 +213,10 @@ export default function Home() {
                     <div
                       className="absolute top-0 left-[35px] w-1.5 bg-gradient-to-b from-green-500 to-green-400 rounded z-0"
                       style={{
-                        height: `${(completedTasks / totalTasks) * (learningPath.length * 120)}px`,
+                        height: `${
+                          (completedTasks / totalTasks) *
+                          (learningPath.length * 120)
+                        }px`,
                       }}
                     ></div>
                   )}
@@ -221,7 +228,11 @@ export default function Home() {
                         <div
                           key={task.id}
                           className={`flex gap-4 items-start ${
-                            task.completed ? "completed" : task.current ? "current" : ""
+                            task.completed
+                              ? "completed"
+                              : task.current
+                              ? "current"
+                              : ""
                           }`}
                         >
                           <div
@@ -232,8 +243,8 @@ export default function Home() {
                                 task.completed
                                   ? "border-green-500 bg-green-50 text-green-500 hover:shadow-md hover:shadow-green-200 hover:scale-105"
                                   : task.current
-                                    ? "border-blue-500 bg-blue-50 text-blue-500 animate-bounce hover:shadow-md hover:shadow-blue-200"
-                                    : "border-gray-300 bg-white text-gray-400 hover:border-gray-400 hover:text-gray-500"
+                                  ? "border-blue-500 bg-blue-50 text-blue-500 animate-bounce hover:shadow-md hover:shadow-blue-200"
+                                  : "border-gray-300 bg-white text-gray-400 hover:border-gray-400 hover:text-gray-500"
                               }
                             `}
                           >
@@ -248,8 +259,8 @@ export default function Home() {
                                task.completed
                                  ? "border-green-200 hover:border-green-300 hover:shadow-md"
                                  : task.current
-                                   ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
-                                   : "border-gray-200 hover:border-gray-300"
+                                 ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
+                                 : "border-gray-200 hover:border-gray-300"
                              }
                             `}
                           >
@@ -281,8 +292,8 @@ export default function Home() {
                                       task.completed
                                         ? "bg-green-500 hover:bg-green-600"
                                         : task.current
-                                          ? "bg-blue-500 hover:bg-blue-600"
-                                          : "bg-gray-400"
+                                        ? "bg-blue-500 hover:bg-blue-600"
+                                        : "bg-gray-400"
                                     }
                                 `}
                                 disabled={!task.current && !task.completed}
@@ -342,7 +353,10 @@ export default function Home() {
                       >
                         <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-orange-400 to-orange-600"></div>
                         <div className="absolute top-2.5 left-2.5 bg-black/60 text-white text-xs py-1 px-2 rounded-full flex items-center gap-1 z-10">
-                          <span className="transition-transform hover:scale-110">{item.typeIcon}</span> {item.type}
+                          <span className="transition-transform hover:scale-110">
+                            {item.typeIcon}
+                          </span>{" "}
+                          {item.type}
                         </div>
 
                         <div
@@ -352,8 +366,8 @@ export default function Home() {
                                 item.type === "Video"
                                   ? "bg-gradient-to-br from-yellow-400 to-orange-500"
                                   : item.type === "Oyun"
-                                    ? "bg-gradient-to-br from-green-400 to-green-600"
-                                    : "bg-gradient-to-br from-purple-500 to-indigo-600"
+                                  ? "bg-gradient-to-br from-green-400 to-green-600"
+                                  : "bg-gradient-to-br from-purple-500 to-indigo-600"
                               }
                             `}
                         >
@@ -365,8 +379,12 @@ export default function Home() {
                         </div>
 
                         <div className="p-3 transition-all group-hover:bg-gray-50">
-                          <h3 className="font-bold text-sm mb-1">{item.title}</h3>
-                          <p className="text-xs text-gray-600 line-clamp-2">{item.description}</p>
+                          <h3 className="font-bold text-sm mb-1">
+                            {item.title}
+                          </h3>
+                          <p className="text-xs text-gray-600 line-clamp-2">
+                            {item.description}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -388,11 +406,14 @@ export default function Home() {
 
               <div className="bg-gray-50 p-4 rounded-xl mb-6 border border-gray-200 transition-all hover:shadow-md hover:bg-gray-50/80">
                 <p className="text-gray-700 text-sm mb-3">
-                  Her gün 30 dakika okuma yaparak haftalık okuma hedefine ulaşabilirsin!
+                  Her gün 30 dakika okuma yaparak haftalık okuma hedefine
+                  ulaşabilirsin!
                 </p>
                 <div className="bg-orange-100 text-orange-600 p-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-transform hover:scale-[1.01]">
-                  <span className="text-xl transition-transform hover:scale-110">💡</span> İpuçlarını takip et, daha
-                  hızlı ilerle!
+                  <span className="text-xl transition-transform hover:scale-110">
+                    💡
+                  </span>{" "}
+                  İpuçlarını takip et, daha hızlı ilerle!
                 </div>
               </div>
 
@@ -410,7 +431,9 @@ export default function Home() {
                       key={`sidebar-${item.id}`}
                       className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all hover:scale-[1.01]"
                     >
-                      <span className="text-2xl transition-transform hover:scale-110">{item.contentIcon}</span>
+                      <span className="text-2xl transition-transform hover:scale-110">
+                        {item.contentIcon}
+                      </span>
                       <div>
                         <div className="font-medium text-sm">{item.title}</div>
                         <div className="text-xs text-gray-500">{item.type}</div>
@@ -435,7 +458,9 @@ export default function Home() {
               <div
                 key={index}
                 className={`flex flex-col items-center relative cursor-pointer transition-transform hover:scale-110 ${
-                  item.active ? "text-orange-500" : "text-gray-500 hover:text-gray-700"
+                  item.active
+                    ? "text-orange-500"
+                    : "text-gray-500 hover:text-gray-700"
                 }`}
               >
                 <div className="text-2xl mb-1">{item.icon}</div>
@@ -445,12 +470,14 @@ export default function Home() {
                     {item.badge}
                   </div>
                 )}
-                {item.active && <div className="absolute -bottom-3 w-1.5 h-1.5 rounded-full bg-orange-500"></div>}
+                {item.active && (
+                  <div className="absolute -bottom-3 w-1.5 h-1.5 rounded-full bg-orange-500"></div>
+                )}
               </div>
             ))}
           </div>
         </nav>
       </div>
     </div>
-  )
+  );
 }

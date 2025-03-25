@@ -17,7 +17,7 @@ export const authOptions = {
             id: "1",
             name: "Ahmet Yılmaz",
             tc: "11111111111",
-            role: "student", // 👈 add role here
+            role: "student", 
           };
         }
       
@@ -26,7 +26,7 @@ export const authOptions = {
             id: "2",
             name: "Mehmet Öğretmen",
             tc: "22222222222",
-            role: "teacher", // 👈 different role
+            role: "teacher",
           };
         }
 

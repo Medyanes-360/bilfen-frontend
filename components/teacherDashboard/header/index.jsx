@@ -1,22 +1,36 @@
-"use client";
-import { redirect, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getSession, signOut } from "next-auth/react";
 
 const Header = ({ dropdownRef, dropdownOpen, setDropdownOpen }) => {
-  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [currentDate, setCurrentDate] = useState("");
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession();
+      if (session) {
+        setUser(session.user);
+      }
+    };
+
+    fetchSession();
+
+    // Set dynamic date
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString("tr-TR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    setCurrentDate(formattedDate);
+  }, []);
+
   return (
     <header className="bg-blue-600 text-white shadow-md sticky top-0 z-30">
       <div className="container mx-auto">
         <div className="flex items-center h-16 px-4">
-          {/* Menü toggle butonu - Sadece mobil */}
-          {/* <button
-                  className="lg:hidden text-white text-2xl mr-4"
-                  onClick={toggleSidebar}
-                  aria-label="Toggle menu"
-                >
-                  ☰
-                </button> */}
-
-          {/* Logo - Her zaman görünür */}
           <div className="flex items-center mr-4">
             <div className="w-8 h-8 rounded-full bg-white text-blue-600 flex items-center justify-center font-bold">
               EÖ
@@ -29,8 +43,10 @@ const Header = ({ dropdownRef, dropdownOpen, setDropdownOpen }) => {
           {/* Öğretmen bilgileri - Sağda */}
           <div className="flex items-center ml-auto" ref={dropdownRef}>
             <div className="text-right mr-3 hidden sm:block">
-              <h1 className="font-bold">Merhaba, Ayşe Öğretmen</h1>
-              <p className="text-xs text-blue-100">23 Mart 2025, Cuma</p>
+              <h2 className="font-bold">
+                Merhaba, {user ? user.name : "Misafir"}
+              </h2>
+              <p className="text-xs text-blue-100">{currentDate}</p>
             </div>
 
             {/* Profil butonu */}
@@ -52,7 +68,7 @@ const Header = ({ dropdownRef, dropdownOpen, setDropdownOpen }) => {
                 <button
                   onClick={() => {
                     setDropdownOpen(false);
-                    router.push("/");
+                    signOut({ redirect: true, callbackUrl: "/" });
                   }}
                   className="cursor-pointer w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-all duration-200"
                 >
