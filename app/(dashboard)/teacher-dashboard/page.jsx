@@ -61,7 +61,7 @@ export default function Home() {
       {/* Ana içerik bölümü */}
       <div className="flex flex-1 pt-0">
         {/* Ana içerik - Ortalaması düzeltildi */}
-        <main className="flex-1 overflow-auto p-4 md:p-6 w-full">
+      <main className="flex-1 overflow-auto p-4 md:p-6 w-full">
           <div className="mx-auto max-w-4xl md:max-w-3xl lg:max-w-4xl">
             {/* Mobilde görünen mini başlık */}
             <div className="md:hidden text-center mb-4">
