@@ -106,10 +106,10 @@ const GallerySection = () => {
   ];
 
   const filters = [
-    { id: "all", label: "All Zones", color: "bg-darklila" },
-    { id: "baby", label: "Baby Area", color: "bg-lightGreen" },
-    { id: "toddler", label: "Toddler Zone", color: "bg-lightYellow" },
-    { id: "main", label: "Main Arena", color: "bg-orange" },
+    { id: "all", label: "Eğitim", color: "bg-darklila" },
+    { id: "baby", label: "Her yaşa uygun", color: "bg-lightGreen" },
+    { id: "toddler", label: "Oyun Alanları", color: "bg-lightYellow" },
+    { id: "main", label: "Kalite", color: "bg-orange" },
   ];
 
   const getFilteredItems = () => {
@@ -163,7 +163,7 @@ const GallerySection = () => {
 
       <div className="container mx-auto relative z-10">
         <h2 className="text-4xl md:text-5xl font-nunito font-bold text-center mb-10 text-darkGray">
-          Our Featured Gallery
+          Etkinlikler
         </h2>
 
         {/* Filter Buttons */}

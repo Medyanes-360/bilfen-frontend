@@ -12,56 +12,22 @@ import { DesktopNav } from "./desktopNav.jsx";
 
 const menuItems = [
   {
-    title: "Home",
+    title: "Ana Sayfa",
     items: [
-      { title: "Home #1 - Soft Play Area", href: "/#" },
-      { title: "Home #2 - Birthday Party", href: "/#" },
-      { title: "Home #3 - Child Care Center", href: "/#" },
-      { title: "Home Boxed", href: "/#" },
+      { title: "Ana Sayfa", href: "/#" },
+    ]
+  },
+  {
+    title: "Sıkça Sorulan Sorular",
+    items: [
+      { title: "Sıkça Sorulan Sorular", href: "/sss" },
     ],
   },
   {
-    title: "Pages",
+    title: "İletişim",
     items: [
-      { title: "Typography", href: "/typography" },
-      { title: "Shortcodes", href: "/shortcodes" },
-      { title: "Privacy Policy", href: "/privacy-policy" },
-      { title: "Service Plus", href: "/service-plus" },
+      { title: "İletişim", href: "/contact" },
     ],
-  },
-  {
-    title: "About",
-    items: [
-      { title: "About Us", href: "/about-us" },
-      { title: "Prices", href: "/prices" },
-      { title: "Rules of Play", href: "/rules" },
-      { title: "Cafe", href: "/cafe" },
-      { title: "Book a Party", href: "/book-party" },
-    ],
-  },
-  {
-    title: "Events",
-    items: [],
-  },
-  {
-    title: "News",
-    items: [
-      { title: "All Posts", href: "/posts" },
-      {
-        title: "Classic Style",
-        href: "/classic-style",
-        hasSubmenu: true,
-        submenu: [
-          { title: "2 Columns", href: "/classic-style/2-columns" },
-          { title: "3 Columns", href: "/classic-style/3-columns" },
-        ],
-      },
-      { title: "Portfolio", href: "/portfolio", hasSubmenu: true },
-    ],
-  },
-  {
-    title: "Contacts",
-    items: [],
   },
 ];
 
@@ -86,7 +52,7 @@ const Navbar = () => {
             <Link href="/" className="flex items-center">
               <Image
                 src="/images/logo.webp"
-                alt="Tediss Park"
+                alt="BİLFEN"
                 width={135}
                 height={80}
               />
@@ -100,7 +66,7 @@ const Navbar = () => {
                   href="/#"
                   className="relative flex items-center gap-2"
                 >
-                  Login
+                  Giriş Yap
                   <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-14 hover:scale-85 transition duration-300" />
                 </Link>
               </div>

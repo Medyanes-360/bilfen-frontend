@@ -8,7 +8,7 @@ const partyPackages = [
     id: 1,
     title: 'Mini Party',
     price: 199,
-    image: '/images/PartyCardimg3.jpg',
+    image: '/images/Cardimg3.jpg',
     features: [
       '1 1/2 Hour Event',
       'Tediss Themed Paper Goods',
@@ -20,7 +20,7 @@ const partyPackages = [
     id: 2,
     title: 'Big Party',
     price: 240,
-    image: '/images/PartyCardimg2.jpg',
+    image: '/images/Cardimg2.jpg',
     features: [
       '2 Hour Event',
       'Tediss Themed Invites',
@@ -33,7 +33,7 @@ const partyPackages = [
     id: 3,
     title: 'Super Party',
     price: 375,
-    image: '/images/PartyCardimg1.jpg',
+    image: '/images/Cardimg1.jpg',
     features: [
       '3 Hour Event',
       'Tediss Themed Invites',
@@ -63,7 +63,7 @@ const PartyPackagesSection = () => {
       
       <div className="relative z-20 xxl:container mx-auto">
         <h2 className="text-[34px] sm:text-4xl md:text-5xl font-nunito font-bold text-center text-[#312F30] mb-12">
-          Children Party Packages
+          Her seviyeye uygun eğitimler
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">

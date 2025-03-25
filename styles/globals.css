@@ -13,7 +13,7 @@ body {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-15px);
   }
 }
 
@@ -30,7 +30,7 @@ body {
 }
 
 .animate-bounce {
-  animation: bounce 2s infinite;
+  animation: bounce 2s ease-in-out infinite;
 }
 
 .animate-pulse {

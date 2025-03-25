@@ -57,33 +57,28 @@
   --color-darkGray: oklch(0.39 0.01 0);
   --color-lightGreen: oklch(0.75 0.13 174.06);
   --color-lightYellow: oklch(0.86 0.14 85.17);
+  --color-lightBlue: #b2eaee;
   --breakpoint-xxl: 90rem;
 
-  --drop-shadow-custom-combined-1: 0px 0px 2px rgba(145, 158, 171, 0.24) -20px 20px
-    40px -4px rgba(145, 158, 171, 0.24);
-  --drop-shadow-custom-combined: 0px 2.59345px 2.59345px
-    rgba(201, 201, 201, 0.25);
-  --drop-shadow-custom-hamburger: 0px 0px 2px rgba(145, 158, 171, 0.24),
-    -20px 20px 40px -4px rgba(145, 158, 171, 0.24);
-  --drop-shadow-custom-combined-2: 0px 20.5451px 41.0901px
-      rgba(142, 155, 174, 0.2),
-    inset 0px 4.10901px 10.2725px 1.02725px rgba(65, 69, 93, 0.1);
+  --drop-shadow-custom-combined-1: 0px 0px 2px rgba(145, 158, 171, 0.24) -20px 20px 40px -4px rgba(145, 158, 171, 0.24);
+  --drop-shadow-custom-combined: 0px 2.59345px 2.59345px rgba(201, 201, 201, 0.25);
+  --drop-shadow-custom-hamburger: 0px 0px 2px rgba(145, 158, 171, 0.24), -20px 20px 40px -4px rgba(145, 158, 171, 0.24);
+  --drop-shadow-custom-combined-2: 0px 20.5451px 41.0901px rgba(142, 155, 174, 0.2), inset 0px 4.10901px 10.2725px
+    1.02725px rgba(65, 69, 93, 0.1);
 
   --box-shadow-custom: 0px 4px 4px 0px rgba(201, 201, 201, 0.25);
   --box-shadow-header-shadow: 0px 12px 24px -4px #919eab29;
-  --box-shadow-custom-combined: -20px 20px 40px -4px rgba(145, 158, 171, 0.24),
-    0px 0px 2px 0px rgba(145, 158, 171, 0.24);
-  --box-shadow-custom-combined-2: -20px 20px 40px -4px rgba(145, 158, 171, 0.24),
-    0px 0px 2px 0px rgba(145, 158, 171, 0.24);
+  --box-shadow-custom-combined: -20px 20px 40px -4px rgba(145, 158, 171, 0.24), 0px 0px 2px 0px
+    rgba(145, 158, 171, 0.24);
+  --box-shadow-custom-combined-2: -20px 20px 40px -4px rgba(145, 158, 171, 0.24), 0px 0px 2px 0px
+    rgba(145, 158, 171, 0.24);
   --box-shadow-blog: 0px 12px 24px -4px rgba(145, 158, 171, 0.16);
   --box-shadow-sectionPackages: 0px 12px 24px -4px rgba(145, 158, 171, 0.16);
-  --box-shadow-leadingBrands: -20px 20px 40px -4px #919eab3d,
-    0px 0px 2px 0px #919eab3d;
+  --box-shadow-leadingBrands: -20px 20px 40px -4px #919eab3d, 0px 0px 2px 0px #919eab3d;
   --box-shadow-concatForm: 0px 12px 24px -4px #919eab29;
   --box-shadow-supportCard: 0px 12px 24px -4px #919eab29;
   --box-shadow-signCard: 0px 12px 24px -4px #919eab29;
-  --box-shadow-dashboardInvoices: 0px 12px 24px -4px #919eab1f,
-    0px 0px 2px 0px #919eab33;
+  --box-shadow-dashboardInvoices: 0px 12px 24px -4px #919eab1f, 0px 0px 2px 0px #919eab33;
   --box-shadow-userCard: 0px 12px 24px -4px #919eab1f, 0px 0px 2px 0px #919eab33;
 }
 

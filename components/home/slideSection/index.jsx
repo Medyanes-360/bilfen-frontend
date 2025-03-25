@@ -14,30 +14,30 @@ import Link from "next/link";
 const slides = [
   {
     image: "/images/img1.webp",
-    title: "Birthdays",
-    highlight: "at",
-    venue: "Tediss Park",
-    description: "Ideas for Kids Birthday Parties, Private Playdates, and Special Events",
-    buttonText: "More About Us",
-    buttonLink: "/about",
+    title: "Okul öncesi keşif dünyası",
+    highlight: "",
+    venue: "BİLFEN'de",
+    description: "Çocuklar için keşfetmeye, öğrenmeye ve eğlenmeye teşvik eden aktiviteler",
+    buttonText: "Hakkımızda",
+    buttonLink: "/sss",
   },
   {
     image: "/images/img2.webp",
-    title: "Fun Events",
-    highlight: "to",
-    venue: "Remember!",
-    description: "Looking for a fun way to raise some money for your cause?",
-    buttonText: "Book a Party",
-    buttonLink: "/book-party",
+    title: "Öğrenirken eğleniyoruz",
+    highlight: "",
+    venue: "Büyümek ve keşfetmek için",
+    description: "Çocukların yaratıcılığını geliştirecek eğitici etkinlikler mi arıyorsunuz?",
+    buttonText: "Tıkla katıl!",
+    buttonLink: "/login",
   },
   {
     image: "/images/img3.webp",
-    title: "Enjoy Our",
+    title: "Eğitici etkinlikler",
     highlight: "",
-    venue: "Softplay Area",
-    description: "Our indoor softplay area is a unique soft play area for infants and toddlers.",
-    buttonText: "View Our Cafe",
-    buttonLink: "/cafe",
+    venue: "BİLFEN'de",
+    description: "Öğrenmeyi oluşturan etkinliklerimizin keyfini çıkarın",
+    buttonText: "İletişime geçelim",
+    buttonLink: "/contact",
   },
 ];
 
@@ -95,7 +95,7 @@ const SlideSection = () => {
 
       {/* Scroll indicator */}
       <div className="group hidden xl:flex flex-col items-center absolute left-3 bottom-8 z-20 cursor-pointer" onClick={scrollToNextSection}>
-        <span className="text-white group-hover:text-orange font-nunito text-lg font-bold rotate-90 mb-4">Scroll</span>
+        <span className="text-white group-hover:text-orange font-nunito text-lg font-bold rotate-90 mb-4">Aşağı Kaydır</span>
         <div className="mt-1">
           <Icons.SlideArrow className="rotate-90 fill-white group-hover:fill-orange w-6 h-6" />
         </div>
