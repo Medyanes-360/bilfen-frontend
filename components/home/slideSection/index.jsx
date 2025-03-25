@@ -19,7 +19,7 @@ const slides = [
     venue: "BİLFEN'de",
     description: "Çocuklar için keşfetmeye, öğrenmeye ve eğlenmeye teşvik eden aktiviteler",
     buttonText: "Hakkımızda",
-    buttonLink: "/about",
+    buttonLink: "/sss",
   },
   {
     image: "/images/img2.webp",
@@ -28,7 +28,7 @@ const slides = [
     venue: "Büyümek ve keşfetmek için",
     description: "Çocukların yaratıcılığını geliştirecek eğitici etkinlikler mi arıyorsunuz?",
     buttonText: "Tıkla katıl!",
-    buttonLink: "/book-party",
+    buttonLink: "/login",
   },
   {
     image: "/images/img3.webp",
@@ -37,7 +37,7 @@ const slides = [
     venue: "BİLFEN'de",
     description: "Öğrenmeyi oluşturan etkinliklerimizin keyfini çıkarın",
     buttonText: "İletişime geçelim",
-    buttonLink: "/cafe",
+    buttonLink: "/contact",
   },
 ];
 

@@ -1,31 +1,23 @@
 "use client";
 
-import React from 'react';
-import Image from 'next/image';
-import Icons from '@/public/icons/Icons';
+import React from "react";
+import Image from "next/image";
+import Icons from "@/public/icons/Icons";
 
 const FeatureSection = () => {
   const features = [
     {
       icon: Icons.Shield,
-      title: 'Güvenli'
+      title: "Güvenli",
     },
     {
       icon: Icons.Clean,
-      title: 'Nezih'
-    },
-    {
-      icon: Icons.Wifi,
-      title: 'Ücretsiz WiFi'
-    },
-    {
-      icon: Icons.NutFree,
-      title: 'Kalite'
+      title: "Nezih",
     },
     {
       icon: Icons.EcoFriendly,
-      title: 'Çevre Dostu'
-    }
+      title: "Çevre Dostu",
+    },
   ];
 
   return (
@@ -38,23 +30,26 @@ const FeatureSection = () => {
           className="object-cover"
           priority
         />
-        <div className='absolute inset-0 bg-black opacity-[0.3] transation '></div>
+        <div className="absolute inset-0 bg-black opacity-[0.3] transition"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-nunito font-bold text-center mb-16 max-w-5xl mx-auto">
-          BİLFEN ile ÖZGÜN EĞİTİMİN TADINI ÇIKARIN
-          <div className='md:pt-4'>Eğlen & Öğren</div>
+          ÖZGÜN EĞİTİMİN TADINI ÇIKARIN
+          <div className="md:pt-4">Eğlen & Öğren</div>
         </h2>
 
         {/* Features */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-4 justify-items-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 justify-items-center items-center">
           {features.map((feature, index) => (
-            <div key={index} className="flex flex-col items-center">
+            <div
+              key={index}
+              className="flex flex-col items-center text-center"
+            >
               <div className="w-20 h-20 md:w-24 md:h-24 mb-4 relative">
                 <feature.icon className="w-full h-full font-light stroke-orange" />
               </div>
-              <span className="text-xl md:text-2xl font-medium text-center">
+              <span className="text-xl md:text-2xl font-medium">
                 {feature.title}
               </span>
             </div>

@@ -163,7 +163,7 @@ const GallerySection = () => {
 
       <div className="container mx-auto relative z-10">
         <h2 className="text-4xl md:text-5xl font-nunito font-bold text-center mb-10 text-darkGray">
-          Derslerimizden Kareler
+          Etkinlikler
         </h2>
 
         {/* Filter Buttons */}

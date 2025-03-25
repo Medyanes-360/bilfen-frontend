@@ -8,7 +8,7 @@ const partyPackages = [
     id: 1,
     title: 'Mini Party',
     price: 199,
-    image: '/images/PartyCardimg3.jpg',
+    image: '/images/Cardimg3.jpg',
     features: [
       '1 1/2 Hour Event',
       'Tediss Themed Paper Goods',
@@ -20,7 +20,7 @@ const partyPackages = [
     id: 2,
     title: 'Big Party',
     price: 240,
-    image: '/images/PartyCardimg2.jpg',
+    image: '/images/Cardimg2.jpg',
     features: [
       '2 Hour Event',
       'Tediss Themed Invites',
@@ -33,7 +33,7 @@ const partyPackages = [
     id: 3,
     title: 'Super Party',
     price: 375,
-    image: '/images/PartyCardimg1.jpg',
+    image: '/images/Cardimg1.jpg',
     features: [
       '3 Hour Event',
       'Tediss Themed Invites',

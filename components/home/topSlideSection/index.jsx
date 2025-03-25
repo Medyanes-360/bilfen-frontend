@@ -47,7 +47,7 @@ export default function TopSlideSection() {
   }, [api])
 
   return (
-    <div className="relative w-full h-[400px] flex items-center justify-center bg-orange py-2 md:py-4 lg:py-6">
+    <div className="relative w-full h-[300px] flex items-center justify-center bg-orange py-2 md:py-4 lg:py-6">
       <Carousel
         opts={{
           loop: true,
@@ -79,7 +79,7 @@ export default function TopSlideSection() {
         </CarouselContent>
 
         {/* Slider navigation dots - hidden on small screens, visible on medium and up */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 hidden md:flex gap-1 z-10">
+        <div className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 hidden md:flex gap-2 z-10">
           {slides.map((_, index) => (
             <button
               key={index}

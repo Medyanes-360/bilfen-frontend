@@ -24,12 +24,6 @@ const menuItems = [
     ],
   },
   {
-    title: "Hakkımızda",
-    items: [
-      { title: "Hakkımızda", href: "/about-us" },
-    ],
-  },
-  {
     title: "İletişim",
     items: [
       { title: "İletişim", href: "/contact" },
