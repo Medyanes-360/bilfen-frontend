@@ -13,25 +13,13 @@ module.exports = {
         fredoka: ['Fredoka', 'sans-serif'],
       },
       animation: {
-        'bounce-slow': 'bounce-slow 7s ease-in-out infinite',
-        'shimmer': 'shimmer 2s infinite linear',
-        'float-slow': 'float 8s ease-in-out infinite',
-        'float-medium': 'float 6s ease-in-out infinite',
-        'float-fast': 'float 4s ease-in-out infinite',
+        'bounce': 'bounce 5s linear infinite',
       },
       keyframes: {
-        'bounce-slow': {
+        'bounce': {
           '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
+          '50%': { transform: 'translateY(-5px)' },
         },
-        shimmer: {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(100%)' }
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' }
-        }
       },
       colors: {
         'orange': 'var(--color-orange)',

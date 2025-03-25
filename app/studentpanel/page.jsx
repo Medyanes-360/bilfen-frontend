@@ -1,4 +1,4 @@
-"use client" // pages/index.js
+"use client"
 
 import { useState } from "react"
 import Head from "next/head"
@@ -18,17 +18,17 @@ export default function Home() {
   const progressPercentage = (completedTasks / totalTasks) * 100
 
   const handleDaySelect = (day) => {
-    setSelectedDay(day);
+    setSelectedDay(day)
 
     // Filter assignments for the selected day
     const filteredAssignments = mockLearningPathData.filter((task) => {
-      if (!task.date) return false;
-      const taskDate = new Date(task.date);
-      return taskDate.getDate() === day.date;
-    });
+      if (!task.date) return false
+      const taskDate = new Date(task.date)
+      return taskDate.getDate() === day.date
+    })
 
-    setLearningPath(filteredAssignments);
-  };
+    setLearningPath(filteredAssignments)
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -132,10 +132,7 @@ export default function Home() {
                 <div className="h-8 bg-white/20 rounded-full overflow-hidden relative backdrop-blur-sm">
                   {/* Progress Bar */}
                   {totalTasks > 0 ? (
-                    <div
-                      className="h-full bg-green-500 rounded-full"
-                      style={{ width: `${progressPercentage}%` }}
-                    >
+                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${progressPercentage}%` }}>
                       <div className="absolute inset-0 overflow-hidden">
                         <div className="w-full h-full bg-white/20 transform -translate-x-full animate-shimmer"></div>
                       </div>
@@ -153,7 +150,7 @@ export default function Home() {
                         transform: `translateX(-50%) translateY(-50%)`,
                       }}
                     >
-                      <div className="text-2xl animate-bounce-slow">⭐</div>
+                      <div className="text-2xl animate-bounce">⭐</div>
                     </div>
                   )}
 
@@ -162,8 +159,9 @@ export default function Home() {
                     {Array.from({ length: 5 }).map((_, index) => (
                       <div
                         key={index}
-                        className={`w-2 h-2 rounded-full ${(index + 1) * 20 <= progressPercentage ? "bg-white" : "bg-white/30"
-                          } ${(index + 1) * 20 <= progressPercentage ? "scale-100" : "scale-75"} transition-all`}
+                        className={`w-2 h-2 rounded-full ${
+                          (index + 1) * 20 <= progressPercentage ? "bg-white" : "bg-white/30"
+                        } ${(index + 1) * 20 <= progressPercentage ? "scale-100" : "scale-75"} transition-all`}
                       ></div>
                     ))}
                   </div>
@@ -175,6 +173,22 @@ export default function Home() {
             <div className="px-5 py-4 md:px-6">
               {/* Calendar Component */}
               <DailyCalendar days={calendarData} selectedDay={selectedDay} onSelectDay={handleDaySelect} />
+
+              {/* Daily Goal Section */}
+              <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl transform transition-all hover:scale-[1.02] hover:shadow-md mb-6 mt-4">
+                <h3 className="font-bold mb-2">Günlük Hedef</h3>
+                <p className="text-sm mb-3">
+                  {totalTasks - completedTasks > 0
+                    ? `${totalTasks - completedTasks} aktivite daha tamamla ve günlük hedefine ulaş!`
+                    : "Tüm aktiviteleri tamamladın! Harika iş!"}
+                </p>
+                <div className="w-full bg-white/30 h-2 rounded-full overflow-hidden">
+                  <div className="bg-white h-full relative" style={{ width: `${progressPercentage}%` }}>
+                    <div className="absolute top-0 bottom-0 right-0 w-2 h-2 bg-white rounded-full animate-ping"></div>
+                  </div>
+                </div>
+              </div>
+
               {/* Learning Path Section */}
               <section className="mb-8">
                 <h2 className="text-xl font-bold text-orange-600 mb-5 flex items-center gap-2">
@@ -206,18 +220,20 @@ export default function Home() {
                       learningPath.map((task, index) => (
                         <div
                           key={task.id}
-                          className={`flex gap-4 items-start ${task.completed ? "completed" : task.current ? "current" : ""
-                            }`}
+                          className={`flex gap-4 items-start ${
+                            task.completed ? "completed" : task.current ? "current" : ""
+                          }`}
                         >
                           <div
                             className={`
                                w-[70px] h-[70px] rounded-full flex items-center justify-center text-3xl
                               border-3 relative z-10 transition-all duration-300
-                              ${task.completed
-                                ? "border-green-500 bg-green-50 text-green-500 hover:shadow-md hover:shadow-green-200 hover:scale-105"
-                                : task.current
-                                  ? "border-blue-500 bg-blue-50 text-blue-500 animate-bounce-slow hover:shadow-md hover:shadow-blue-200"
-                                  : "border-gray-300 bg-white text-gray-400 hover:border-gray-400 hover:text-gray-500"
+                              ${
+                                task.completed
+                                  ? "border-green-500 bg-green-50 text-green-500 hover:shadow-md hover:shadow-green-200 hover:scale-105"
+                                  : task.current
+                                    ? "border-blue-500 bg-blue-50 text-blue-500 animate-bounce hover:shadow-md hover:shadow-blue-200"
+                                    : "border-gray-300 bg-white text-gray-400 hover:border-gray-400 hover:text-gray-500"
                               }
                             `}
                           >
@@ -228,12 +244,13 @@ export default function Home() {
                             className={`
                              flex-1 bg-white rounded-2xl p-4 shadow
                              border-2 transition-all duration-200
-                             ${task.completed
-                                ? "border-green-200 hover:border-green-300 hover:shadow-md"
-                                : task.current
-                                  ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
-                                  : "border-gray-200 hover:border-gray-300"
-                              }
+                             ${
+                               task.completed
+                                 ? "border-green-200 hover:border-green-300 hover:shadow-md"
+                                 : task.current
+                                   ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
+                                   : "border-gray-200 hover:border-gray-300"
+                             }
                             `}
                           >
                             <div className="flex justify-between items-center mb-2">
@@ -246,7 +263,9 @@ export default function Home() {
                                 )}
                               </h3>
                               {task.completed && (
-                                <span className="text-green-500 transform transition-transform hover:scale-110">✅</span>
+                                <span className="text-green-500 transform transition-transform hover:scale-110">
+                                  ✅
+                                </span>
                               )}
                             </div>
 
@@ -258,12 +277,13 @@ export default function Home() {
                               <button
                                 className={`
                                     py-2 px-4 rounded-full text-sm font-bold text-white flex items-center gap-1 whitespace-nowrap transition-all
-                                    ${task.completed
-                                    ? "bg-green-500 hover:bg-green-600"
-                                    : task.current
-                                      ? "bg-blue-500 hover:bg-blue-600"
-                                      : "bg-gray-400"
-                                  }
+                                    ${
+                                      task.completed
+                                        ? "bg-green-500 hover:bg-green-600"
+                                        : task.current
+                                          ? "bg-blue-500 hover:bg-blue-600"
+                                          : "bg-gray-400"
+                                    }
                                 `}
                                 disabled={!task.current && !task.completed}
                               >
@@ -328,12 +348,13 @@ export default function Home() {
                         <div
                           className={`
                               h-[100px] flex items-center justify-center text-4xl relative overflow-hidden group
-                              ${item.type === "Video"
-                              ? "bg-gradient-to-br from-yellow-400 to-orange-500"
-                              : item.type === "Oyun"
-                                ? "bg-gradient-to-br from-green-400 to-green-600"
-                                : "bg-gradient-to-br from-purple-500 to-indigo-600"
-                            }
+                              ${
+                                item.type === "Video"
+                                  ? "bg-gradient-to-br from-yellow-400 to-orange-500"
+                                  : item.type === "Oyun"
+                                    ? "bg-gradient-to-br from-green-400 to-green-600"
+                                    : "bg-gradient-to-br from-purple-500 to-indigo-600"
+                              }
                             `}
                         >
                           <span className="relative z-10 transform transition-transform group-hover:scale-125">
@@ -413,8 +434,9 @@ export default function Home() {
             ].map((item, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-center relative cursor-pointer transition-transform hover:scale-110 ${item.active ? "text-orange-500" : "text-gray-500 hover:text-gray-700"
-                  }`}
+                className={`flex flex-col items-center relative cursor-pointer transition-transform hover:scale-110 ${
+                  item.active ? "text-orange-500" : "text-gray-500 hover:text-gray-700"
+                }`}
               >
                 <div className="text-2xl mb-1">{item.icon}</div>
                 <div className="text-xs">{item.label}</div>
