@@ -31,7 +31,7 @@ const FaqSearch = ({ onSearch }) => {
         {/* Input */}
         <input
           type="text"
-          placeholder="Konuyu yazın"
+          placeholder="Ne aramıştınız?"
           className="flex-1 text-sm bg-transparent focus:outline-none ml-5 pr-2"
           value={value}
           onChange={handleChange}
