@@ -7,15 +7,16 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-} from "@/components/ui/collapsible";
+import { Collapsible } from "@/components/ui/collapsible";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import Icons from "@/public/icons/Icons";
+import { useSession } from "next-auth/react";
 
 const MobileNav = ({ menuItems }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session } = useSession();
 
   const handleLinkClick = () => {
     setIsOpen(false);
@@ -54,11 +55,7 @@ const MobileNav = ({ menuItems }) => {
           {/* Top Bar with X */}
           <div className="flex justify-end p-4">
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-darklila"
-              >
+              <Button variant="ghost" size="icon" className="text-darklila">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="28"
@@ -79,7 +76,11 @@ const MobileNav = ({ menuItems }) => {
 
           {/* Centered Logo */}
           <div className="flex justify-center items-center py-4">
-            <Link href="/" className="flex items-center" onClick={handleLinkClick}>
+            <Link
+              href="/"
+              className="flex items-center"
+              onClick={handleLinkClick}
+            >
               <Image
                 src="/images/logo2.webp"
                 alt="BİLFEN"
@@ -107,6 +108,16 @@ const MobileNav = ({ menuItems }) => {
                   </Collapsible>
                 </li>
               ))}
+
+              {!session && (
+                <li>
+                  <Collapsible>
+                    <button className="cursor-pointer text-orange font-poppins text-base font-semibold block w-full py-2">
+                      Giriş Yap
+                    </button>
+                  </Collapsible>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -129,7 +140,14 @@ const MobileNav = ({ menuItems }) => {
                 href: "https://instagram.com",
                 icon: (
                   <>
-                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                    <rect
+                      width="20"
+                      height="20"
+                      x="2"
+                      y="2"
+                      rx="5"
+                      ry="5"
+                    ></rect>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                     <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
                   </>

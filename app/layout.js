@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono, Nunito, Poppins, Fredoka } from "next/font/google";
 import "./globals.css";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,13 +18,11 @@ const nunito = Nunito({
   variable: "--font-nunito",
 });
 
-
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
 });
-
 
 const fredoka = Fredoka({
   subsets: ["latin"],
@@ -40,7 +39,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <SessionProviderWrapper>{children}</SessionProviderWrapper>
       </body>
     </html>
   );

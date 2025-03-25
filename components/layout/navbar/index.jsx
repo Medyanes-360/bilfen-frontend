@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import Icons from "@/public/icons/Icons";
@@ -52,6 +53,7 @@ const menuItems = [
 
 const Navbar = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,15 +82,22 @@ const Navbar = () => {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center justify-between gap-7">
               <DesktopNav menuItems={menuItems} />
-              <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
-                <Link href="/#" className="relative flex items-center gap-2">
-                  Giriş Yap
-                  <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-11 hover:scale-85 transition duration-300" />
-                </Link>
-              </div>
+
+              {/* Show login only if NOT logged in */}
+              {!session && (
+                <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
+                  <Link
+                    href="/api/auth/signin"
+                    className="relative flex items-center gap-2"
+                  >
+                    Giriş Yap
+                    <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-11 hover:scale-85 transition duration-300" />
+                  </Link>
+                </div>
+              )}
             </div>
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu */}
             <MobileNav menuItems={menuItems} />
           </div>
         </div>
