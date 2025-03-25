@@ -1,4 +1,8 @@
+"use client";
+import { redirect, useRouter } from "next/navigation";
+
 const Header = ({ dropdownRef, dropdownOpen, setDropdownOpen }) => {
+  const router = useRouter();
   return (
     <header className="bg-blue-600 text-white shadow-md sticky top-0 z-30">
       <div className="container mx-auto">
@@ -48,8 +52,7 @@ const Header = ({ dropdownRef, dropdownOpen, setDropdownOpen }) => {
                 <button
                   onClick={() => {
                     setDropdownOpen(false);
-                    // logout işlemi burada yapılır
-                    console.log("Logging out...");
+                    router.push("/");
                   }}
                   className="cursor-pointer w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 transition-all duration-200"
                 >
