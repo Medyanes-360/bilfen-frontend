@@ -10,6 +10,7 @@ import ScrollToTopButton from "./scrollToTopButton";
 
 import MobileNav from "./mobileNav";
 import { DesktopNav } from "./desktopNav.jsx";
+import LoginPopup from "@/components/LoginPopup";
 
 // const menuItems = [
 //   {
@@ -53,6 +54,7 @@ const menuItems = [
 
 const Navbar = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -86,25 +88,25 @@ const Navbar = () => {
               {/* Show login only if NOT logged in */}
               {!session && (
                 <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
-                  <Link
-                    href="/api/auth/signin"
-                    className="relative flex items-center gap-2"
-                  >
+                  <button onClick={() => setIsOpen(true)} className="cursor-pointer relative flex items-center gap-2">
                     Giriş Yap
                     <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-11 hover:scale-85 transition duration-300" />
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
 
             {/* Mobile Menu */}
-            <MobileNav menuItems={menuItems} />
+            <MobileNav menuItems={menuItems} setActiveModal={setIsOpen} />
           </div>
         </div>
       </nav>
 
       {/* Scroll to Top Button */}
       <ScrollToTopButton show={showScrollTop} />
+
+      {/* login pop-up */}
+      <LoginPopup isOpen={isOpen} setIsOpen={setIsOpen} />
     </>
   );
 };

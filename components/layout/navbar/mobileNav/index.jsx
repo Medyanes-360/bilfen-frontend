@@ -14,7 +14,7 @@ import { useState } from "react";
 import Icons from "@/public/icons/Icons";
 import { useSession } from "next-auth/react";
 
-const MobileNav = ({ menuItems }) => {
+const MobileNav = ({ menuItems, setActiveModal }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
 
@@ -112,7 +112,13 @@ const MobileNav = ({ menuItems }) => {
               {!session && (
                 <li>
                   <Collapsible>
-                    <button className="cursor-pointer text-orange font-poppins text-base font-semibold block w-full py-2">
+                    <button
+                      onClick={() => {
+                        setActiveModal(true);
+                        handleLinkClick();
+                      }}
+                      className="cursor-pointer text-orange font-poppins text-base font-semibold block w-full py-2"
+                    >
                       Giriş Yap
                     </button>
                   </Collapsible>
