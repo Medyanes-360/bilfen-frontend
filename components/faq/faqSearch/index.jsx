@@ -17,7 +17,7 @@ const FaqSearch = ({ onSearch }) => {
     <div className="flex flex-col items-left px-3 sm:p-6">
       {/* Başlık */}
       <p className="text-xl text-center sm:text-start sm:text-2xl font-Inter font-medium sm:font-bold text-purple-400 mb-4 leading-6 sm:leading-[54px]">
-        Nasıl size yardımcı olabiliriz?
+        Size nasıl yardımcı olabiliriz?
       </p>
 
       {/* Arama Kutusu */}

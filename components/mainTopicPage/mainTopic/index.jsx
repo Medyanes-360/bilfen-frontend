@@ -21,10 +21,10 @@ const MainTopic = ({ onTopicSelect, activeId, topics }) => {
       }}
     >
       <h2 className="font-Inter font-bold text-2xl lg:text-3xl leading-[54px] text-center lg:text-start text-tertiary-800 p-6 pb-0">
-        Ana Topikler
+        Ana Başlıklar
       </h2>
       <div className="flex flex-col space-y-4 w-full mb-10 md:mb-0">
-        {/* Ana Topikler */}
+        {/* Ana Başlıklar */}
         {topics.map((topic, index) => (
           <div
             key={index}

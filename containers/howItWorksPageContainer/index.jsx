@@ -4,7 +4,7 @@ import HeroSection from "@/components/ui/heroSection";
 const HowItWorksPageContainer = () => {
   return (
     <>
-      <HeroSection title="How It Works" />
+      <HeroSection title="Nasıl Çalışır?" />
       <GuideSection />
     </>
   );
