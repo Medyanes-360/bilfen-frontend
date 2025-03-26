@@ -8,7 +8,7 @@ import Link from "next/link"
 const slides = [
   {
     image: "/images/dijital_egitim_1.webp",
-    buttonLink: "/sss",
+    buttonLink: "/faq",
   },
   {
     image: "/images/dijital_egitim_2.webp",
