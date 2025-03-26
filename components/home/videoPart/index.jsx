@@ -47,7 +47,7 @@ const VideoPart = () => {
           <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full max-w-[580px] mx-auto">
             <Image
               src="/images/img-7-copyright.jpg"
-              alt="Birthday Party Video"
+              alt="Teacher student image"
               width={500}
               height={350}
               className="w-full h-[337px] md:h-[354px] lg:h-[338px] object-cover"
@@ -69,12 +69,6 @@ const VideoPart = () => {
                 <br />
                 EĞİTİM
               </h3>
-              <Button
-                className="mt-3 md:mt-4 py-2 px-4 sm:py-3 sm:px-5 md:py-8 bg-orange hover:bg-darklila text-white text-sm sm:text-base md:text-lg"
-                onClick={() => (window.location.href = "/#")}
-              >
-                TIKLA İZLE!
-              </Button>
             </div>
           </div>
 
@@ -90,7 +84,7 @@ const VideoPart = () => {
             </p>
             <Button
               className="px-6 py-8 xl:px-8 xl:py-9 text-base sm:text-lg bg-darklila hover:bg-orange text-white"
-              onClick={() => (window.location.href = "/#")}
+              onClick={() => (window.location.href = "/faq")}
             >
               Hakkımızda bilgi alın
             </Button>

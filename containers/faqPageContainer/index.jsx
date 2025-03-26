@@ -4,7 +4,7 @@ import HeroSection from "@/components/ui/heroSection";
 const FaqPageContainer = () => {
   return (
     <>
-      <HeroSection title="Sıkca Sorulan Sorular" />
+      <HeroSection title="Sıkça Sorulan Sorular" />
       <FaqSection />
     </>
   );

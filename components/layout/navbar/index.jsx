@@ -22,7 +22,7 @@ import LoginPopup from "@/components/LoginPopup";
 //   {
 //     title: "Sıkça Sorulan Sorular",
 //     items: [
-//       { title: "Sıkça Sorulan Sorular", href: "/sss" },
+//       { title: "Sıkça Sorulan Sorular", href: "/faq" },
 //     ],
 //   },
 //   {

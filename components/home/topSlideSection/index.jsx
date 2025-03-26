@@ -8,17 +8,14 @@ import Link from "next/link"
 const slides = [
   {
     image: "/images/dijital_egitim_1.webp",
-    title: "Dijital Eğitim Altyapısı",
     buttonLink: "/sss",
   },
   {
     image: "/images/dijital_egitim_2.webp",
-    title: "Öğretmen ve Öğrenci Odaklı",
     buttonLink: "/how-it-works",
   },
   {
     image: "/images/dijital_egitim_3.webp",
-    title: "Geleceğe Hazırlık",
     buttonLink: "/contact",
   },
 ]
@@ -67,7 +64,7 @@ export default function TopSlideSection() {
                 >
                   <Image
                     src={slide.image}
-                    alt={slide.title}
+                    alt={slide.title || "Slide image"}
                     width={600}
                     height={350}
                     className="w-auto h-[250px] object-cover rounded-lg shadow-md cursor-pointer"
