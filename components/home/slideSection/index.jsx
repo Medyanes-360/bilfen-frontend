@@ -27,8 +27,8 @@ const slides = [
     highlight: "",
     venue: "Büyümek ve keşfetmek için",
     description: "Çocuklarınızın yaratıcılığını geliştirecek eğitici etkinlikler mi arıyorsunuz?",
-    buttonText: "Tıkla katıl!",
-    buttonLink: "/login",
+    buttonText: "Tıkla öğren!",
+    buttonLink: "/how-it-works",
   },
   {
     image: "/images/img3.webp",
