@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+// /access-settings get req
+
 function generateCalendarDays(centerDate = new Date(), range = 7) {
   const days = [];
 
