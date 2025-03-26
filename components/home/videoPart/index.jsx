@@ -64,10 +64,8 @@ const VideoPart = () => {
             </div>
 
             <div className="absolute bottom-2 left-12 md:left-0 p-4 sm:p-5 md:p-6">
-              <h3 className="font-nunito text-5xl font-bold text-white">
-                BİLFEN
-                <br />
-                EĞİTİM
+              <h3 className="font-nunito text-2xl sm:text-3xl font-bold text-white uppercase">
+                bilfen eğitim 
               </h3>
             </div>
           </div>
