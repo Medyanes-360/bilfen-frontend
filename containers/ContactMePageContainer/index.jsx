@@ -4,7 +4,7 @@ import HeroSection from "@/components/ui/heroSection";
 const ContactMePageContainer = () => {
   return (
     <>
-      <HeroSection title="Contact me" />
+      <HeroSection title="Bizimle İletişim" />
       <ContactMeSection />
     </>
   );

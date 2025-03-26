@@ -35,7 +35,7 @@ const ContactMeSection = () => {
     <section className="w-full py-20 px-4 bg-gradient-to-b from-white to-purple-50">
       <div className="max-w-2xl mx-auto bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl p-10 border border-purple-100">
         <h1 className="text-3xl font-bold mb-4 text-[color:var(--color-orange)] text-center">
-          İletişim
+          İletişim formu
         </h1>
         <p className="mb-8 text-center text-gray-700">
           Aşağıdaki formu kullanarak bizimle iletişime geçin
