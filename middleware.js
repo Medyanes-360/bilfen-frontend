@@ -20,7 +20,7 @@ export async function middleware(req) {
 
   // 🔐 Not logged in → redirect to login
   if (!token) {
-    return NextResponse.redirect(new URL("/auth/signin", req.url));
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   const userRole = token?.role;
