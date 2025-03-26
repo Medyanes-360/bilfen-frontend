@@ -99,7 +99,6 @@ export default function Home() {
                   </div>
                 </div>
                 <div>
-                  <div className="text-lg font-bold">Merhaba!</div>
                   <div className="text-2xl font-bold flex flex-col gap-2">
                     <h2 className="font-bold">Merhaba, {user ? user.name : "Misafir"}</h2>
                     <p className="text-xs">{currentDate}</p>
