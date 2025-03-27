@@ -4,7 +4,7 @@ const MaterialList = ({ materials }) => {
   if (materials.length === 0) {
     return (
       <div className="py-10 text-center text-gray-500">
-        <p>Bu tarih için materyal bulunamadı.</p>
+        <p>Materyaller bulunamadı.</p>
       </div>
     );
   }
