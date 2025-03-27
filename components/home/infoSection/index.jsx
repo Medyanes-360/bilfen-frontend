@@ -8,54 +8,54 @@ import { Parallax } from "@/globalElements/Parallax";
 
 const InfoSection = () => {
   return (
-    <PageContainer className="px-6">
+    <PageContainer className="px-4">
       {/* Star and rocket animate image mouse moving effects */}
       <div
         id="next-section"
-        className="group z-20 relative flex flex-col xxl:flex-row gap-12 py-16 xl:py-36"
+        className="group z-20 relative flex flex-col xxl:flex-row gap-8 py-8 xl:py-20"
       >
         <Parallax
           sensitivity={0.05}
-          className="absolute md:top-[9%] top-[12%] right-[1%]"
+          className="absolute md:top-[10%] top-[15%] right-[2%]"
         >
-          <Image src="/images/star4.png" alt="Star" width={36} height={46} />
+          <Image src="/images/star4.png" alt="Star" width={24} height={30} />
         </Parallax>
         <Parallax
           sensitivity={0.05}
-          className="absolute top-[62%] md:top-[59%] left-[4%] xxl:left-[0.2%]  w-14 h-14 block transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2"
+          className="absolute top-[65%] md:top-[60%] left-[5%] xxl:left-[2%] w-10 h-10 block transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2"
         >
-          <Image src="/images/star4.png" alt="Star" width={36} height={46} />
+          <Image src="/images/star4.png" alt="Star" width={24} height={30} />
         </Parallax>
         <Parallax
           sensitivity={0.05}
-          className="absolute bottom-[9%] right-[1%] w-14 h-14 hidden xl:block transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2"
+          className="absolute bottom-[10%] right-[2%] w-10 h-10 hidden xl:block transition-transform duration-400 group-hover:-translate-x-2 group-hover:translate-y-2"
         >
-          <Image src="/images/star4.png" alt="Star" width={36} height={46} />
+          <Image src="/images/star4.png" alt="Star" width={24} height={30} />
         </Parallax>
         <Parallax
           sensitivity={0.03}
           rotate={6}
-          className="absolute top-[23%] 2xl:-left-[19%] -left-8 hidden xxl:block"
+          className="absolute top-[25%] 2xl:-left-[15%] -left-6 hidden xxl:block"
         >
           <Image
             src="/images/rocket3.png"
             alt="Rocket"
-            width={216}
-            height={246}
+            width={150}
+            height={170}
           />
         </Parallax>
         {/* Text Section */}
         <TextPart />
         {/* ImagePart */}
-        <div className="relative z-10 rounded-3xl sm:bg-[url('/images/happy.png')] bg-center bg-no-repeat bg-cover w-full h-[410px]">
+        <div className="relative z-10 rounded-2xl sm:bg-[url('/images/happy.png')] bg-center bg-no-repeat bg-cover w-full h-[300px]">
           {/* Content */}
-          <div className="absolute rounded-xl -top-8 right-0 z-20 bg-lightGreen p-4 md:pr-16 lg:p-6 lg:pr-32 xxl:p-10 shadow-lg w-full sm:w-fit h-[320px]">
-            <div className="space-y-2 text-white">
-              <Icons.StarBadge className="w-32 h-32 md:w-20 md:h-20 text-light" />
-              <h3 className="text-lg text-darklila font-poppins">
+          <div className="absolute rounded-xl -top-6 right-0 z-20 bg-orange p-3 md:pr-12 lg:p-4 lg:pr-20 xxl:p-6 shadow-lg w-full sm:w-fit h-[240px]">
+            <div className="space-y-1 text-white">
+              <Icons.StarBadge className="w-20 h-20 md:w-16 md:h-16 text-light" />
+              <h3 className="text-base text-darklila font-poppins">
                 Güvenilir Eğitimin Adresi
               </h3>
-              <p className="flex md:flex-col gap-2 text-2xl md:text-4xl font-bold font-nunito">
+              <p className="flex md:flex-col gap-1 text-xl md:text-2xl font-bold font-nunito">
                 BİLFEN
               </p>
             </div>

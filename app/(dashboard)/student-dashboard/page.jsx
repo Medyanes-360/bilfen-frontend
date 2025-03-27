@@ -1,31 +1,29 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import Head from "next/head";
-import {
-  mockUserData,
-  mockLearningPathData,
-  mockRecommendationsData,
-  mockCalendarData,
-} from "@/data/mockData";
-import DailyCalendar from "@/components/DailyCalendar";
-import { getSession } from "next-auth/react";
+import { useEffect, useState } from "react"
+import Head from "next/head"
+import { LogOut } from 'lucide-react'
+import { mockUserData, mockLearningPathData, generateCalendarData } from "@/data/mockData"
+import DailyCalendar from "@/components/DailyCalendar"
+import { getSession, signOut } from "next-auth/react"
 
 export default function Home() {
-  const [userData, setUserData] = useState(mockUserData);
-  const [learningPath, setLearningPath] = useState(mockLearningPathData);
-  const [recommendations, setRecommendations] = useState(
-    mockRecommendationsData
-  );
-  const [calendarData, setCalendarData] = useState(mockCalendarData);
-  const [selectedDay, setSelectedDay] = useState(
-    calendarData.find((day) => day.isToday)
-  );
+  const [userData, setUserData] = useState(mockUserData)
+  const [learningPath, setLearningPath] = useState(mockLearningPathData)
+  const [isMaterialPopupOpen, setIsMaterialPopupOpen] = useState(false)
+  const [calendarData, setCalendarData] = useState(generateCalendarData())
+  const [selectedDay, setSelectedDay] = useState(calendarData.find((day) => day.isToday))
+  const [isTaskPopupOpen, setIsTaskPopupOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [isMaterialPreviewOpen, setIsMaterialPreviewOpen] = useState(false)
+  const [selectedMaterial, setSelectedMaterial] = useState(null)
+  const [user, setUser] = useState(null)
+  const [currentDate, setCurrentDate] = useState("")
 
-  // Progress hesaplamaları
-  const completedTasks = learningPath.filter((task) => task.completed).length;
-  const totalTasks = learningPath.length;
-  const progressPercentage = (completedTasks / totalTasks) * 100;
+  // Progress calculations
+  const completedTasks = learningPath.filter((task) => task.completed).length
+  const totalTasks = learningPath.length
+  const progressPercentage = (completedTasks / totalTasks) * 100
 
   const handleDaySelect = (day) => {
     setSelectedDay(day);
@@ -39,9 +37,6 @@ export default function Home() {
 
     setLearningPath(filteredAssignments);
   };
-
-  const [user, setUser] = useState(null);
-  const [currentDate, setCurrentDate] = useState("");
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -65,6 +60,26 @@ export default function Home() {
     setCurrentDate(formattedDate);
   }, []);
 
+  // Generate calendar data dynamically on the client
+  useEffect(() => {
+    const data = generateCalendarData();
+    setCalendarData(data);
+    setSelectedDay(data.find((day) => day.isToday)); // current day is selected day
+  }, []);
+
+  // Prevent body scroll when modals are open
+  useEffect(() => {
+    if (isTaskPopupOpen || isMaterialPreviewOpen || isMaterialPopupOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "auto"
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"
+    }
+  }, [isTaskPopupOpen, isMaterialPreviewOpen, isMaterialPopupOpen])
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <Head>
@@ -76,10 +91,8 @@ export default function Home() {
       <div className="max-w-lg md:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto bg-white min-h-screen shadow-lg relative overflow-hidden pb-20">
         {/* Main container with 3-column layout for desktop */}
         <div className="lg:flex lg:flex-row lg:justify-center">
-          {/* Left sidebar - only visible on desktop */}
-
           {/* Main content - centered when sidebar is hidden */}
-          <div className="lg:w-2/4 mx-auto">
+          <div className="lg:w-3/4 mx-auto">
             {/* Header */}
             <header className="bg-gradient-to-r from-orange-400 to-orange-600 text-white p-5 md:p-6 rounded-b-3xl md:rounded-none relative overflow-hidden">
               <div className="absolute inset-0 overflow-hidden rounded-b-3xl md:rounded-none">
@@ -104,9 +117,18 @@ export default function Home() {
                     <p className="text-xs">{currentDate}</p>
                   </div>
                 </div>
+
+                {/* Responsive Sign Out Button */}
+                <button
+                  className="absolute right-4 sm:right-8 top-[75%] sm:top-[75%] transform -translate-y-1/2 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2"
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                >
+                  <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="hidden sm:inline">Çıkış Yap</span>
+                </button>
               </div>
 
-              {/* New Progress Bar Design */}
+              {/* Progress Bar Design */}
               <div className="mt-5 relative z-10">
                 <div className="flex justify-between mb-2 text-sm">
                   <div>Günlük İlerleme</div>
@@ -117,10 +139,7 @@ export default function Home() {
                 <div className="h-8 bg-white/20 rounded-full overflow-hidden relative backdrop-blur-sm">
                   {/* Progress Bar */}
                   {totalTasks > 0 ? (
-                    <div
-                      className="h-full bg-green-500 rounded-full"
-                      style={{ width: `${progressPercentage}%` }}
-                    >
+                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${progressPercentage}%` }}>
                       <div className="absolute inset-0 overflow-hidden">
                         <div className="w-full h-full bg-white/20 transform -translate-x-full animate-shimmer"></div>
                       </div>
@@ -147,15 +166,8 @@ export default function Home() {
                     {Array.from({ length: 5 }).map((_, index) => (
                       <div
                         key={index}
-                        className={`w-2 h-2 rounded-full ${
-                          (index + 1) * 20 <= progressPercentage
-                            ? "bg-white"
-                            : "bg-white/30"
-                        } ${
-                          (index + 1) * 20 <= progressPercentage
-                            ? "scale-100"
-                            : "scale-75"
-                        } transition-all`}
+                        className={`w-2 h-2 rounded-full ${(index + 1) * 20 <= progressPercentage ? "bg-white" : "bg-white/30"
+                          } ${(index + 1) * 20 <= progressPercentage ? "scale-100" : "scale-75"} transition-all`}
                       ></div>
                     ))}
                   </div>
@@ -171,26 +183,6 @@ export default function Home() {
                 selectedDay={selectedDay}
                 onSelectDay={handleDaySelect}
               />
-
-              {/* Daily Goal Section */}
-              <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-xl transform transition-all hover:scale-[1.02] hover:shadow-md mb-6 mt-4">
-                <h3 className="font-bold mb-2">Günlük Hedef</h3>
-                <p className="text-sm mb-3">
-                  {totalTasks - completedTasks > 0
-                    ? `${
-                        totalTasks - completedTasks
-                      } aktivite daha tamamla ve günlük hedefine ulaş!`
-                    : "Tüm aktiviteleri tamamladın! Harika iş!"}
-                </p>
-                <div className="w-full bg-white/30 h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-white h-full relative"
-                    style={{ width: `${progressPercentage}%` }}
-                  >
-                    <div className="absolute top-0 bottom-0 right-0 w-2 h-2 bg-white rounded-full animate-ping"></div>
-                  </div>
-                </div>
-              </div>
 
               {/* Learning Path Section */}
               <section className="mb-8">
@@ -212,10 +204,7 @@ export default function Home() {
                     <div
                       className="absolute top-0 left-[35px] w-1.5 bg-gradient-to-b from-green-500 to-green-400 rounded z-0"
                       style={{
-                        height: `${
-                          (completedTasks / totalTasks) *
-                          (learningPath.length * 120)
-                        }px`,
+                        height: `${(completedTasks / totalTasks) * (learningPath.length * 120)}px`,
                       }}
                     ></div>
                   )}
@@ -226,23 +215,17 @@ export default function Home() {
                       learningPath.map((task, index) => (
                         <div
                           key={task.id}
-                          className={`flex gap-4 items-start ${
-                            task.completed
-                              ? "completed"
-                              : task.current
-                              ? "current"
-                              : ""
-                          }`}
+                          className={`flex gap-4 items-start ${task.completed ? "completed" : task.current ? "current" : ""
+                            }`}
                         >
                           <div
                             className={`
                                w-[70px] h-[70px] rounded-full flex items-center justify-center text-3xl
                               border-3 relative z-10 transition-all duration-300
-                              ${
-                                task.completed
-                                  ? "border-green-500 bg-green-50 text-green-500 hover:shadow-md hover:shadow-green-200 hover:scale-105"
-                                  : task.current
-                                  ? "border-blue-500 bg-blue-50 text-blue-500 animate-bounce hover:shadow-md hover:shadow-blue-200"
+                              ${task.completed
+                                ? "border-green-500 bg-green-50 text-green-500 hover:shadow-md hover:shadow-green-200 hover:scale-105"
+                                : task.current
+                                  ? "border-blue-500 bg-blue-50 text-blue-500 animate-slow-bounce hover:shadow-md hover:shadow-blue-200"
                                   : "border-gray-300 bg-white text-gray-400 hover:border-gray-400 hover:text-gray-500"
                               }
                             `}
@@ -254,13 +237,12 @@ export default function Home() {
                             className={`
                              flex-1 bg-white rounded-2xl p-4 shadow
                              border-2 transition-all duration-200
-                             ${
-                               task.completed
-                                 ? "border-green-200 hover:border-green-300 hover:shadow-md"
-                                 : task.current
-                                 ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
-                                 : "border-gray-200 hover:border-gray-300"
-                             }
+                             ${task.completed
+                                ? "border-green-200 hover:border-green-300 hover:shadow-md"
+                                : task.current
+                                  ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
+                                  : "border-gray-200 hover:border-gray-300"
+                              }
                             `}
                           >
                             <div className="flex justify-between items-center mb-2">
@@ -286,16 +268,19 @@ export default function Home() {
                             <div className="flex justify-between items-center">
                               <button
                                 className={`
-                                    py-2 px-4 rounded-full text-sm font-bold text-white flex items-center gap-1 whitespace-nowrap transition-all
-                                    ${
-                                      task.completed
-                                        ? "bg-green-500 hover:bg-green-600"
-                                        : task.current
-                                        ? "bg-blue-500 hover:bg-blue-600"
-                                        : "bg-gray-400"
-                                    }
+                                  py-2 px-4 rounded-full text-sm font-bold text-white flex items-center gap-1 whitespace-nowrap transition-all
+                                  ${task.completed
+                                    ? "bg-green-500 hover:bg-green-600"
+                                    : task.current
+                                      ? "bg-blue-500 hover:bg-blue-600"
+                                      : "bg-gray-400"
+                                  }
                                 `}
                                 disabled={!task.current && !task.completed}
+                                onClick={() => {
+                                  setSelectedTask(task)
+                                  setIsTaskPopupOpen(true)
+                                }}
                               >
                                 <span className="flex items-center justify-center gap-1">
                                   {task.completed ? (
@@ -323,124 +308,16 @@ export default function Home() {
                       </div>
                     )}
                   </div>
-
-                  {/* Coming Soon Section - only show if there are tasks */}
-                  {learningPath.length > 0 && (
-                    <div className="mt-3 bg-gray-100 rounded-2xl p-4 border-2 border-dashed border-gray-300 text-center text-gray-500 italic transition-all hover:bg-gray-50">
-                      ⏰ Yarınki görevler hazırlanıyor...
-                    </div>
-                  )}
                 </div>
               </section>
 
-              {/* Recommendations Section */}
-              <section className="mb-10">
-                <h2 className="text-xl font-bold text-orange-600 mb-5 flex items-center gap-2">
-                  <span className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center transition-transform hover:scale-110">
-                    💡
-                  </span>
-                  Senin İçin Öneriler
-                </h2>
-
-                {/* Fixed Scrollable Area for All Devices */}
-                <div className="overflow-x-auto pb-4 -mx-5 px-5">
-                  <div className="flex gap-4 w-max">
-                    {recommendations.map((item) => (
-                      <div
-                        key={item.id}
-                        className="min-w-[180px] bg-white rounded-2xl shadow-md overflow-hidden relative transition-all hover:shadow-lg hover:translate-y-[-2px]"
-                      >
-                        <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-orange-400 to-orange-600"></div>
-                        <div className="absolute top-2.5 left-2.5 bg-black/60 text-white text-xs py-1 px-2 rounded-full flex items-center gap-1 z-10">
-                          <span className="transition-transform hover:scale-110">
-                            {item.typeIcon}
-                          </span>{" "}
-                          {item.type}
-                        </div>
-
-                        <div
-                          className={`
-                              h-[100px] flex items-center justify-center text-4xl relative overflow-hidden group
-                              ${
-                                item.type === "Video"
-                                  ? "bg-gradient-to-br from-yellow-400 to-orange-500"
-                                  : item.type === "Oyun"
-                                  ? "bg-gradient-to-br from-green-400 to-green-600"
-                                  : "bg-gradient-to-br from-purple-500 to-indigo-600"
-                              }
-                            `}
-                        >
-                          <span className="relative z-10 transform transition-transform group-hover:scale-125">
-                            {item.contentIcon}
-                          </span>
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all"></div>
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        </div>
-
-                        <div className="p-3 transition-all group-hover:bg-gray-50">
-                          <h3 className="font-bold text-sm mb-1">
-                            {item.title}
-                          </h3>
-                          <p className="text-xs text-gray-600 line-clamp-2">
-                            {item.description}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-
-          {/* Right sidebar - only visible on desktop */}
-          <div className="hidden lg:block lg:w-1/4 p-6">
-            <div className="sticky top-4">
-              <h2 className="text-xl font-bold text-orange-600 mb-5 flex items-center gap-2">
-                <span className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center transition-transform hover:scale-110">
-                  👋
-                </span>
-                Günün İpucu
-              </h2>
-
-              <div className="bg-gray-50 p-4 rounded-xl mb-6 border border-gray-200 transition-all hover:shadow-md hover:bg-gray-50/80">
-                <p className="text-gray-700 text-sm mb-3">
-                  Her gün 30 dakika okuma yaparak haftalık okuma hedefine
-                  ulaşabilirsin!
-                </p>
-                <div className="bg-orange-100 text-orange-600 p-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-transform hover:scale-[1.01]">
-                  <span className="text-xl transition-transform hover:scale-110">
-                    💡
-                  </span>{" "}
-                  İpuçlarını takip et, daha hızlı ilerle!
-                </div>
-              </div>
-
-              <h2 className="text-xl font-bold text-orange-600 mb-3 flex items-center gap-2">
-                <span className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center transition-transform hover:scale-110">
-                  🔝
-                </span>
-                En Sevilen İçerikler
-              </h2>
-
-              <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 transition-all hover:shadow-lg">
-                <ul className="space-y-3">
-                  {recommendations.slice(0, 3).map((item) => (
-                    <li
-                      key={`sidebar-${item.id}`}
-                      className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-all hover:scale-[1.01]"
-                    >
-                      <span className="text-2xl transition-transform hover:scale-110">
-                        {item.contentIcon}
-                      </span>
-                      <div>
-                        <div className="font-medium text-sm">{item.title}</div>
-                        <div className="text-xs text-gray-500">{item.type}</div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* open materials button */}
+              <button
+                className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600"
+                onClick={() => setIsMaterialPopupOpen(true)}
+              >
+                Ekstra Materyaller
+              </button>
             </div>
           </div>
         </div>
@@ -456,11 +333,8 @@ export default function Home() {
             ].map((item, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-center relative cursor-pointer transition-transform hover:scale-110 ${
-                  item.active
-                    ? "text-orange-500"
-                    : "text-gray-500 hover:text-gray-700"
-                }`}
+                className={`flex flex-col items-center relative cursor-pointer transition-transform hover:scale-110 ${item.active ? "text-orange-500" : "text-gray-500 hover:text-gray-700"
+                  }`}
               >
                 <div className="text-2xl mb-1">{item.icon}</div>
                 <div className="text-xs">{item.label}</div>
@@ -469,14 +343,141 @@ export default function Home() {
                     {item.badge}
                   </div>
                 )}
-                {item.active && (
-                  <div className="absolute -bottom-3 w-1.5 h-1.5 rounded-full bg-orange-500"></div>
-                )}
+                {item.active && <div className="absolute -bottom-3 w-1.5 h-1.5 rounded-full bg-orange-500"></div>}
               </div>
             ))}
           </div>
         </nav>
       </div>
+
+      {/* MODALS  */}
+
+      {/* Task Popup Modal */}
+      {isTaskPopupOpen && selectedTask && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md md:max-w-lg m-auto">
+            <h2 className="text-xl font-bold mb-4">{selectedTask.title}</h2>
+            <p className="text-gray-700 mb-6">{selectedTask.description}</p>
+
+            {selectedTask.materials?.length > 0 && (
+              <>
+                <h3 className="font-bold text-lg mb-2">Materyaller</h3>
+                <ul className="space-y-2 mb-4">
+                  {selectedTask.materials?.map((material, index) => (
+                    <li
+                      key={index}
+                      className="text-blue-500 underline cursor-pointer hover:text-blue-700 transition-colors"
+                      onClick={() => {
+                        if (window.innerWidth < 768) {
+                          // Small screen: Trigger download
+                          const link = document.createElement("a");
+                          link.href = material.url;
+                          link.download = material.name;
+                          link.click();
+                        } else {
+                          // Larger screen: Open preview modal
+                          setSelectedMaterial(material);
+                          setIsMaterialPreviewOpen(true);
+                          setIsTaskPopupOpen(false); // Close task popup when opening material
+                        }
+                      }}
+                    >
+                      {material.name}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            <div className="flex justify-end mt-4">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                onClick={() => setIsTaskPopupOpen(false)}
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Material Preview Modal */}
+      {isMaterialPreviewOpen && selectedMaterial && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-3xl m-auto max-h-[90vh] flex flex-col">
+            <h2 className="text-lg sm:text-xl font-bold mb-2 text-center">{selectedMaterial.name}</h2>
+            <div className="flex-grow w-full h-[60vh] sm:h-[70vh] overflow-hidden rounded-lg border border-gray-200">
+              <iframe
+                src={selectedMaterial.url}
+                className="w-full h-full border-0"
+                title={selectedMaterial.name}
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="flex justify-between mt-4">
+              <button
+                className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm sm:text-base"
+                onClick={() => {
+                  setIsMaterialPreviewOpen(false)
+                  setIsTaskPopupOpen(true) // Return to task popup
+                }}
+              >
+                Geri Dön
+              </button>
+              <button
+                className="bg-red-500 text-white px-3 py-2 rounded-lg hover:bg-red-600 transition-colors text-sm sm:text-base"
+                onClick={() => setIsMaterialPreviewOpen(false)}
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Materials Pop-Up */}
+      {isMaterialPopupOpen && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm sm:max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">Ekstra Materyaller</h2>
+            <ul className="space-y-2">
+              {/* Sample materials */}
+              {[
+                { id: 1, name: "Materyal 1", url: "/document.pdf" },
+                { id: 2, name: "Materyal 2", url: "/document.pdf" },
+                { id: 3, name: "Materyal 3", url: "/document.pdf" },
+              ].map((material) => (
+                <li
+                  key={material.id}
+                  className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+                  onClick={() => {
+                    if (window.innerWidth < 768) {
+                      // Small screen: Trigger download
+                      const link = document.createElement("a")
+                      link.href = material.url
+                      link.download = material.name
+                      link.click()
+                    } else {
+                      // Larger screen: Open preview modal
+                      setSelectedMaterial(material)
+                      setIsMaterialPreviewOpen(true)
+                      setIsMaterialPopupOpen(false) // Close materials popup
+                    }
+                  }}
+                >
+                  {material.name}
+                </li>
+              ))}
+            </ul>
+            <button
+              className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+              onClick={() => setIsMaterialPopupOpen(false)}
+            >
+              Kapat
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  );
+  )
 }
