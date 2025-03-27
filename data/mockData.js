@@ -12,7 +12,11 @@ export const mockLearningPathData = [
     id: 1,
     title: 'Matematik Bulmacası',
     description: 'Eğlenceli sayı oyunları',
-    date: "2025-03-23",
+    materials: [
+      { name: "Matematik Bulmacası", url: "/document.pdf" },
+      { name: "Matematik Bulmacası", url: "/document.pdf" },
+    ],
+    date: "2025-03-27",
     icon: '🧮',
     typeIcon: '🎮',
     completed: true,
@@ -23,7 +27,8 @@ export const mockLearningPathData = [
     id: 2,
     title: 'Günlük Okuma Etkinliği',
     description: '"Küçük Kaşifler" hikayesi',
-    date: "2025-03-23",
+    materials: ["document.pdf", "document.pdf"],
+    date: "2025-03-27",
     icon: '📚',
     typeIcon: '📖',
     completed: true,
@@ -98,86 +103,31 @@ export const mockRecommendationsData = [
 ];
 
 // Günlük takvim verisi
-export const mockCalendarData = [
-  {
-    id: 1,
-    date: 19,
-    dayName: 'Pts',
-    isPast: true,
-    isToday: false,
-    tasksDone: 15,
-    totalTasks: 18
-  },
-  {
-    id: 2,
-    date: 20,
-    dayName: 'Sal',
-    isPast: true,
-    isToday: false,
-    tasksDone: 14,
-    totalTasks: 16
-  },
-  {
-    id: 3,
-    date: 21,
-    dayName: 'Çar',
-    isPast: true,
-    isToday: false,
-    tasksDone: 16,
-    totalTasks: 17
-  },
-  {
-    id: 4,
-    date: 22,
-    dayName: 'Per',
-    isPast: true,
-    isToday: false,
-    tasksDone: 12,
-    totalTasks: 15
-  },
-  {
-    id: 5,
-    date: 23,
-    dayName: 'Cum',
-    isPast: false,
-    isToday: true,
-    tasksDone: 13,
-    totalTasks: 20
-  },
-  {
-    id: 6,
-    date: 24,
-    dayName: 'Cmt',
-    isPast: false,
-    isToday: false,
-    tasksDone: 0,
-    totalTasks: 12
-  },
-  {
-    id: 7,
-    date: 25,
-    dayName: 'Paz',
-    isPast: false,
-    isToday: false,
-    tasksDone: 0,
-    totalTasks: 10
-  },
-  {
-    id: 8,
-    date: 26,
-    dayName: 'Pts',
-    isPast: false,
-    isToday: false,
-    tasksDone: 0,
-    totalTasks: 15
-  },
-  {
-    id: 9,
-    date: 27,
-    dayName: 'Sal',
-    isPast: false,
-    isToday: false,
-    tasksDone: 0,
-    totalTasks: 14
+
+export const generateCalendarData = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth(); // 0-based index for months
+  const daysInMonth = new Date(year, month + 1, 0).getDate(); // Get the number of days in the month
+
+  const dayNames = ['Paz', 'Pts', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt']; // day names
+  const calendarData = [];
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = new Date(year, month, day);
+    calendarData.push({
+      id: day,
+      date: day,
+      dayName: dayNames[date.getDay()], // Get the day name
+      isPast: day < today.getDate(), // Check if the day is in the past
+      isToday: day === today.getDate(), // Check if the day is today
+      tasksDone: Math.floor(Math.random() * 20), // Example: Random tasks done
+      totalTasks: Math.floor(Math.random() * 20) + 10, // Example: Random total tasks
+    });
   }
-];
+
+  return calendarData;
+};
+
+// Export dynamic calendar data
+export const mockCalendarData = generateCalendarData();

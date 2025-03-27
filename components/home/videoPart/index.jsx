@@ -11,8 +11,8 @@ const VideoPart = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="relative py-12 md:py-16 lg:py-28 xl:py-46 px-4 sm:px-6 md:px-8 bg-[#b2eaee] overflow-hidden group ">
-      {/* stars and the moon will move */}
+    <div className="relative py-12 md:py-16 lg:py-28 xl:py-46 px-4 sm:px-6 md:px-8 bg-[#b2eaee] overflow-hidden group">
+      {/* Stars and the moon will move */}
       <Parallax
         sensitivity={0.05}
         className="absolute top-1 left-10 w-12 h-12"
@@ -20,19 +20,22 @@ const VideoPart = () => {
         <Image src="/images/star_2.png" alt="Star" width={48} height={48} />
       </Parallax>
 
-      <Parallax sensitivity={0.05} className="absolute bottom-20 left-[15%] w-16 h-16 ">
+      <Parallax
+        sensitivity={0.05}
+        className="absolute bottom-20 left-[15%] w-16 h-16"
+      >
         <Image src="/images/star_3.png" alt="Star" width={84} height={64} />
       </Parallax>
 
-      <Parallax className="absolute top-[20%] right-[10%] w-14 h-14 ">
+      <Parallax className="absolute top-[20%] right-[10%] w-14 h-14">
         <Image src="/images/star_4.png" alt="Star" width={56} height={56} />
       </Parallax>
 
-      <Parallax className="absolute bottom-[32%] right-[9%] w-10 h-10 ">
+      <Parallax className="absolute bottom-[32%] right-[9%] w-10 h-10">
         <Image src="/images/star_5.png" alt="Star" width={40} height={40} />
       </Parallax>
 
-      <Parallax className="absolute top-[79%] right-[5%] w-40 h-40 ">
+      <Parallax className="absolute top-[79%] right-[5%] w-40 h-40">
         <Image
           sensitivity={0.04}
           src="/images/moon.png"
@@ -44,15 +47,16 @@ const VideoPart = () => {
 
       <div className="container mx-auto relative z-10 xxl:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-center">
+          {/* Video Preview Section */}
           <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full max-w-[580px] mx-auto">
-            <Image
-              src="/images/img-7-copyright.jpg"
-              alt="Teacher student image"
-              width={500}
-              height={350}
-              className="w-full h-[337px] md:h-[354px] lg:h-[338px] object-cover"
-              priority
-            />
+            <div className="relative pb-[56.25%] h-0 overflow-hidden">
+              <iframe
+                src="https://player.vimeo.com/video/141557554?autoplay=1&muted=1&loop=1&background=1"
+                className="absolute top-0 left-0 w-full h-full"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
             <div className="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent w-full h-full"></div>
             <div className="absolute top-8 left-4 sm:left-6 md:left-8">
               <div
@@ -63,13 +67,16 @@ const VideoPart = () => {
               </div>
             </div>
 
-            <div className="absolute bottom-2 left-12 md:left-0 p-4 sm:p-5 md:p-6">
-              <h3 className="font-nunito text-2xl sm:text-3xl font-bold text-white uppercase">
-                bilfen eğitim 
+            <div className="absolute bottom-2 left-12 md:bottom-2 md:left-0 p-4 sm:p-5 md:p-6">
+              <h3 className="font-nunito text-5xl font-bold text-white">
+                BİLFEN
+                <br />
+                EĞİTİM
               </h3>
             </div>
           </div>
 
+          {/* Text Section */}
           <div className="text-[#341c77] w-full max-w-lg mx-auto md:mx-0 mt-6 md:mt-0">
             <h2 className="text-3xl lg:text-5xl font-nunito font-bold mb-4 sm:mb-5 md:mb-6">
               Değerlerimize

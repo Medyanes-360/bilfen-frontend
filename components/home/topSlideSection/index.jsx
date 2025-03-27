@@ -44,17 +44,20 @@ export default function TopSlideSection() {
   }, [api])
 
   return (
-    <div className="relative w-full flex items-center justify-center bg-darklila py-2 md:py-4 lg:py-6">
+    <div className="relative w-screen h-auto flex flex-col items-center justify-center bg-darklila overflow-hidden">
       <Carousel
         opts={{
           loop: true,
         }}
         setApi={setApi}
-        className="w-full h-full mx-auto" // Removed max-w-5xl and padding
+        className="w-full h-auto"
       >
-        <CarouselContent className="w-full">
+        <CarouselContent className="w-full flex justify-center">
           {slides.map((slide, index) => (
-            <CarouselItem key={index} className="relative w-full flex items-center justify-center">
+            <CarouselItem
+              key={index}
+              className="relative w-full max-w-[90%] sm:max-w-[80%] flex items-center justify-center mx-auto"
+            >
               {/* Image with Link */}
               <Link href={slide.buttonLink}>
                 <div
@@ -64,8 +67,8 @@ export default function TopSlideSection() {
                   <Image
                     src={slide.image}
                     alt={slide.title || "Slide image"}
-                    width={600}
-                    height={350}
+                    width={1920}
+                    height={1080}
                     className="w-full h-auto object-cover rounded-lg shadow-md cursor-pointer"
                   />
                 </div>
@@ -74,6 +77,8 @@ export default function TopSlideSection() {
           ))}
         </CarouselContent>
       </Carousel>
+
+      <div className="hidden lg:block w-full bg-darklila h-20"></div>
     </div>
   );
 }

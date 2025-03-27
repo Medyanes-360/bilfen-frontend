@@ -54,8 +54,9 @@ const FeatureSection = () => {
               key={index}
               className="flex flex-col items-center text-center transition transform hover:scale-105 hover:shadow-2xl duration-300"
             >
-              <div className="w-24 h-24 flex items-center justify-center bg-white bg-opacity-10 rounded-full mb-6 backdrop-blur-md border border-white/20 hover:border-orange transition-all">
-                <feature.icon className="w-12 h-12 text-orange transition-all duration-300" />
+              {/* 3D Icon */}
+              <div className="w-20 h-20 md:w-24 md:h-24 mb-4 relative transform transition-transform duration-300 hover:rotate-6 hover:scale-110">
+                <feature.icon className="w-full h-full font-light stroke-orange drop-shadow-lg" />
               </div>
               <h3 className="text-2xl font-semibold mb-2">{feature.title}</h3>
               <p className="text-sm text-gray-200 max-w-xs">

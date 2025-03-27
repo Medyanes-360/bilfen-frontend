@@ -1,6 +1,5 @@
 "use client"
 import FeatureSection from "@/components/home/featureSection";
-import GallerySection from "@/components/home/gallerySection";
 import InfoSection from "@/components/home/infoSection";
 import TopSlideSection from "@/components/home/topSlideSection";
 import SlideSection from "@/components/home/slideSection";
@@ -16,7 +15,6 @@ export default function HomePageContainer() {
       <InfoSection />
       <VideoPart />
       <FeatureSection />
-      <GallerySection />
     </>
   );
 }
