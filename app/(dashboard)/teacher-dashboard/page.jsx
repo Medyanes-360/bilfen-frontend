@@ -6,6 +6,7 @@ import Header from "@/components/teacherDashboard/header";
 import MaterialList from "@/components/teacherDashboard/materialList";
 import Calendar from "@/components/teacherDashboard/calendar";
 import { motion, AnimatePresence } from "framer-motion";
+import ArchiveModal from "@/components/modal/archiveModal";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -17,6 +18,8 @@ export default function Home() {
 
   const [isOpen, setIsOpen] = useState(true);
   const [isExtraOpen, setIsExtraOpen] = useState(true);
+
+  const [showArchive, setShowArchive] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -64,128 +67,85 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header - Sabit pozisyonlu */}
-      <Header
-        dropdownRef={dropdownRef}
-        dropdownOpen={dropdownOpen}
-        setDropdownOpen={setDropdownOpen}
-      />
+    <>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        {/* Header - Sabit pozisyonlu */}
+        <Header
+          dropdownRef={dropdownRef}
+          dropdownOpen={dropdownOpen}
+          setDropdownOpen={setDropdownOpen}
+        />
 
-      {/* Ana içerik bölümü */}
-      <div className="flex flex-1 pt-0">
-        {/* Ana içerik - Ortalaması düzeltildi */}
-        <main className="flex-1 overflow-auto p-4 md:p-6 w-full">
-          <div className="mx-auto max-w-4xl md:max-w-3xl lg:max-w-4xl">
-            {/* Mobilde görünen mini başlık */}
-            <div className="md:hidden text-center mb-4">
-              <h2 className="font-bold text-gray-800">
-                Merhaba, Ayşe Öğretmen
-              </h2>
-              <p className="text-xs text-gray-500">23 Mart 2025, Cuma</p>
-            </div>
-
-            {/* Takvim Kartı */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6 overflow-hidden">
-              <div className="flex justify-between items-center p-4 border-b border-gray-100">
-                <div className="flex items-center">
-                  <span className="text-blue-600 mr-2">📅</span>
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    Takvim
-                  </h2>
-                </div>
-                <Link
-                  href="#"
-                  className="text-blue-600 text-sm font-medium hover:underline"
-                >
-                  Tümünü Gör ›
-                </Link>
+        {/* Ana içerik bölümü */}
+        <div className="flex flex-1 pt-0">
+          {/* Ana içerik - Ortalaması düzeltildi */}
+          <main className="flex-1 overflow-auto p-4 md:p-6 w-full">
+            <div className="mx-auto max-w-4xl md:max-w-3xl lg:max-w-4xl">
+              {/* Mobilde görünen mini başlık */}
+              <div className="md:hidden text-center mb-4">
+                <h2 className="font-bold text-gray-800">
+                  Merhaba, Ayşe Öğretmen
+                </h2>
+                <p className="text-xs text-gray-500">23 Mart 2025, Cuma</p>
               </div>
 
-              <Calendar
-                selectedDate={selectedDate}
-                onSelectDate={handleDateChange}
-              />
-            </div>
+              {/* Takvim Kartı */}
+              <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6 overflow-hidden">
+                <div className="flex justify-between items-center p-4 border-b border-gray-100">
+                  <div className="flex items-center">
+                    <span className="text-blue-600 mr-2">📅</span>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Takvim
+                    </h2>
+                  </div>
+                  <Link
+                    href="#"
+                    className="text-blue-600 text-sm font-medium hover:underline"
+                  >
+                    Tümünü Gör ›
+                  </Link>
+                </div>
 
-            <div className="flex justify-end gap-4 mb-4">
-              {/* <button
+                <Calendar
+                  selectedDate={selectedDate}
+                  onSelectDate={handleDateChange}
+                />
+              </div>
+
+              <div className="flex justify-end gap-4 mb-4">
+                {/* <button
                 onClick={() => setShowExtraMaterials(!showExtraMaterials)}
                 className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
               >
                 {showExtraMaterials ? "Gizle" : "Extra Materyaller"}
               </button> */}
-              <button
-                onClick={() => alert("Arşiv özelliği henüz aktif değil.")}
-                className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
-              >
-                Arşiv
-              </button>
-            </div>
+                <button
+                  onClick={() => setShowArchive(true)}
+                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
+                >
+                  Arşiv
+                </button>
+              </div>
 
-            {/* Materyaller Kartı */}
-            <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                aria-label="Toggle extra materials"
-              >
-                {/* Sabit Başlık */}
-                <div className="flex items-center">
-                  <span className="text-blue-600 mr-2">📚</span>
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    Dijital Materyaller
-                  </h2>
-                </div>
-
-                <div className="text-gray-400 transition">
-                  <span
-                    className={`inline-block transform transition-transform duration-300 ${
-                      isOpen ? "rotate-180" : "rotate-0"
-                    }`}
-                  >
-                    ▼
-                  </span>
-                </div>
-              </button>
-
-              <AnimatePresence initial={false}>
-                {isOpen && (
-                  <motion.div
-                    key="extra-content"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.4, ease: "easeInOut" }}
-                    className="overflow-hidden"
-                  >
-                    <div className="p-4">
-                      <MaterialList materials={materials} />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {extraMaterials && (
+              {/* Materyaller Kartı */}
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
                 <button
-                  onClick={() => setIsExtraOpen(!isExtraOpen)}
+                  onClick={() => setIsOpen(!isOpen)}
                   className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
                   aria-label="Toggle extra materials"
                 >
                   {/* Sabit Başlık */}
                   <div className="flex items-center">
-                    <span className="text-blue-600 mr-2">➕</span>
+                    <span className="text-blue-600 mr-2">📚</span>
                     <h2 className="text-lg font-semibold text-gray-800">
-                      Extra Materyaller
+                      Dijital Materyaller
                     </h2>
                   </div>
 
                   <div className="text-gray-400 transition">
                     <span
                       className={`inline-block transform transition-transform duration-300 ${
-                        isExtraOpen ? "rotate-180" : "rotate-0"
+                        isOpen ? "rotate-180" : "rotate-0"
                       }`}
                     >
                       ▼
@@ -194,7 +154,7 @@ export default function Home() {
                 </button>
 
                 <AnimatePresence initial={false}>
-                  {isExtraOpen && (
+                  {isOpen && (
                     <motion.div
                       key="extra-content"
                       initial={{ height: 0, opacity: 0 }}
@@ -204,16 +164,65 @@ export default function Home() {
                       className="overflow-hidden"
                     >
                       <div className="p-4">
-                        <MaterialList materials={extraMaterials} />
+                        <MaterialList materials={materials} />
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
-            )}
-          </div>
-        </main>
+
+              {extraMaterials && (
+                <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
+                  <button
+                    onClick={() => setIsExtraOpen(!isExtraOpen)}
+                    className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
+                    aria-label="Toggle extra materials"
+                  >
+                    {/* Sabit Başlık */}
+                    <div className="flex items-center">
+                      <span className="text-blue-600 mr-2">➕</span>
+                      <h2 className="text-lg font-semibold text-gray-800">
+                        Extra Materyaller
+                      </h2>
+                    </div>
+
+                    <div className="text-gray-400 transition">
+                      <span
+                        className={`inline-block transform transition-transform duration-300 ${
+                          isExtraOpen ? "rotate-180" : "rotate-0"
+                        }`}
+                      >
+                        ▼
+                      </span>
+                    </div>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isExtraOpen && (
+                      <motion.div
+                        key="extra-content"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <div className="p-4">
+                          <MaterialList materials={extraMaterials} />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+
+      {showArchive && (
+        <ArchiveModal onClose={() => setShowArchive(false)} visibleDays={7} />
+      )}
+    </>
   );
 }
