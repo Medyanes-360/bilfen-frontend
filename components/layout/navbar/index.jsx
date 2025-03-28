@@ -74,7 +74,7 @@ const Navbar = () => {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <Image
-                src="/images/logo.webp"
+                src="/images/logo-white.webp"
                 alt="BİLFEN"
                 width={135}
                 height={80}

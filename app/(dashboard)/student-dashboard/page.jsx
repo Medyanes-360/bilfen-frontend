@@ -1,29 +1,35 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Head from "next/head"
-import { LogOut } from 'lucide-react'
-import { mockUserData, mockLearningPathData, generateCalendarData } from "@/data/mockData"
-import DailyCalendar from "@/components/DailyCalendar"
-import { getSession, signOut } from "next-auth/react"
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import { LogOut } from "lucide-react";
+import {
+  mockUserData,
+  mockLearningPathData,
+  generateCalendarData,
+} from "@/data/mockData";
+import DailyCalendar from "@/components/DailyCalendar";
+import { getSession, signOut } from "next-auth/react";
 
 export default function Home() {
-  const [userData, setUserData] = useState(mockUserData)
-  const [learningPath, setLearningPath] = useState(mockLearningPathData)
-  const [isMaterialPopupOpen, setIsMaterialPopupOpen] = useState(false)
-  const [calendarData, setCalendarData] = useState(generateCalendarData())
-  const [selectedDay, setSelectedDay] = useState(calendarData.find((day) => day.isToday))
-  const [isTaskPopupOpen, setIsTaskPopupOpen] = useState(false)
-  const [selectedTask, setSelectedTask] = useState(null)
-  const [isMaterialPreviewOpen, setIsMaterialPreviewOpen] = useState(false)
-  const [selectedMaterial, setSelectedMaterial] = useState(null)
-  const [user, setUser] = useState(null)
-  const [currentDate, setCurrentDate] = useState("")
+  const [userData, setUserData] = useState(mockUserData);
+  const [learningPath, setLearningPath] = useState(mockLearningPathData);
+  const [isMaterialPopupOpen, setIsMaterialPopupOpen] = useState(false);
+  const [calendarData, setCalendarData] = useState(generateCalendarData());
+  const [selectedDay, setSelectedDay] = useState(
+    calendarData.find((day) => day.isToday)
+  );
+  const [isTaskPopupOpen, setIsTaskPopupOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isMaterialPreviewOpen, setIsMaterialPreviewOpen] = useState(false);
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [user, setUser] = useState(null);
+  const [currentDate, setCurrentDate] = useState("");
 
   // Progress calculations
-  const completedTasks = learningPath.filter((task) => task.completed).length
-  const totalTasks = learningPath.length
-  const progressPercentage = (completedTasks / totalTasks) * 100
+  const completedTasks = learningPath.filter((task) => task.completed).length;
+  const totalTasks = learningPath.length;
+  const progressPercentage = (completedTasks / totalTasks) * 100;
 
   const handleDaySelect = (day) => {
     setSelectedDay(day);
@@ -70,15 +76,15 @@ export default function Home() {
   // Prevent body scroll when modals are open
   useEffect(() => {
     if (isTaskPopupOpen || isMaterialPreviewOpen || isMaterialPopupOpen) {
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto"
+      document.body.style.overflow = "auto";
     }
 
     return () => {
-      document.body.style.overflow = "auto"
-    }
-  }, [isTaskPopupOpen, isMaterialPreviewOpen, isMaterialPopupOpen])
+      document.body.style.overflow = "auto";
+    };
+  }, [isTaskPopupOpen, isMaterialPreviewOpen, isMaterialPopupOpen]);
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -113,7 +119,9 @@ export default function Home() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold flex flex-col gap-2">
-                    <h2 className="font-bold">Merhaba, {user ? user.name : "Misafir"}</h2>
+                    <h2 className="font-bold">
+                      Merhaba, {user ? user.name : "Misafir"}
+                    </h2>
                     <p className="text-xs">{currentDate}</p>
                   </div>
                 </div>
@@ -121,7 +129,7 @@ export default function Home() {
                 {/* Responsive Sign Out Button */}
                 <button
                   className="absolute right-4 sm:right-8 top-[75%] sm:top-[75%] transform -translate-y-1/2 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2"
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
                 >
                   <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span className="hidden sm:inline">Çıkış Yap</span>
@@ -139,7 +147,10 @@ export default function Home() {
                 <div className="h-8 bg-white/20 rounded-full overflow-hidden relative backdrop-blur-sm">
                   {/* Progress Bar */}
                   {totalTasks > 0 ? (
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${progressPercentage}%` }}>
+                    <div
+                      className="h-full bg-green-500 rounded-full"
+                      style={{ width: `${progressPercentage}%` }}
+                    >
                       <div className="absolute inset-0 overflow-hidden">
                         <div className="w-full h-full bg-white/20 transform -translate-x-full animate-shimmer"></div>
                       </div>
@@ -166,8 +177,15 @@ export default function Home() {
                     {Array.from({ length: 5 }).map((_, index) => (
                       <div
                         key={index}
-                        className={`w-2 h-2 rounded-full ${(index + 1) * 20 <= progressPercentage ? "bg-white" : "bg-white/30"
-                          } ${(index + 1) * 20 <= progressPercentage ? "scale-100" : "scale-75"} transition-all`}
+                        className={`w-2 h-2 rounded-full ${
+                          (index + 1) * 20 <= progressPercentage
+                            ? "bg-white"
+                            : "bg-white/30"
+                        } ${
+                          (index + 1) * 20 <= progressPercentage
+                            ? "scale-100"
+                            : "scale-75"
+                        } transition-all`}
                       ></div>
                     ))}
                   </div>
@@ -204,7 +222,10 @@ export default function Home() {
                     <div
                       className="absolute top-0 left-[35px] w-1.5 bg-gradient-to-b from-green-500 to-green-400 rounded z-0"
                       style={{
-                        height: `${(completedTasks / totalTasks) * (learningPath.length * 120)}px`,
+                        height: `${
+                          (completedTasks / totalTasks) *
+                          (learningPath.length * 120)
+                        }px`,
                       }}
                     ></div>
                   )}
@@ -215,16 +236,22 @@ export default function Home() {
                       learningPath.map((task, index) => (
                         <div
                           key={task.id}
-                          className={`flex gap-4 items-start ${task.completed ? "completed" : task.current ? "current" : ""
-                            }`}
+                          className={`flex gap-4 items-start ${
+                            task.completed
+                              ? "completed"
+                              : task.current
+                              ? "current"
+                              : ""
+                          }`}
                         >
                           <div
                             className={`
                                w-[70px] h-[70px] rounded-full flex items-center justify-center text-3xl
                               border-3 relative z-10 transition-all duration-300
-                              ${task.completed
-                                ? "border-green-500 bg-green-50 text-green-500 hover:shadow-md hover:shadow-green-200 hover:scale-105"
-                                : task.current
+                              ${
+                                task.completed
+                                  ? "border-green-500 bg-green-50 text-green-500 hover:shadow-md hover:shadow-green-200 hover:scale-105"
+                                  : task.current
                                   ? "border-blue-500 bg-blue-50 text-blue-500 animate-slow-bounce hover:shadow-md hover:shadow-blue-200"
                                   : "border-gray-300 bg-white text-gray-400 hover:border-gray-400 hover:text-gray-500"
                               }
@@ -237,12 +264,13 @@ export default function Home() {
                             className={`
                              flex-1 bg-white rounded-2xl p-4 shadow
                              border-2 transition-all duration-200
-                             ${task.completed
-                                ? "border-green-200 hover:border-green-300 hover:shadow-md"
-                                : task.current
-                                  ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
-                                  : "border-gray-200 hover:border-gray-300"
-                              }
+                             ${
+                               task.completed
+                                 ? "border-green-200 hover:border-green-300 hover:shadow-md"
+                                 : task.current
+                                 ? "border-blue-200 hover:border-blue-300 hover:shadow-md"
+                                 : "border-gray-200 hover:border-gray-300"
+                             }
                             `}
                           >
                             <div className="flex justify-between items-center mb-2">
@@ -269,17 +297,18 @@ export default function Home() {
                               <button
                                 className={`
                                   py-2 px-4 rounded-full text-sm font-bold text-white flex items-center gap-1 whitespace-nowrap transition-all
-                                  ${task.completed
-                                    ? "bg-green-500 hover:bg-green-600"
-                                    : task.current
+                                  ${
+                                    task.completed
+                                      ? "bg-green-500 hover:bg-green-600"
+                                      : task.current
                                       ? "bg-blue-500 hover:bg-blue-600"
                                       : "bg-gray-400"
                                   }
                                 `}
                                 disabled={!task.current && !task.completed}
                                 onClick={() => {
-                                  setSelectedTask(task)
-                                  setIsTaskPopupOpen(true)
+                                  setSelectedTask(task);
+                                  setIsTaskPopupOpen(true);
                                 }}
                               >
                                 <span className="flex items-center justify-center gap-1">
@@ -333,8 +362,11 @@ export default function Home() {
             ].map((item, index) => (
               <div
                 key={index}
-                className={`flex flex-col items-center relative cursor-pointer transition-transform hover:scale-110 ${item.active ? "text-orange-500" : "text-gray-500 hover:text-gray-700"
-                  }`}
+                className={`flex flex-col items-center relative cursor-pointer transition-transform hover:scale-110 ${
+                  item.active
+                    ? "text-orange-500"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
               >
                 <div className="text-2xl mb-1">{item.icon}</div>
                 <div className="text-xs">{item.label}</div>
@@ -343,7 +375,9 @@ export default function Home() {
                     {item.badge}
                   </div>
                 )}
-                {item.active && <div className="absolute -bottom-3 w-1.5 h-1.5 rounded-full bg-orange-500"></div>}
+                {item.active && (
+                  <div className="absolute -bottom-3 w-1.5 h-1.5 rounded-full bg-orange-500"></div>
+                )}
               </div>
             ))}
           </div>
@@ -405,7 +439,9 @@ export default function Home() {
       {isMaterialPreviewOpen && selectedMaterial && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-3xl m-auto max-h-[90vh] flex flex-col">
-            <h2 className="text-lg sm:text-xl font-bold mb-2 text-center">{selectedMaterial.name}</h2>
+            <h2 className="text-lg sm:text-xl font-bold mb-2 text-center">
+              {selectedMaterial.name}
+            </h2>
             <div className="flex-grow w-full h-[60vh] sm:h-[70vh] overflow-hidden rounded-lg border border-gray-200">
               <iframe
                 src={selectedMaterial.url}
@@ -418,8 +454,8 @@ export default function Home() {
               <button
                 className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm sm:text-base"
                 onClick={() => {
-                  setIsMaterialPreviewOpen(false)
-                  setIsTaskPopupOpen(true) // Return to task popup
+                  setIsMaterialPreviewOpen(false);
+                  setIsTaskPopupOpen(true); // Return to task popup
                 }}
               >
                 Geri Dön
@@ -453,15 +489,15 @@ export default function Home() {
                   onClick={() => {
                     if (window.innerWidth < 768) {
                       // Small screen: Trigger download
-                      const link = document.createElement("a")
-                      link.href = material.url
-                      link.download = material.name
-                      link.click()
+                      const link = document.createElement("a");
+                      link.href = material.url;
+                      link.download = material.name;
+                      link.click();
                     } else {
                       // Larger screen: Open preview modal
-                      setSelectedMaterial(material)
-                      setIsMaterialPreviewOpen(true)
-                      setIsMaterialPopupOpen(false) // Close materials popup
+                      setSelectedMaterial(material);
+                      setIsMaterialPreviewOpen(true);
+                      setIsMaterialPopupOpen(false); // Close materials popup
                     }
                   }}
                 >
@@ -479,5 +515,5 @@ export default function Home() {
         </div>
       )}
     </div>
-  )
+  );
 }
