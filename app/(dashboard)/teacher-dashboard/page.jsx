@@ -7,14 +7,15 @@ import MaterialList from "@/components/teacherDashboard/materialList";
 import Calendar from "@/components/teacherDashboard/calendar";
 import { motion, AnimatePresence } from "framer-motion";
 import ArchiveModal from "@/components/modal/archiveModal";
+import { getSession } from "next-auth/react";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [materials, setMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
 
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const [user, setUser] = useState(null);
+  const [currentDate, setCurrentDate] = useState("");
 
   const [isOpen, setIsOpen] = useState(true);
   const [isExtraOpen, setIsExtraOpen] = useState(true);
@@ -22,20 +23,31 @@ export default function Home() {
   const [showArchive, setShowArchive] = useState(false);
 
   useEffect(() => {
-    function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
     const today = new Date();
     setSelectedDate(today);
     updateMaterialsForDate(today);
     filterExtraMaterials();
+  }, []);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession();
+      if (session) {
+        setUser(session.user);
+      }
+    };
+
+    fetchSession();
+
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString("tr-TR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    setCurrentDate(formattedDate);
   }, []);
 
   const handleDateChange = (dateObj) => {
@@ -70,11 +82,7 @@ export default function Home() {
     <>
       <div className="min-h-screen flex flex-col bg-gray-50">
         {/* Header - Sabit pozisyonlu */}
-        <Header
-          dropdownRef={dropdownRef}
-          dropdownOpen={dropdownOpen}
-          setDropdownOpen={setDropdownOpen}
-        />
+        <Header user={user} currentDate={currentDate} />
 
         {/* Ana içerik bölümü */}
         <div className="flex flex-1 pt-0">
@@ -84,9 +92,9 @@ export default function Home() {
               {/* Mobilde görünen mini başlık */}
               <div className="md:hidden text-center mb-4">
                 <h2 className="font-bold text-gray-800">
-                  Merhaba, Ayşe Öğretmen
+                  Merhaba, {user ? user.name : "Misafir"}
                 </h2>
-                <p className="text-xs text-gray-500">23 Mart 2025, Cuma</p>
+                <p className="text-xs text-gray-500">{currentDate}</p>
               </div>
 
               {/* Takvim Kartı */}

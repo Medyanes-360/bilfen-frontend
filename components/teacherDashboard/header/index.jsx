@@ -1,32 +1,8 @@
-import { useEffect, useState } from "react";
-import { getSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
 import Image from "next/image";
 
-const Header = () => {
-  const [user, setUser] = useState(null);
-  const [currentDate, setCurrentDate] = useState("");
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      const session = await getSession();
-      if (session) {
-        setUser(session.user);
-      }
-    };
-
-    fetchSession();
-
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString("tr-TR", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-
-    setCurrentDate(formattedDate);
-  }, []);
+const Header = ({user, currentDate}) => {
 
   return (
     <header className="bg-blue-600 text-white shadow-md sticky top-0 z-30">
