@@ -203,15 +203,15 @@ const getTypeInfo = (type) => {
   }
 };
 
-function Modal({ children, onClose }) {
+function Modal({ children, onClose, className = "max-w-3xl" }) {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 bg-[rgba(0,0,0,.5)] bg-opacity-30 flex items-center justify-center"
+      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-2 m-0"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-lg shadow-lg max-w-md w-full p-4 relative"
+        className={`bg-white rounded-lg shadow-lg w-full ${className} max-h-[90vh] overflow-y-auto p-6 relative`}
       >
         {children}
       </div>
@@ -292,32 +292,81 @@ const MaterialCard = ({ material }) => {
         </div>
       </div>
 
-      {/* Modal Component */}
-      {/* Modal for video only */}
-      {isModalOpen && material.type === "video" && (
-        <Modal onClose={handleCloseModal}>
+      {isModalOpen && material && (
+        <Modal onClose={handleCloseModal} className="max-w-5xl">
           <div className="space-y-6">
-            <div>
-              <h2 className="text-xl font-bold mb-1">{material.title}</h2>
-              <p className="text-sm text-gray-600">{material.description}</p>
-              <div className="text-xs text-gray-500 mt-2 flex gap-4">
-                <span>⏱️ {material.duration}</span>
-                <span>📅 {material.date}</span>
+            <div className="border-b pb-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+                {/* Icon alanı */}
+                <div
+                  className={`w-fit self-start ${typeInfo.bgColor} ${typeInfo.color} p-3 rounded-lg flex items-center justify-center border ${typeInfo.borderColor} group-hover:shadow-md transition-all duration-300 ease-in-out group-hover:scale-105`}
+                >
+                  <div className="transform transition-transform duration-300 group-hover:rotate-3 group-hover:scale-110">
+                    {typeInfo.icon}
+                  </div>
+                </div>
+
+                {/* Başlık + Açıklama */}
+                <div className="text-start">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-1">
+                    {material.title}
+                  </h2>
+                  {material.description && (
+                    <p className="text-sm text-gray-600">
+                      {material.description}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 
-            <ReactPlayer
-              url={material.source}
-              controls
-              width="100%"
-              height="500px"
-              className="rounded-md overflow-hidden"
-            />
+            <div className="rounded-md overflow-hidden">
+              {material.type === "video" && (
+                <div className="w-full h-[200px] sm:h-[400px] md:h-[500px]">
+                  <ReactPlayer
+                    url={material.content}
+                    className="rounded"
+                    controls
+                    width="100%"
+                    height="100%"
+                    config={{
+                      file: {
+                        attributes: {
+                          controlsList: "nodownload",
+                          disablePictureInPicture: true,
+                          playsInline: true,
+                          preload: "auto",
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              )}
 
-            <div className="flex justify-end">
+              {material.type === "document" && (
+                <div className="w-full h-[400px] sm:h-[500px]">
+                  <iframe
+                    src={material.content}
+                    className="w-full h-full border rounded"
+                    title="Doküman Önizleme"
+                  />
+                </div>
+              )}
+
+              {material.type === "image" && (
+                <img
+                  src={material.source}
+                  alt={material.title}
+                  className="w-full max-h-[400px] sm:max-h-[600px] object-contain rounded"
+                />
+              )}
+            </div>
+
+            {/* Kapat Butonu */}
+            <div className="flex justify-end border-t pt-2">
               <button
                 onClick={handleCloseModal}
-                className="px-4 py-2 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200"
+                className="cursor-pointer px-4 py-2 text-sm bg-red-100 text-red-600 rounded hover:bg-red-200"
               >
                 Kapat
               </button>

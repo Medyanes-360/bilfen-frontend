@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getSession, signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
+import Image from "next/image";
 
 const Header = () => {
   const [user, setUser] = useState(null);
@@ -33,12 +34,12 @@ const Header = () => {
         <div className="flex items-center h-16 px-4">
           {/* Logo */}
           <div className="flex items-center mr-4">
-            <div className="w-8 h-8 rounded-full bg-white text-blue-600 flex items-center justify-center font-bold">
-              EÖ
-            </div>
-            <h2 className="text-white font-semibold ml-2 hidden sm:block">
-              EğitimHub
-            </h2>
+            <Image
+              src="/images/logo-white.webp"
+              alt="BİLFEN"
+              width={135}
+              height={80}
+            />
           </div>
 
           {/* Sağ taraf */}

@@ -82,7 +82,7 @@ const MobileNav = ({ menuItems, setActiveModal }) => {
               onClick={handleLinkClick}
             >
               <Image
-                src="/images/logo2.webp"
+                src="/images/logo.webp"
                 alt="BİLFEN"
                 width={120}
                 height={60}
