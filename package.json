@@ -24,7 +24,7 @@
     "lord-icon-element": "^4.1.2",
     "lottie-web": "^5.12.2",
     "lucide-react": "^0.482.0",
-    "next": "^15.2.2",
+    "next": "^15.2.4",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.0",
     "postcss": "^8.5.3",

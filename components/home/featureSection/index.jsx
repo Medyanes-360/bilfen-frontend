@@ -6,18 +6,18 @@ import Image from "next/image"
 const features = [
   {
     icon: "ugllxeyl", // Shield icon
-    title: "Güvenli",
-    description: "Çocuklarınız için maksimum güvenlik standartları.",
+    title: "Güvenli ve Korunaklı",
+    description: "En yüksek güvenlik standartlarıyla, çocuklarınızın güvenle öğrenebileceği bir dijital ortam sunuyoruz.",
   },
   {
     icon: "sviehykt", // Clean icon
-    title: "Nezih",
-    description: "Hijyenik, düzenli ve özenle tasarlanmış ortamlar.",
+    title: "Düzenli ve Bakımlı",
+    description: "Çocuklarınızın rahatça öğrenebileceği, her zaman düzenli ve profesyonelce hazırlanmış içerikler sunuyoruz.",
   },
   {
     icon: "vvyxyrur", // Eco-friendly icon
-    title: "Eğitimde Kalite",
-    description: "Müfredata ve çağa uygun eğitim.",
+    title: "Eğitimde Yenilikçi Yaklaşım",
+    description: "Bilfen'in zengin online eğitim içerikleriyle çocuklarınızın gelişimini her adımda destekliyoruz.",
   },
 ]
 
@@ -50,8 +50,9 @@ const FeatureSection = () => {
       <div className="relative z-10 container mx-auto px-4">
         {/* Heading */}
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-nunito font-bold text-center mb-20 tracking-tight leading-tight">
-          ÖZGÜN EĞİTİMİN TADINI ÇIKARIN
-          <div className="pt-3 text-orange text-2xl md:text-3xl font-light tracking-wide">Eğlen & Öğren</div>
+        ÖZGÜN EĞİTİMLE GELECEĞE GÜVENLE!
+                  <div className="pt-3 text-orange text-2xl md:text-3xl font-light tracking-wide">
+                  🎉 Eğlenerek Öğrenin          </div>
         </h2>
 
         {/* Features */}
