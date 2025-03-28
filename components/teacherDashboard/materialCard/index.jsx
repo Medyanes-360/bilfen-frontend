@@ -1,7 +1,7 @@
 "use client";
+import { Modal } from "@/components/modal";
 import { useState } from "react";
 import ReactPlayer from "react-player";
-
 const getTypeInfo = (type) => {
   switch (type) {
     case "video":
@@ -202,22 +202,6 @@ const getTypeInfo = (type) => {
       };
   }
 };
-
-function Modal({ children, onClose, className = "max-w-3xl" }) {
-  return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-2 m-0"
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className={`bg-white rounded-lg shadow-lg w-full ${className} max-h-[90vh] overflow-y-auto p-6 relative`}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
 
 const MaterialCard = ({ material }) => {
   const typeInfo = getTypeInfo(material.type);
