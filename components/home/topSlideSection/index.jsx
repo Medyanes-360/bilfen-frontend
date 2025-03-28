@@ -1,84 +1,95 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
-import Image from "next/image"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import Image from "next/image";
+import Link from "next/link";
 
 const slides = [
   {
-    image: "/images/dijital_egitim_1.webp",
+    image: "/images/dijital_egitim_1.png",
     buttonLink: "/faq",
   },
   {
-    image: "/images/dijital_egitim_2.webp",
+    image: "/images/dijital_egitim_2.png",
     buttonLink: "/how-it-works",
   },
   {
-    image: "/images/dijital_egitim_3.webp",
+    image: "/images/dijital_egitim_3.png",
     buttonLink: "/contact",
   },
-]
+];
 
 export default function TopSlideSection() {
-  const [api, setApi] = useState(null)
-  const [current, setCurrent] = useState(0)
+  const [api, setApi] = useState(null);
+  const [current, setCurrent] = useState(0);
 
   // Auto-switching
   useEffect(() => {
-    if (!api) return
+    if (!api) return;
 
     const onSelect = () => {
-      setCurrent(api.selectedScrollSnap())
-    }
-    api.on("select", onSelect)
+      setCurrent(api.selectedScrollSnap());
+    };
+    api.on("select", onSelect);
 
     const autoRotationInterval = setInterval(() => {
-      api.scrollNext()
-    }, 10000)
+      api.scrollNext();
+    }, 10000);
 
     return () => {
-      api.off("select", onSelect)
-      clearInterval(autoRotationInterval)
-    }
-  }, [api])
+      api.off("select", onSelect);
+      clearInterval(autoRotationInterval);
+    };
+  }, [api]);
 
   return (
-    <div className="relative w-screen h-auto flex flex-col items-center justify-center bg-darklila overflow-hidden">
+    <div className="relative w-full overflow-hidden">
+      <style jsx global>{`
+        .carousel-reset {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        .carousel-reset > * {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+      `}</style>
+
       <Carousel
         opts={{
           loop: true,
+          align: "start",
         }}
         setApi={setApi}
-        className="w-full h-auto"
+        className="w-full carousel-reset"
       >
-        <CarouselContent className="w-full flex justify-center">
+        <CarouselContent className="w-full carousel-reset">
           {slides.map((slide, index) => (
-            <CarouselItem
-              key={index}
-              className="relative w-full max-w-[90%] sm:max-w-[80%] flex items-center justify-center mx-auto"
-            >
-              {/* Image with Link */}
-              <Link href={slide.buttonLink}>
+            <CarouselItem key={index} className="relative w-full p-0 m-0 carousel-reset">
+              <Link href={slide.buttonLink} className="block w-full cursor-pointer">
                 <div
-                  className={`transition-all duration-1000 ${current === index ? "scale-100 opacity-100" : "scale-90 opacity-0"
-                    }`}
+                  className={`transition-all duration-1000 ease-in-out transform ${
+                    current === index ? "scale-100 opacity-100" : "scale-105 opacity-0"
+                  }`}
                 >
-                  <Image
-                    src={slide.image}
-                    alt={slide.title || "Slide image"}
-                    width={1920}
-                    height={1080}
-                    className="w-full h-auto object-cover rounded-lg shadow-md cursor-pointer"
-                  />
+                  <div className="relative w-full h-[calc(100vh-80px)]">
+                    <Image
+                      src={slide.image || "/placeholder.svg"}
+                      alt={`Slide ${index + 1}`}
+                      fill
+                      priority={index === 0}
+                      sizes="100vw"
+                      className="object-cover object-center"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent opacity-60"></div>
+                  </div>
                 </div>
               </Link>
             </CarouselItem>
           ))}
         </CarouselContent>
       </Carousel>
-
-      <div className="hidden lg:block w-full bg-darklila h-20"></div>
     </div>
   );
 }

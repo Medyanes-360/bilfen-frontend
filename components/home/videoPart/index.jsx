@@ -51,7 +51,7 @@ const VideoPart = () => {
           <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full max-w-[580px] mx-auto">
             <div className="relative pb-[56.25%] h-0 overflow-hidden">
               <iframe
-                src="https://player.vimeo.com/video/141557554?autoplay=1&muted=1&loop=1&background=1"
+                src="https://player.vimeo.com/video/386232261?autoplay=1&muted=1&loop=1&background=1"
                 className="absolute top-0 left-0 w-full h-full"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
@@ -105,7 +105,7 @@ const VideoPart = () => {
             <iframe
               src={
                 isOpen
-                  ? "https://player.vimeo.com/video/141557554?autoplay=1"
+                  ? "https://player.vimeo.com/video/386232261?autoplay=1"
                   : "#"
               }
               className="absolute top-0 left-0 w-full h-full"
