@@ -83,9 +83,8 @@ const VideoPart = () => {
               <br className="hidden sm:block" /> Bağlıyız
             </h2>
             <p className="text-antrasit font-extralight text-base sm:text-lg mb-6 sm:mb-7 md:mb-8">
-              Merkezimiz, çocuklarınızın güvenli bir şekilde oynayıp öğrenebileceği,
-              verimli vakit geçirebileceği ve yeni arkadaşlar edinebileceği,
-              uzman gözetiminde pozitif bir eğitim ortamı sunmak için tasarlanmıştır.
+            Merkezimiz, çocuklarınız için güvenli, eğlenceli ve öğretici bir dünya sunuyor!
+Uzman eğitmenler eşliğinde, keşfederek öğrenebilecekleri, verimli vakit geçirebilecekleri ve yeni arkadaşlıklar kurabilecekleri özel bir ortam sağlıyoruz
             </p>
             <Button
               className="px-6 py-8 xl:px-8 xl:py-9 text-base sm:text-lg bg-darklila hover:bg-orange text-white"

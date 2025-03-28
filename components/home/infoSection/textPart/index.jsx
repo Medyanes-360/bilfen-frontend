@@ -12,9 +12,9 @@ const TextPart = () => {
         </div>
         <div>
           <p className="font-light text-base sm:text-lg md:text-xl text-darkGray leading-relaxed">
-            Çocuğunuzun öğrenme yolculuğunu özel kılmak ister misiniz?
-            Çocukların özgürce keşfedip öğrenebileceği bir ortam mı arıyorsunuz?
-            Anaokulumuzda bilimden sanata, oyunlardan dil gelişimine kadar birçok eğitici program sunuyoruz!
+          Çocuğunuzun eğitim yolculuğunu unutulmaz kılmaya ne dersiniz?
+Merak eden, keşfeden ve öğrenen mutlu çocuklar için özel bir ortam sunuyoruz!
+Bilimden sanata, oyunlardan dil gelişimine kadar zengin eğitim programlarımızla çocuğunuzun geleceğine değer katın.
           </p>
         </div>
       </div>

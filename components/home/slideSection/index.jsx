@@ -14,32 +14,33 @@ import Link from "next/link";
 const slides = [
   {
     image: "/images/img1.webp",
-    title: "Okul öncesi keşif dünyası",
+    title: "Eğitimle Keşfedin, Geleceği Şekillendirin",
     highlight: "",
-    venue: "BİLFEN'de",
-    description: "Çocuklar için keşfetmeye, öğrenmeye ve eğlenmeye teşvik eden aktiviteler",
-    buttonText: "Hakkımızda",
+    venue: "BİLFEN Online",
+    description: "Çocuklarınız için interaktif, eğlenceli ve öğretici online eğitim içerikleriyle öğrenme dünyasını keşfedin.",
+    buttonText: "Daha Fazla Bilgi",
     buttonLink: "/faq",
   },
   {
     image: "/images/img2.webp",
-    title: "Öğrenirken eğleniyoruz",
+    title: "Öğrenirken Eğleniyorlar",
     highlight: "",
-    venue: "Büyümek ve keşfetmek için",
-    description: "Çocuklarınızın yaratıcılığını geliştirecek eğitici etkinlikler mi arıyorsunuz?",
-    buttonText: "Tıkla öğren!",
+    venue: "BİLFEN Online",
+    description: "Çocuklarınızın yaratıcılığını geliştirecek eğitici online içerikler ile öğrenme sürecini daha eğlenceli hale getirin.",
+    buttonText: "Nasıl Çalıştığını Görün",
     buttonLink: "/how-it-works",
   },
   {
     image: "/images/img3.webp",
-    title: "Eğitici etkinlikler",
+    title: "Eğitici Online Etkinlikler",
     highlight: "",
-    venue: "BİLFEN'de",
-    description: "Öğrenmeyi oluşturan etkinliklerimizin keyfini çıkarın",
-    buttonText: "İletişime geçelim",
+    venue: "BİLFEN Online",
+    description: "Bilfen'in eğitici online içerikleri ile çocuklarınızın gelişimini her adımda destekleyin.",
+    buttonText: "Bize Ulaşın",
     buttonLink: "/contact",
   },
 ];
+
 
 const SlideSection = () => {
   const [api, setApi] = useState(null);
