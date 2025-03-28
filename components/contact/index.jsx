@@ -18,11 +18,23 @@ const ContactMeSection = () => {
         .email("Geçerli bir email adresi girin.")
         .required("Email adresi zorunludur."),
     }),
-    onSubmit: (values, { resetForm }) => {
-      console.log("Form submitted:", values);
-      setIsSubmitted(true);
-      resetForm();
-      setTimeout(() => setIsSubmitted(false), 3000);
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        });
+
+        if (!response.ok) throw new Error("Gönderilemedi");
+
+        setIsSubmitted(true);
+        resetForm();
+        setTimeout(() => setIsSubmitted(false), 3000);
+      } catch (err) {
+        alert("Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.");
+        console.error("Hata:", err);
+      }
     },
   });
 
