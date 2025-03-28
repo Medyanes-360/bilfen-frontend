@@ -28,7 +28,7 @@ function generateCalendarDays(centerDate = new Date(), range = 7) {
   return days;
 }
 
-const Calendar = ({ selectedDate, onSelectDate }) => {
+const Calendar = ({ selectedDate }) => {
   const scrollRef = useRef(null);
   const [mounted, setMounted] = useState(false);
   const days = useMemo(() => generateCalendarDays(), []);
@@ -141,15 +141,14 @@ const Calendar = ({ selectedDate, onSelectDate }) => {
               day.fullDate.toDateString();
 
           return (
-            <button
+            <div
               key={day.id}
               id={`day-${day.id}`}
               ref={index === todayIndex ? todayRef : null}
-              onClick={() => onSelectDate(day.fullDate)}
               className={`
                 flex flex-col items-center justify-center p-2 sm:p-3 min-w-[70px] sm:min-w-[85px] rounded-xl
-                transition-all duration-300 ease-in-out cursor-pointer
-                hover:shadow-md hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400
+                transition-all duration-300 ease-in-out
+                hover:shadow-md hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400
                 ${day.isToday ? "day-today" : ""}
                 ${
                   isSelected
@@ -170,7 +169,7 @@ const Calendar = ({ selectedDate, onSelectDate }) => {
                   <span className="text-xs font-medium">Bu gün</span>
                 </div>
               )}
-            </button>
+            </div>
           );
         })}
       </div>

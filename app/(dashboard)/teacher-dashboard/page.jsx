@@ -52,7 +52,6 @@ export default function Home() {
 
   const handleDateChange = (dateObj) => {
     setSelectedDate(dateObj);
-    updateMaterialsForDate(dateObj);
   };
 
   const updateMaterialsForDate = (date) => {
@@ -114,19 +113,10 @@ export default function Home() {
                   </Link>
                 </div>
 
-                <Calendar
-                  selectedDate={selectedDate}
-                  onSelectDate={handleDateChange}
-                />
+                <Calendar selectedDate={selectedDate} />
               </div>
 
               <div className="flex justify-end gap-4 mb-4">
-                {/* <button
-                onClick={() => setShowExtraMaterials(!showExtraMaterials)}
-                className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
-              >
-                {showExtraMaterials ? "Gizle" : "Extra Materyaller"}
-              </button> */}
                 <button
                   onClick={() => setShowArchive(true)}
                   className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
