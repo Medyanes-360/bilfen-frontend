@@ -50,9 +50,6 @@ export default function Home() {
     setCurrentDate(formattedDate);
   }, []);
 
-  const handleDateChange = (dateObj) => {
-    setSelectedDate(dateObj);
-  };
 
   const updateMaterialsForDate = (date) => {
     const formatted = formatDate(date);
