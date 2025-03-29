@@ -1,56 +1,40 @@
-"use client";
+"use client"
 
-import React, { useRef, useEffect, useState } from "react";
+import { useState, useEffect } from "react"
 
 const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
-  const [visibleDays, setVisibleDays] = useState([]); // State for visible days
-  const scrollRef = useRef(null);
+  const [startIndex, setStartIndex] = useState(0) // Index of the first visible day
+  const visibleDaysCount = 5 // Maximum number of days to display at once
 
-  // Filter visible days dynamically on the client side
+  // Ensure the current day is visible on page load
   useEffect(() => {
-    const todayIndex = days.findIndex((d) => d.isToday);
-    const filteredDays = days.filter((day, index) => {
-      return index >= todayIndex - 3 && index <= todayIndex + 3;
-    });
-    setVisibleDays(filteredDays);
-  }, [days]);
-
-  // Center today's date when the page loads
-  useEffect(() => {
-    if (scrollRef.current) {
-      const todayElement = scrollRef.current.querySelector('[data-today="true"]');
-      if (todayElement) {
-        todayElement.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
-      }
+    const todayIndex = days.findIndex((d) => d.isToday)
+    if (todayIndex !== -1) {
+      const start = Math.max(0, todayIndex - Math.floor(visibleDaysCount / 2))
+      setStartIndex(start)
     }
-  }, [visibleDays]);
+  }, [days])
 
-  // Scroll left and right functionality
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: -100,
-        behavior: "smooth",
-      });
-    }
-  };
+  // Get the visible days based on the current startIndex
+  const visibleDays = days.slice(startIndex, startIndex + visibleDaysCount)
 
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({
-        left: 100,
-        behavior: "smooth",
-      });
+  // Handle left arrow click
+  const handleScrollLeft = () => {
+    if (startIndex > 0) {
+      setStartIndex((prev) => prev - 1)
     }
-  };
+  }
+
+  // Handle right arrow click
+  const handleScrollRight = () => {
+    if (startIndex + visibleDaysCount < days.length) {
+      setStartIndex((prev) => prev + 1)
+    }
+  }
 
   return (
     <section className="mb-8">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between gap-x-4 mb-4">
         <h2 className="text-xl font-bold text-orange-600 flex items-center gap-2">
           <span className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center transition-transform hover:scale-110">
             📅
@@ -59,55 +43,71 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
         </h2>
       </div>
 
-      <div className="relative">
-        {/* Scrollable Calendar */}
-        <div
-          ref={scrollRef}
-          className="overflow-x-auto pb-2 hide-scrollbar md:overflow-visible"
-        >
-          <div className="flex gap-3 w-max md:w-full md:gap-2 md:justify-between">
+      <div className="relative w-full">
+        {/* Calendar Container with Arrows */}
+        <div className="flex items-center justify-between w-full">
+          {/* Left Arrow */}
+          <button
+            onClick={handleScrollLeft}
+            disabled={startIndex === 0}
+            className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 z-10 transition-all duration-200 ${
+              startIndex === 0
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer hover:bg-orange-50 hover:text-orange-500 hover:shadow-lg"
+            }`}
+            aria-label="Previous days"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+
+          {/* Visible Days - Full Width */}
+          <div className="flex flex-1 justify-between px-2">
             {visibleDays.map((day) => (
               <div
                 key={day.id}
                 data-today={day.isToday ? "true" : "false"}
-                onClick={() => onSelectDay(day)}
-                className={`
-                  flex flex-col items-center px-3 py-3 rounded-xl cursor-pointer transition-all duration-200
-                  w-[80px] flex-shrink-0 md:w-auto md:flex-1
-                  ${day.isToday
-                    ? "bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200"
-                    : day.isPast
-                    ? "bg-gray-100 hover:bg-gray-200"
-                    : "bg-gray-50 hover:bg-gray-100"
+                onClick={() => {
+                  if (day.isToday) {
+                    onSelectDay(day) // Allow selection only for the current day
                   }
-                  ${day.id === selectedDay?.id && !day.isToday
-                    ? "ring-2 ring-orange-300 shadow-md"
-                    : "hover:shadow-sm hover:translate-y-[-2px]"
+                }}
+                className={`flex flex-col items-center py-3 rounded-xl cursor-pointer transition-all duration-200
+                  flex-1
+                  ${
+                    day.isToday
+                      ? "bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200"
+                      : day.isPast || day.isFuture
+                        ? "bg-gray-100 cursor-not-allowed"
+                        : "bg-gray-50 hover:bg-gray-100"
                   }
-                  ${day.isPast ? "opacity-90 hover:opacity-100" : ""}
-                `}
+                  ${
+                    day.id === selectedDay?.id && !day.isToday
+                      ? "ring-2 ring-orange-300 shadow-md"
+                      : "hover:shadow-sm hover:translate-y-[-2px]"
+                  }
+                  ${day.isPast ? "opacity-90 hover:opacity-100" : ""}`}
               >
-                <div
-                  className={`
-                    text-sm font-medium
-                    ${day.isToday ? "text-white/90" : "text-gray-600"}
-                  `}
-                >
+                <div className={`text-sm font-medium ${day.isToday ? "text-white/90" : "text-gray-600"}`}>
                   {day.dayName}
                 </div>
 
                 <div
-                  className={`
-                    w-10 h-10 md:w-9 md:h-9 rounded-full flex items-center justify-center my-1.5
-                    ${day.isToday
-                      ? "bg-white text-orange-500 font-bold shadow-inner"
-                      : day.isPast
-                      ? "bg-white text-gray-700 font-medium"
-                      : "bg-white/70 text-gray-500"
+                  className={`w-8 h-8 rounded-full flex items-center justify-center my-1.5
+                    ${
+                      day.isToday
+                        ? "bg-white text-orange-500 font-bold shadow-inner"
+                        : day.isPast
+                          ? "bg-white text-gray-700 font-medium"
+                          : "bg-white/70 text-gray-500"
                     }
                     ${day.id === selectedDay?.id && !day.isToday ? "ring-1 ring-orange-200" : ""}
-                    transition-transform duration-200 hover:scale-110
-                  `}
+                    transition-transform duration-200 hover:scale-110`}
                 >
                   {day.date}
                 </div>
@@ -117,70 +117,37 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
                     Bugün
                   </span>
                 ) : day.isPast ? (
-                  <div className="h-1.5 w-10 md:w-8 bg-gray-200 rounded-full overflow-hidden mt-1">
-                    <div
-                      className="h-full bg-green-400 rounded-full"
-                      style={{ width: `${(day.tasksDone / day.totalTasks) * 100}%` }}
-                    ></div>
-                  </div>
+                  <span className="text-xs text-gray-400 italic truncate max-w-full">Geçmiş</span>
                 ) : (
-                  <span className="text-xs text-gray-400 italic truncate max-w-full">
-                    Yakında
-                  </span>
+                  <span className="text-xs text-gray-400 italic truncate max-w-full">Yakında</span>
                 )}
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Mobile Scroll Indicators */}
-        <div
-          onClick={scrollLeft}
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full shadow-md flex items-center justify-center text-gray-500 cursor-pointer z-10 md:hidden"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+          {/* Right Arrow */}
+          <button
+            onClick={handleScrollRight}
+            disabled={startIndex + visibleDaysCount >= days.length}
+            className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 z-10 transition-all duration-200 ${
+              startIndex + visibleDaysCount >= days.length
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer hover:bg-orange-50 hover:text-orange-500 hover:shadow-lg"
+            }`}
+            aria-label="Next days"
           >
-            <path
-              fillRule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-        <div
-          onClick={scrollRight}
-          className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full shadow-md flex items-center justify-center text-gray-500 cursor-pointer z-10 md:hidden"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
-            />
-          </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
         </div>
       </div>
-
-      <style jsx global>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </section>
-  );
-};
+  )
+}
 
 export default DailyCalendar;
