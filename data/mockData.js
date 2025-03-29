@@ -2,7 +2,7 @@
 export const mockUserData = {
   id: 1,
   name: 'Ayşe',
-  avatar: '👧',
+  avatar: '☺️',
   completedTasks: 13,
   totalTasks: 20
 };
@@ -16,46 +16,50 @@ export const mockLearningPathData = [
       { name: "Matematik Bulmacası", url: "/document.pdf" },
       { name: "Matematik Bulmacası", url: "/document.pdf" },
     ],
-    date: "2025-03-27",
+    date: "2025-03-29",
     icon: '🧮',
     typeIcon: '🎮',
     completed: true,
     current: false,
-    isNew: false
+    isExtraMaterial: true
   },
   {
     id: 2,
     title: 'Günlük Okuma Etkinliği',
     description: '"Küçük Kaşifler" hikayesi',
     materials: ["document.pdf", "document.pdf"],
-    date: "2025-03-27",
+    date: "2025-03-29",
     icon: '📚',
     typeIcon: '📖',
     completed: true,
     current: false,
-    isNew: false
+    isExtraMaterial: true
   },
   {
     id: 3,
     title: 'Bilim Deneyi İzleme',
     description: 'Mıknatısların gücü (5 dk)',
-    date: "2025-03-23",
+    materials: [
+      { name: 'Mıknatısların gücü (5 dk)', url: "/example-video.mp4" },
+      { name: "Matematik Bulmacası", url: "/document.pdf" },
+    ],
+    date: "2025-03-29",
     icon: '🧪',
     typeIcon: '🎬',
     completed: false,
     current: true,
-    isNew: true
+    isExtraMaterial: false
   },
   {
     id: 4,
     title: 'İngilizce Çalışması',
     description: 'Hayvan isimleri aktivitesi',
-    date: "2025-03-22",
+    date: "2025-03-29",
     icon: '🇬🇧',
     typeIcon: '🧩',
     completed: false,
     current: false,
-    isNew: false
+    isExtraMaterial: true
   }
 ];
 

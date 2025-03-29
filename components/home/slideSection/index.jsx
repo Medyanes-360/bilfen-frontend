@@ -114,7 +114,7 @@ const SlideSection = () => {
             <CarouselItem key={index} className="pl-0 px-2">
               <div className="cursor-pointer grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 items-center p-3 md:p-5 lg:p-8 xl:p-12 font-poppins">
                 {/* Image container with improved animations and responsiveness */}
-                <div className="flex items-center justify-center relative overflow-hidden rounded-2xl shadow-xl">
+                <div className="flex items-center justify-center relative overflow-hidden rounded-2xl">
                   <div className={`transition-all duration-1000 ${current === index ? 'scale-100 opacity-100' : 'scale-90 opacity-0'}`}>
                     <Image
                       src={slide.image || "/images/img1.svg"}
