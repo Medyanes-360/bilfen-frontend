@@ -12,7 +12,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import Icons from "@/public/icons/Icons";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 const MobileNav = ({ menuItems, setActiveModal }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -109,7 +109,20 @@ const MobileNav = ({ menuItems, setActiveModal }) => {
                 </li>
               ))}
 
-              {!session && (
+              {session ? (
+                <li>
+                  <Collapsible>
+                    <button
+                      onClick={() =>
+                        signOut({ redirect: true, callbackUrl: "/" })
+                      }
+                      className="cursor-pointer text-orange font-poppins text-base font-semibold block w-full py-2"
+                    >
+                      Çıkış Yap
+                    </button>
+                  </Collapsible>
+                </li>
+              ) : (
                 <li>
                   <Collapsible>
                     <button
