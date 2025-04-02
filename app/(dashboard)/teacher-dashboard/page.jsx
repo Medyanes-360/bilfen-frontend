@@ -1,6 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import { MATERIALS_DATA } from "@/data/teacherDashboardMockData";
 import Header from "@/components/teacherDashboard/header";
 import MaterialList from "@/components/teacherDashboard/materialList";
@@ -21,6 +20,28 @@ export default function Home() {
   const [isExtraOpen, setIsExtraOpen] = useState(true);
 
   const [showArchive, setShowArchive] = useState(false);
+
+  // Materials: fetch data which date is the same as today
+  // Extra Materials: fetch data which isExtraMaterial is true
+  // Archive: fetch data which isExtraMaterial is false and date is older than today
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const request = await fetch("http://localhost:3001/api/contents");
+        if (!request.ok) {
+          throw new Error(`HTTP error! Status: ${request.status}`);
+        }
+
+        const data = await request.json();
+        console.log(data);
+      } catch (error) {
+        console.error("Error fetching data:", error.message);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const today = new Date();
@@ -49,7 +70,6 @@ export default function Home() {
 
     setCurrentDate(formattedDate);
   }, []);
-
 
   const updateMaterialsForDate = (date) => {
     const formatted = formatDate(date);
@@ -95,19 +115,13 @@ export default function Home() {
 
               {/* Takvim Kartı */}
               <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6 overflow-hidden">
-                <div className="flex justify-between items-center p-4 border-b border-gray-100">
+                <div className="flex items-center p-4 border-b border-gray-100">
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📅</span>
                     <h2 className="text-lg font-semibold text-gray-800">
                       Takvim
                     </h2>
                   </div>
-                  <Link
-                    href="#"
-                    className="text-blue-600 text-sm font-medium hover:underline"
-                  >
-                    Tümünü Gör ›
-                  </Link>
                 </div>
 
                 <Calendar selectedDate={selectedDate} />

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 // /access-settings get req
 
-function generateCalendarDays(centerDate = new Date(), range = 7) {
+function generateCalendarDays(centerDate = new Date(), range = 14) {
   const days = [];
 
   for (let i = -range; i <= range; i++) {
