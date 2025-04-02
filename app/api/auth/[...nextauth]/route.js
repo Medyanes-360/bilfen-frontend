@@ -6,31 +6,30 @@ export const authOptions = {
     CredentialsProvider({
       name: "T.C. Kimlik ile Giriş",
       credentials: {
-        tc: { label: "T.C. Kimlik No", type: "text" },
+        tc: { label: "T.C. Kimlik No", type: "text", placeholder: "TC No" },
         password: { label: "Şifre", type: "password" },
       },
       async authorize(credentials) {
         const { tc, password } = credentials ?? {};
 
-        if (tc === "11111111111" && password === "123456") {
-          return {
-            id: "1",
-            name: "Ahmet Yılmaz",
-            tc: "11111111111",
-            role: "student", 
-          };
-        }
-      
-        if (tc === "22222222222" && password === "123456") {
-          return {
-            id: "2",
-            name: "Mehmet Öğretmen",
-            tc: "22222222222",
-            role: "teacher",
-          };
-        }
+        try {
+          // backend projesindeki verify API endpoint'ine istek atılır
+          const response = await fetch(`${process.env.BACKEND_URL}/api/auth/verify`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tc, password }),
+          });
 
-        return null;
+          if (!response.ok) {
+            return null;
+          }
+
+          const user = await response.json();
+          return user;
+        } catch (error) {
+          console.error("Giriş doğrulama hatası:", error);
+          return null;
+        }
       },
     }),
   ],
@@ -41,13 +40,13 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role; // 👈 add role to token
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (token?.role) {
-        session.user.role = token.role; // 👈 expose to session
+        session.user.role = token.role;
       }
       return session;
     },
