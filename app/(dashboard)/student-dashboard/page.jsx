@@ -216,15 +216,15 @@ export default function Home() {
   // Handle task completion
   const handleCompleteTask = async (taskId) => {
     try {
-      // Update the task in the local state immediately for better UX
+      // Update the task in the local state
       setContents((prevContents) =>
         prevContents.map((content) => (content._id === taskId ? { ...content, completed: true } : content)),
       )
 
-      // Close the task popup
+     
       setIsTaskPopupOpen(false)
 
-      // No need to call an API endpoint as you mentioned
+    
     } catch (error) {
       console.error("Error completing task:", error)
     }
