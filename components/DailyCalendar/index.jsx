@@ -1,36 +1,36 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
 const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
-  const [startIndex, setStartIndex] = useState(0) // Index of the first visible day
-  const visibleDaysCount = 5 // Maximum number of days to display at once
+  const [startIndex, setStartIndex] = useState(0); // Index of the first visible day
+  const visibleDaysCount = 5; // Maximum number of days to display at once
 
   // Ensure the current day is visible on page load
   useEffect(() => {
-    const todayIndex = days.findIndex((d) => d.isToday)
+    const todayIndex = days.findIndex((d) => d.isToday);
     if (todayIndex !== -1) {
-      const start = Math.max(0, todayIndex - Math.floor(visibleDaysCount / 2))
-      setStartIndex(start)
+      const start = Math.max(0, todayIndex - Math.floor(visibleDaysCount / 2));
+      setStartIndex(start);
     }
-  }, [days])
+  }, [days]);
 
   // Get the visible days based on the current startIndex
-  const visibleDays = days.slice(startIndex, startIndex + visibleDaysCount)
+  const visibleDays = days.slice(startIndex, startIndex + visibleDaysCount);
 
   // Handle left arrow click
   const handleScrollLeft = () => {
     if (startIndex > 0) {
-      setStartIndex((prev) => prev - 1)
+      setStartIndex((prev) => prev - 1);
     }
-  }
+  };
 
   // Handle right arrow click
   const handleScrollRight = () => {
     if (startIndex + visibleDaysCount < days.length) {
-      setStartIndex((prev) => prev + 1)
+      setStartIndex((prev) => prev + 1);
     }
-  }
+  };
 
   return (
     <section className="mb-8">
@@ -70,11 +70,11 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
           <div className="flex flex-1 justify-between px-2">
             {visibleDays.map((day) => (
               <div
-                key={day.id}
+                key={day.id || day.date.toISOString()} // Ensure a unique key
                 data-today={day.isToday ? "true" : "false"}
                 onClick={() => {
                   if (day.isToday) {
-                    onSelectDay(day) // Allow selection only for the current day
+                    onSelectDay(day); // Allow selection only for the current day
                   }
                 }}
                 className={`flex flex-col items-center py-3 rounded-xl cursor-pointer transition-all duration-200
@@ -83,8 +83,8 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
                     day.isToday
                       ? "bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200"
                       : day.isPast || day.isFuture
-                        ? "bg-gray-100 cursor-not-allowed"
-                        : "bg-gray-50 hover:bg-gray-100"
+                      ? "bg-gray-100 cursor-not-allowed"
+                      : "bg-gray-50 hover:bg-gray-100"
                   }
                   ${
                     day.id === selectedDay?.id && !day.isToday
@@ -103,13 +103,13 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
                       day.isToday
                         ? "bg-white text-orange-500 font-bold shadow-inner"
                         : day.isPast
-                          ? "bg-white text-gray-700 font-medium"
-                          : "bg-white/70 text-gray-500"
+                        ? "bg-white text-gray-700 font-medium"
+                        : "bg-white/70 text-gray-500"
                     }
                     ${day.id === selectedDay?.id && !day.isToday ? "ring-1 ring-orange-200" : ""}
                     transition-transform duration-200 hover:scale-110`}
                 >
-                  {day.date}
+                  {day.date.toLocaleDateString("tr-TR")} {/* Convert Date to String */}
                 </div>
 
                 {day.isToday ? (
@@ -139,7 +139,7 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4-4a1 1 0 010 1.414l-4-4a1 1 0 01-1.414 0z"
                 clipRule="evenodd"
               />
             </svg>
@@ -147,7 +147,7 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
 export default DailyCalendar;

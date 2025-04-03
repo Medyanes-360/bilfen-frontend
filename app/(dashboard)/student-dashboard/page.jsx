@@ -83,7 +83,7 @@ export default function Home() {
       try {
         setIsLoading(true)
         // Using the full URL with the API base
-        const response = await fetch(`${API_BASE_URL}/api/contents/user`)
+        const response = await fetch(`${API_BASE_URL}/api/contents`)
 
         if (!response.ok) {
           throw new Error("Failed to fetch user data")
