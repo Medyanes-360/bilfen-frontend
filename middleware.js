@@ -11,14 +11,20 @@ export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
+  // 👉 Root sayfadaysa ve giriş yapılmışsa yönlendir
+  if (pathname === "/" && token) {
+    const userRole = token?.role;
+    const expectedPath = protectedRoutes[userRole];
+
+    return NextResponse.redirect(new URL(expectedPath, req.url));
+  }
+
   const isProtected = Object.values(protectedRoutes).some((path) =>
     pathname.startsWith(path)
   );
 
-  // ✅ Allow if route is not protected
   if (!isProtected) return NextResponse.next();
 
-  // 🔐 Not logged in → redirect to login
   if (!token) {
     return NextResponse.redirect(new URL("/", req.url));
   }
@@ -26,7 +32,6 @@ export async function middleware(req) {
   const userRole = token?.role;
   const expectedPath = protectedRoutes[userRole];
 
-  // ✅ If user is accessing their own dashboard → allow
   if (pathname.startsWith(expectedPath)) {
     return NextResponse.next();
   }
