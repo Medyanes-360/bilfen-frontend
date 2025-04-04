@@ -14,7 +14,7 @@ export const authOptions = {
 
         try {
           // backend projesindeki verify API endpoint'ine istek atılır
-          const response = await fetch(`${process.env.BACKEND_URL}/api/auth/verify`, {
+          const response = await fetch(`http://localhost:3001/api/auth/verify`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tc, password }),
