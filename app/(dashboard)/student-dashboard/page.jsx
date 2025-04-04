@@ -20,9 +20,6 @@ import TaskModal from "@/components/studentDashboard/modals/TaskModal"
 import MaterialPreviewModal from "@/components/studentDashboard/modals/MaterialPreviewModal"
 import ArchiveModal from "@/components/modal/studentArchive/archive-modal"
 
-// API base URL
-const API_BASE_URL = "http://localhost:3001"
-
 export default function Home() {
   const { data: session } = useSession()
   const [userData, setUserData] = useState(null)
@@ -83,7 +80,7 @@ export default function Home() {
       try {
         setIsLoading(true)
         // Using the full URL with the API base
-        const response = await fetch(`${API_BASE_URL}/api/contents`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents`)
 
         if (!response.ok) {
           throw new Error("Failed to fetch user data")
@@ -150,7 +147,7 @@ export default function Home() {
       try {
         setIsLoading(true)
         // Using the full URL with the API base
-        const response = await fetch(`${API_BASE_URL}/api/contents`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents`)
 
         if (!response.ok) {
           throw new Error("Failed to fetch contents")
@@ -194,7 +191,7 @@ export default function Home() {
   const handleTaskClick = async (task) => {
     try {
       // Fetch the latest task data when clicked
-      const response = await fetch(`${API_BASE_URL}/api/contents/${task._id}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task._id}`)
 
       if (response.ok) {
         const updatedTask = await response.json()

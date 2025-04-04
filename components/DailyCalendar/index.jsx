@@ -84,7 +84,7 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
           </button>
 
           {/* Visible Days - Full Width */}
-          <div className="flex flex-1 justify-between px-2">
+          <div className="flex flex-1 justify-between px-2 gap-x-2">
             {visibleDays.map((day) => {
               const isPast = isPastDay(day)
               const isFuture = isFutureDay(day)
