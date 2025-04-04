@@ -10,7 +10,7 @@ import { getSession } from "next-auth/react";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
-  const [materials, setMaterials] = useState([]);
+  const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
@@ -21,26 +21,22 @@ export default function Home() {
 
   const [showArchive, setShowArchive] = useState(false);
 
-  // Materials: fetch data which date is the same as today
-  // Extra Materials: fetch data which isExtraMaterial is true
-  // Archive: fetch data which isExtraMaterial is false and date is older than today
-
   useEffect(() => {
-    async function fetchData() {
+    async function fetchDailyMaterials() {
       try {
-        const request = await fetch("http://localhost:3001/api/contents");
+        const request = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true`);
         if (!request.ok) {
           throw new Error(`HTTP error! Status: ${request.status}`);
         }
 
         const data = await request.json();
-        console.log(data);
+        setDailyMaterials(data);
       } catch (error) {
         console.error("Error fetching data:", error.message);
       }
     }
 
-    fetchData();
+    fetchDailyMaterials();
   }, []);
 
   useEffect(() => {
@@ -77,7 +73,7 @@ export default function Home() {
       (material) =>
         material.date === formatted && material.isExtraMaterial === false
     );
-    setMaterials(filtered);
+    setDailyMaterials(filtered);
   };
 
   const filterExtraMaterials = () => {
