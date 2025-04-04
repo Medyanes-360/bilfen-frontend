@@ -32,6 +32,24 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
     }
   }
 
+  // to determine if a day is in the past
+  const isPastDay = (day) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const dayDate = new Date(day.date)
+    dayDate.setHours(0, 0, 0, 0)
+    return dayDate < today
+  }
+
+  // to determine if a day is in the future
+  const isFutureDay = (day) => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const dayDate = new Date(day.date)
+    dayDate.setHours(0, 0, 0, 0)
+    return dayDate > today
+  }
+
   return (
     <section className="mb-8">
       <div className="flex items-center justify-between gap-x-4 mb-4">
@@ -50,11 +68,10 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
           <button
             onClick={handleScrollLeft}
             disabled={startIndex === 0}
-            className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 z-10 transition-all duration-200 ${
-              startIndex === 0
+            className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 z-10 transition-all duration-200 ${startIndex === 0
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer hover:bg-orange-50 hover:text-orange-500 hover:shadow-lg"
-            }`}
+              }`}
             aria-label="Previous days"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -68,72 +85,75 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
 
           {/* Visible Days - Full Width */}
           <div className="flex flex-1 justify-between px-2">
-            {visibleDays.map((day) => (
-              <div
-                key={day.id}
-                data-today={day.isToday ? "true" : "false"}
-                onClick={() => {
-                  if (day.isToday) {
-                    onSelectDay(day) // Allow selection only for the current day
-                  }
-                }}
-                className={`flex flex-col items-center py-3 rounded-xl cursor-pointer transition-all duration-200
-                  flex-1
-                  ${
-                    day.isToday
-                      ? "bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200"
-                      : day.isPast || day.isFuture
+            {visibleDays.map((day) => {
+              const isPast = isPastDay(day)
+              const isFuture = isFutureDay(day)
+
+              return (
+                <div
+                  key={day.date.toISOString()} // Ensure a unique key
+                  data-today={day.isToday ? "true" : "false"}
+                  onClick={() => {
+                    if (day.isToday || (!isPast && !isFuture)) {
+                      onSelectDay(day) // Allow selection only for today and valid days
+                    }
+                  }}
+                  className={`flex flex-col items-center py-3 rounded-xl transition-all duration-200
+                    flex-1
+                    ${day.isToday
+                      ? "bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200 cursor-pointer"
+                      : isPast
                         ? "bg-gray-100 cursor-not-allowed"
-                        : "bg-gray-50 hover:bg-gray-100"
-                  }
-                  ${
-                    day.id === selectedDay?.id && !day.isToday
+                        : isFuture
+                          ? "bg-gray-100 cursor-not-allowed"
+                          : "bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                    }
+                    ${selectedDay && day.date.toDateString() === selectedDay.date.toDateString() && !day.isToday
                       ? "ring-2 ring-orange-300 shadow-md"
                       : "hover:shadow-sm hover:translate-y-[-2px]"
-                  }
-                  ${day.isPast ? "opacity-90 hover:opacity-100" : ""}`}
-              >
-                <div className={`text-sm font-medium ${day.isToday ? "text-white/90" : "text-gray-600"}`}>
-                  {day.dayName}
-                </div>
+                    }
+                    ${isPast ? "opacity-90" : ""}`}
+                >
+                  <div className={`text-sm font-medium ${day.isToday ? "text-white/90" : "text-gray-600"}`}>
+                    {day.weekday}
+                  </div>
 
-                <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center my-1.5
-                    ${
-                      day.isToday
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center my-1.5
+                      ${day.isToday
                         ? "bg-white text-orange-500 font-bold shadow-inner"
-                        : day.isPast
+                        : isPast
                           ? "bg-white text-gray-700 font-medium"
                           : "bg-white/70 text-gray-500"
-                    }
-                    ${day.id === selectedDay?.id && !day.isToday ? "ring-1 ring-orange-200" : ""}
-                    transition-transform duration-200 hover:scale-110`}
-                >
-                  {day.date}
-                </div>
+                      }
+                      ${selectedDay && day.date.toDateString() === selectedDay.date.toDateString() && !day.isToday ? "ring-1 ring-orange-200" : ""}
+                      transition-transform duration-200 ${day.isToday ? "hover:scale-110" : ""}`}
+                  >
+                    {day.day} {/* Display just the day number */}
+                  </div>
 
-                {day.isToday ? (
-                  <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full text-white font-medium truncate max-w-full">
-                    Bugün
-                  </span>
-                ) : day.isPast ? (
-                  <span className="text-xs text-gray-400 italic truncate max-w-full">Geçmiş</span>
-                ) : (
-                  <span className="text-xs text-gray-400 italic truncate max-w-full">Yakında</span>
-                )}
-              </div>
-            ))}
+                  {day.isToday ? (
+                    <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full text-white font-medium truncate max-w-full">
+                      Bugün
+                    </span>
+                  ) : isPast ? (
+                    <span className="text-xs text-gray-400 italic truncate max-w-full">Geçmiş</span>
+                  ) : (
+                    <span className="text-xs text-gray-400 italic truncate max-w-full">Yakında</span>
+                  )}
+                </div>
+              )
+            })}
           </div>
 
           {/* Right Arrow */}
           <button
             onClick={handleScrollRight}
             disabled={startIndex + visibleDaysCount >= days.length}
-            className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 z-10 transition-all duration-200 ${
-              startIndex + visibleDaysCount >= days.length
+            className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 z-10 transition-all duration-200 ${startIndex + visibleDaysCount >= days.length
                 ? "opacity-50 cursor-not-allowed"
                 : "cursor-pointer hover:bg-orange-50 hover:text-orange-500 hover:shadow-lg"
-            }`}
+              }`}
             aria-label="Next days"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

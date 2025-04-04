@@ -1,33 +1,72 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { FileText, Video, Download, ExternalLink, X } from "lucide-react"
 import { getMaterialIcon } from "@/data/iconMockData"
 
 export default function ArchiveModal({ onClose, materials, isMobile }) {
     const [selectedDate, setSelectedDate] = useState(null)
+    const [pastDays, setPastDays] = useState([])
 
-    const pastDays = useMemo(() => {
-        const days = []
-        const today = new Date()
+    // Process materials to extract dates
+    useEffect(() => {
+        if (!materials || materials.length === 0) {
+            console.warn("No materials provided to Archive Modal")
+            return
+        }
 
-        // Get unique dates from materials
-        const uniqueDates = [...new Set(materials.map((material) => material.date))]
+        try {
+            const days = []
+            const today = new Date()
+            today.setHours(0, 0, 0, 0)
 
-        // Sort dates in descending order (newest first)
-        uniqueDates.sort((a, b) => new Date(b) - new Date(a))
+            // Get unique dates from materials
+            const uniqueDates = [
+                ...new Set(
+                    materials
+                        .map((material) => {
+                            // Check if date exists and is valid
+                            if (!material.date) {
+                                console.warn("Material missing date property:", material)
+                                return null
+                            }
+                            return material.date
+                        })
+                        .filter(Boolean),
+                ),
+            ]
 
-        // Create date objects for each unique date
-        uniqueDates.forEach((dateStr) => {
-            const date = new Date(dateStr)
-            days.push(date)
-        })
+            // (newest first)
+            uniqueDates.sort((a, b) => new Date(b) - new Date(a))
 
-        return days
-    }, [materials])
+            // Create date objects for each unique date
+            uniqueDates.forEach((dateStr) => {
+                try {
+                    const date = new Date(dateStr)
+                    if (!isNaN(date.getTime())) {
+                        days.push(date)
+                    } else {
+                        console.warn("Invalid date string:", dateStr)
+                    }
+                } catch (error) {
+                    console.error("Error parsing date:", dateStr, error)
+                }
+            })
+
+            setPastDays(days)
+
+            // Auto-select the first date if available
+            if (days.length > 0 && !selectedDate) {
+                setSelectedDate(days[0])
+            }
+        } catch (error) {
+            console.error("Error processing materials for dates:", error)
+        }
+    }, [materials, selectedDate])
 
     const formattedDate = (date) => {
+        if (!date) return ""
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
             2,
             "0",
@@ -41,6 +80,7 @@ export default function ArchiveModal({ onClose, materials, isMobile }) {
     }, [selectedDate, materials])
 
     const getMonthLabel = (date) => {
+        if (!date) return ""
         return date.toLocaleDateString("tr-TR", { month: "long", year: "numeric" })
     }
 
@@ -96,30 +136,37 @@ export default function ArchiveModal({ onClose, materials, isMobile }) {
                     {/* Left side: Days */}
                     <div className="md:w-1/4 md:border-r h-[40vh] md:h-[70vh] overflow-y-auto">
                         <div className="flex md:flex-col p-4 gap-3 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto no-scrollbar">
-                            {pastDays.map((day, index) => {
-                                const isSelected = selectedDate && day.toDateString() === selectedDate.toDateString()
+                            {pastDays.length > 0 ? (
+                                pastDays.map((day, index) => {
+                                    const isSelected = selectedDate && day.toDateString() === selectedDate.toDateString()
 
-                                return (
-                                    <button
-                                        key={index}
-                                        onClick={() => setSelectedDate(day)}
-                                        className={`
-                      flex flex-col items-center justify-center p-2 sm:p-3 min-w-[70px] sm:min-w-[85px] rounded-xl
-                      transition-all duration-300 ease-in-out cursor-pointer
-                      hover:shadow-md hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-orange-400
-                      ${isSelected
-                                                ? "transform -translate-y-1 shadow-lg border-2 border-orange-400 scale-105 bg-orange-500 text-white"
-                                                : "shadow-sm border border-gray-200 hover:border-orange-200 bg-white text-gray-800"
-                                            }
-                    `}
-                                    >
-                                        <span className="text-xs font-medium mb-1">
-                                            {day.toLocaleDateString("tr-TR", { weekday: "short" })}
-                                        </span>
-                                        <span className="text-xl font-bold">{day.getDate()}</span>
-                                    </button>
-                                )
-                            })}
+                                    return (
+                                        <button
+                                            key={index}
+                                            onClick={() => setSelectedDate(day)}
+                                            className={`
+                                                flex flex-col items-center justify-center p-2 sm:p-3 min-w-[70px] sm:min-w-[85px] rounded-xl
+                                                transition-all duration-300 ease-in-out cursor-pointer
+                                                hover:shadow-md hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-orange-400
+                                                ${isSelected
+                                                    ? "transform -translate-y-1 shadow-lg border-2 border-orange-400 scale-105 bg-orange-500 text-white"
+                                                    : "shadow-sm border border-gray-200 hover:border-orange-200 bg-white text-gray-800"
+                                                }
+                                            `}
+                                        >
+                                            <span className="text-xs font-medium mb-1">
+                                                {day.toLocaleDateString("tr-TR", { weekday: "short" })}
+                                            </span>
+                                            <span className="text-xl font-bold">{day.getDate()}</span>
+                                        </button>
+                                    )
+                                })
+                            ) : (
+                                <div className="flex flex-col items-center justify-center w-full h-full text-gray-400 p-4">
+                                    <div className="text-3xl mb-2">🗄️</div>
+                                    <p className="text-center text-sm italic">Arşivlenmiş içerik bulunamadı.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -128,8 +175,8 @@ export default function ArchiveModal({ onClose, materials, isMobile }) {
                         {selectedDate ? (
                             filteredMaterials.length > 0 ? (
                                 <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                                    {filteredMaterials.map((material) => (
-                                        <li key={material.id}>
+                                    {filteredMaterials.map((material, idx) => (
+                                        <li key={material.id || idx}>
                                             <button
                                                 onClick={() => handleMaterialClick(material)}
                                                 className="w-full flex items-start gap-3 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-left group border border-gray-200 hover:border-orange-200 hover:shadow-md"
@@ -181,8 +228,8 @@ export default function ArchiveModal({ onClose, materials, isMobile }) {
                             )
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                                <div className="text-5xl mb-4">📆</div>
-                                <p className="text-center italic">Lütfen sol taraftan bir tarih seçin.</p>
+                                <div className="text-5xl mb-4">📅</div>
+                                <p className="text-center italic">Lütfen takvimden bir tarih seçin.</p>
                             </div>
                         )}
                     </div>

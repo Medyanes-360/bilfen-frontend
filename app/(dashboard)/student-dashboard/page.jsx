@@ -20,10 +20,13 @@ import TaskModal from "@/components/studentDashboard/modals/TaskModal"
 import MaterialPreviewModal from "@/components/studentDashboard/modals/MaterialPreviewModal"
 import ArchiveModal from "@/components/modal/studentArchive/archive-modal"
 
+// API base URL
+const API_BASE_URL = "http://localhost:3001"
+
 export default function Home() {
   const { data: session } = useSession()
   const [userData, setUserData] = useState(null)
-  const [learningPath, setLearningPath] = useState([])
+  const [contents, setContents] = useState([])
   const [calendarData, setCalendarData] = useState([])
   const [selectedDay, setSelectedDay] = useState(null)
   const [isTaskPopupOpen, setIsTaskPopupOpen] = useState(false)
@@ -38,6 +41,13 @@ export default function Home() {
   const [archiveMaterials, setArchiveMaterials] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  // Derived state for learning path (today's tasks)
+  const learningPath = contents.filter((content) => {
+    const contentDate = new Date(content.date)
+    const today = new Date()
+    return contentDate.toDateString() === today.toDateString() && !content.isExtraMaterial
+  })
 
   // Progress calculations
   const completedTasks = learningPath.filter((task) => task.completed).length
@@ -68,39 +78,33 @@ export default function Home() {
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!session) return;
+      if (!session) return
 
       try {
-        setIsLoading(true);
-
-        // Extract the user ID from the session object
-        const id = session.user?.id;
-        if (!id) {
-          throw new Error("User ID is not available in the session");
-        }
-
-        const response = await fetch(`/api/tasks/${id}`);
+        setIsLoading(true)
+        // Using the full URL with the API base
+        const response = await fetch(`${API_BASE_URL}/api/contents`)
 
         if (!response.ok) {
-          throw new Error("Failed to fetch user data");
+          throw new Error("Failed to fetch user data")
         }
 
-        const data = await response.json();
-        setUserData(data);
+        const data = await response.json()
+        setUserData(data)
       } catch (error) {
-        console.error("Error fetching user data:", error);
-        setError("Failed to load user data");
+        console.error("Error fetching user data:", error)
+        setError("Failed to load user data")
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    fetchUserData();
-  }, [session]);
+    fetchUserData()
+  }, [session])
 
-  // Generate and fetch calendar data
+  // Generate calendar data
   useEffect(() => {
-    const generateCalendarData = async () => {
+    const generateCalendarData = () => {
       try {
         // Generate basic calendar structure (7 days)
         const today = new Date()
@@ -110,108 +114,76 @@ export default function Home() {
           const date = new Date(today)
           date.setDate(today.getDate() + i)
 
+          // Check if there are any contents for this day
+          const hasTask = contents.some((content) => {
+            const contentDate = new Date(content.date)
+            return contentDate.toDateString() === date.toDateString()
+          })
+
           days.push({
             date: date,
             day: date.getDate(),
             weekday: date.toLocaleDateString("tr-TR", { weekday: "short" }),
             isToday: i === 0,
-            hasTask: false,
+            hasTask: hasTask,
           })
-        }
-
-        // Fetch tasks for each day to determine which days have tasks
-        if (session) {
-          const startDate = new Date(days[0].date)
-          startDate.setHours(0, 0, 0, 0)
-
-          const endDate = new Date(days[days.length - 1].date)
-          endDate.setHours(23, 59, 59, 999)
-
-          const response = await fetch(
-            `/api/contents/calendar?start=${startDate.toISOString()}&end=${endDate.toISOString()}`,
-          )
-
-          if (response.ok) {
-            const taskDates = await response.json()
-
-            // Update calendar days with task information
-            days.forEach((day) => {
-              const dayString = day.date.toISOString().split("T")[0]
-              day.hasTask = taskDates.includes(dayString)
-            })
-          }
         }
 
         setCalendarData(days)
         setSelectedDay(days.find((day) => day.isToday))
       } catch (error) {
         console.error("Error generating calendar data:", error)
-        setError("Failed to load calendar")
+        setError("Failed to generate calendar")
       }
     }
 
-    generateCalendarData()
-  }, [session])
-
-  // Fetch learning path data (tasks for the selected day)
-  useEffect(() => {
-    const fetchLearningPath = async () => {
-      if (!session || !selectedDay) return
-
-      try {
-        setIsLoading(true)
-
-        // Format the selected date for the API
-        const selectedDate = selectedDay.date.toISOString().split("T")[0]
-        const response = await fetch(`/api/contents/learning-path?date=${selectedDate}`)
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch learning path data")
-        }
-
-        const data = await response.json()
-        setLearningPath(data)
-      } catch (error) {
-        console.error("Error fetching learning path data:", error)
-        setError("Failed to load tasks")
-      } finally {
-        setIsLoading(false)
-      }
+    if (contents.length > 0) {
+      generateCalendarData()
     }
+  }, [contents])
 
-    fetchLearningPath()
-  }, [session, selectedDay])
-
-  // Fetch materials (extra materials and archive)
+  // Fetch all contents
   useEffect(() => {
-    const fetchMaterials = async () => {
+    const fetchContents = async () => {
       if (!session) return
 
       try {
         setIsLoading(true)
-        const response = await fetch("/api/contents/materials")
+        // Using the full URL with the API base
+        const response = await fetch(`${API_BASE_URL}/api/contents`)
 
         if (!response.ok) {
-          throw new Error("Failed to fetch materials")
+          throw new Error("Failed to fetch contents")
         }
 
         const data = await response.json()
+        setContents(data)
 
-        // Split materials into extra materials and archive materials
-        const extra = data.filter((material) => !material.archived)
-        const archive = data.filter((material) => material.archived)
+        // Process materials
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        // Extra materials: isExtraMaterial is true
+        const extra = data.filter((item) => item.isExtraMaterial === true)
+
+        // Archive materials: isExtraMaterial is false and date is older than today
+        const archive = data.filter((item) => {
+          const itemDate = new Date(item.date)
+          itemDate.setHours(0, 0, 0, 0)
+          return !item.isExtraMaterial && itemDate < today
+        })
 
         setExtraMaterials(extra)
         setArchiveMaterials(archive)
       } catch (error) {
-        console.error("Error fetching materials:", error)
-        setError("Failed to load materials")
+        console.error("Error fetching contents:", error)
+        setError("Failed to load contents")
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchMaterials()
+    fetchContents()
   }, [session])
 
   const handleDaySelect = (day) => {
@@ -219,36 +191,39 @@ export default function Home() {
   }
 
   // Handle task click
-  const handleTaskClick = (task) => {
-    setSelectedTask(task)
-    setIsTaskPopupOpen(true)
+  const handleTaskClick = async (task) => {
+    try {
+      // Fetch the latest task data when clicked
+      const response = await fetch(`${API_BASE_URL}/api/contents/${task._id}`)
+
+      if (response.ok) {
+        const updatedTask = await response.json()
+        setSelectedTask(updatedTask)
+      } else {
+        // If fetch fails, use the existing task data
+        setSelectedTask(task)
+      }
+
+      setIsTaskPopupOpen(true)
+    } catch (error) {
+      console.error("Error fetching task details:", error)
+      // Fall back to using the existing task data
+      setSelectedTask(task)
+      setIsTaskPopupOpen(true)
+    }
   }
 
   // Handle task completion
   const handleCompleteTask = async (taskId) => {
     try {
-      const response = await fetch("/api/contents/complete-task", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ taskId }),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to complete task")
-      }
-
       // Update the task in the local state
-      setLearningPath((prevTasks) =>
-        prevTasks.map((task) => (task._id === taskId ? { ...task, completed: true } : task)),
+      setContents((prevContents) =>
+        prevContents.map((content) => (content._id === taskId ? { ...content, completed: true } : content)),
       )
-
-      // Close the task popup
       setIsTaskPopupOpen(false)
+      
     } catch (error) {
       console.error("Error completing task:", error)
-      alert("Failed to complete task. Please try again.")
     }
   }
 
@@ -315,7 +290,7 @@ export default function Home() {
   }
 
   // Loading state
-  if (isLoading && !userData && learningPath.length === 0) {
+  if (isLoading && !userData && contents.length === 0) {
     return <LoadingState />
   }
 
