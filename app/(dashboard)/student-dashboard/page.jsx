@@ -220,11 +220,8 @@ export default function Home() {
       setContents((prevContents) =>
         prevContents.map((content) => (content._id === taskId ? { ...content, completed: true } : content)),
       )
-
-     
       setIsTaskPopupOpen(false)
-
-    
+      
     } catch (error) {
       console.error("Error completing task:", error)
     }
