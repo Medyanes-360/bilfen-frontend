@@ -12,7 +12,7 @@ const InfoSection = () => {
       {/* Star and rocket animate image mouse moving effects */}
       <div
         id="next-section"
-        className="group z-20 relative flex flex-col xxl:flex-row gap-8 py-8 xl:py-20"
+        className="group z-20 relative flex flex-col gap-4 sm:gap-6 py-8 xl:py-20"
       >
         <Parallax
           sensitivity={0.05}
@@ -47,19 +47,7 @@ const InfoSection = () => {
         {/* Text Section */}
         <TextPart />
         {/* ImagePart */}
-        <div className="relative z-10 rounded-2xl sm:bg-[url('/images/happy.png')] bg-center bg-no-repeat bg-cover w-full h-[300px]">
-          {/* Content */}
-          <div className="absolute rounded-xl -top-6 right-0 z-20 bg-orange p-3 md:pr-12 lg:p-4 lg:pr-20 xxl:p-6 shadow-lg w-full sm:w-fit h-[240px]">
-            <div className="space-y-1 text-white">
-              <Icons.StarBadge className="w-20 h-20 md:w-16 md:h-16 text-light" />
-              <h3 className="text-base text-darklila font-poppins">
-                Güvenilir Eğitimin Adresi
-              </h3>
-              <p className="flex md:flex-col gap-1 text-xl md:text-2xl font-bold font-nunito">
-                BİLFEN
-              </p>
-            </div>
-          </div>
+        <div className="relative z-10 rounded-2xl sm:bg-[url('/images/happy.png')] bg-center bg-no-repeat bg-cover w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] flex-shrink-0 self-center mt-4 sm:mt-6">
         </div>
       </div>
     </PageContainer>

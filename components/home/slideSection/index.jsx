@@ -107,11 +107,12 @@ const SlideSection = () => {
         className="w-full max-w-7xl mx-auto"
         opts={{
           loop: true,
+          align: 'center',
         }}
       >
-        <CarouselContent>
+        <CarouselContent className="mx-auto">
           {slides.map((slide, index) => (
-            <CarouselItem key={index} className="pl-0 px-2">
+            <CarouselItem key={index} className="pl-0 md:px-2">
               <div className="cursor-pointer grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 items-center p-3 md:p-5 lg:p-8 xl:p-12 font-poppins">
                 {/* Image container with improved animations and responsiveness */}
                 <div className="flex items-center justify-center relative overflow-hidden rounded-2xl">
@@ -128,7 +129,7 @@ const SlideSection = () => {
                 </div>
 
                 {/* Content container with improved spacing and animations */}
-                <div className="max-w-lg flex flex-col items-center md:items-start gap-3 md:gap-4 lg:gap-5 text-white px-2 sm:px-4 lg:px-8">
+                <div className="max-w-lg mx-auto md:mx-0 flex flex-col items-center md:items-start gap-3 md:gap-4 lg:gap-5 text-white px-2 sm:px-4 lg:px-8">
                   <div className={`transition-all duration-1000 delay-300 ${current === index ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'}`}>
                     <h2 className="text-xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center md:text-left leading-tight">
                       {slide.title}{" "}
