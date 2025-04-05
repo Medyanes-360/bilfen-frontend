@@ -51,7 +51,7 @@ export default function BreadCrumbComponent({ customPaths = [] }) {
             href={"/"}
             className="text-base sm:text-[18px] leading-[30px] font-thin md:font-normal"
           >
-            Home
+            Ana Sayfa
           </Link>
         </li>
         {pathNames.length > 0 && (

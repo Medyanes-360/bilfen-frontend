@@ -58,7 +58,7 @@ export default function TopSlideSection() {
   const goNext = () => api && api.scrollNext();
 
   return (
-    <div className="relative w-full h-[85vh] overflow-hidden">
+    <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[85vh] overflow-hidden">
       {/* Slide Container */}
       <div className="absolute inset-0 z-0">
         {slides.map((slide, index) => (
@@ -69,7 +69,7 @@ export default function TopSlideSection() {
             }`}
           >
             <Image
-              src={slide.image}
+              src={slide.image || "/top-slide-1.jpg"}
               alt={`Slide ${index + 1}`}
               fill
               sizes="100vw"
