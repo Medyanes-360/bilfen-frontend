@@ -5,17 +5,17 @@ import Image from "next/image"
 
 const features = [
   {
-    icon: "ugllxeyl", // Shield icon
-    title: "Güvenli ve Korunaklı",
-    description: "En yüksek güvenlik standartlarıyla, çocuklarınızın güvenle öğrenebileceği bir dijital ortam sunuyoruz.",
+    icon: "ogjpwrxe", // digital icon
+    title: "Bilfen Dijital",
+    description: "Çocuklarınız, Bilfen’in özel online portalında kaliteli ve dopdolu içeriklerle öğrenmenin keyfini çıkarıyor.",
   },
   {
-    icon: "sviehykt", // Clean icon
-    title: "Düzenli ve Bakımlı",
-    description: "Çocuklarınızın rahatça öğrenebileceği, her zaman düzenli ve profesyonelce hazırlanmış içerikler sunuyoruz.",
+    icon: "xmaezqzk", // contents icon
+    title: "Hazır İçerikler",
+    description: "Bilfen’in dijital portalında ödevler ve ek materyaller her zaman erişilebilir ve eğitim sürecine tam entegre şekilde sunulur.",
   },
   {
-    icon: "vvyxyrur", // Eco-friendly icon
+    icon: "vvyxyrur", // school icon
     title: "Eğitimde Yenilikçi Yaklaşım",
     description: "Bilfen'in zengin online eğitim içerikleriyle çocuklarınızın gelişimini her adımda destekliyoruz.",
   },
