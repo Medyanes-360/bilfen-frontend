@@ -46,7 +46,7 @@ export const authOptions = {
         token.id = user.id; 
         token.role = user.role;
         token.branch = user.branch ? user.branch : null;
-        token.age = user.age ? user.age : null;
+        token.grade = user.grade ? user.grade : null;
       }
       return token;
     },
@@ -57,7 +57,7 @@ export const authOptions = {
       if (token?.role) {
         session.user.role = token.role;
         session.user.branch = token.branch ? token.branch : null;
-        session.user.age = token.age ? token.age : null;
+        session.user.grade = token.grade ? token.grade : null;
       }
       return session;
     },

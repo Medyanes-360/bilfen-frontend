@@ -8,6 +8,7 @@ import ArchiveModal from "@/components/modal/archiveModal";
 import { getSession } from "next-auth/react";
 import LoadingState from "@/components/loadingState";
 import ErrorState from "@/components/errorState";
+import { buildUrl } from "@/lib/utils";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -17,8 +18,6 @@ export default function Home() {
 
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
-  
-  console.log("user", user);  
 
   const [isOpen, setIsOpen] = useState(true);
   const [isExtraOpen, setIsExtraOpen] = useState(true);
@@ -29,44 +28,6 @@ export default function Home() {
   const [showArchive, setShowArchive] = useState(false);
 
   const today = new Date();
-
-  async function fetchMaterials(isExtra = false, setter) {
-    try {
-      setIsLoading(true);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true&isExtra=${isExtra}`
-      );
-
-      if (!res.ok) {
-        setError(res.status);
-        throw new Error(`HTTP error! Status: ${res.status}`);
-      }
-
-      const data = await res.json();
-      // it will be filtered via query named 'branch'
-      const filteredMaterialsByBranch = data.filter((material) => {
-        const materialBranch = material?.branch?.toLowerCase() || "";
-        const userBranch = user?.branch?.toLowerCase() || "";
-        return materialBranch === userBranch;
-      })
-      setter(filteredMaterialsByBranch);
-    } catch (error) {
-      console.error("Error fetching materials:", error.message);
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchMaterials(false, setMaterials);
-    fetchMaterials(true, setExtraMaterials);
-  }, []);
-
-  useEffect(() => {
-    setSelectedDate(today);
-    updateMaterialsForDate(today);
-  }, [materials]);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -91,6 +52,43 @@ export default function Home() {
 
     setCurrentDate(formattedDate);
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    fetchMaterials(false, setMaterials);
+    fetchMaterials(true, setExtraMaterials);
+  }, [user]);
+
+  useEffect(() => {
+    setSelectedDate(today);
+    updateMaterialsForDate(today);
+  }, [materials]);
+
+  async function fetchMaterials(isExtra = false, setter) {
+    try {
+      setIsLoading(true);
+      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
+        isPublished: true,
+        isExtra,
+        branch: user.branch,
+      });
+      const res = await fetch(url);
+
+      if (!res.ok) {
+        setError(res.status);
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setter(data);
+    } catch (error) {
+      console.error("Error fetching materials:", error.message);
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   const updateMaterialsForDate = (date) => {
     const formattedDate = formatDate(date);
@@ -135,7 +133,7 @@ export default function Home() {
             <div className="mx-auto max-w-4xl md:max-w-3xl lg:max-w-4xl">
               {/* Mobilde görünen mini başlık */}
               <div className="md:hidden text-center mb-4">
-                <h2 className="font-bold text-gray-800">
+                <h2 className="font-bold text-gray-800 capitalize">
                   Merhaba, {user ? user.name : "Misafir"}
                 </h2>
                 <p className="text-xs text-gray-500">{currentDate}</p>
