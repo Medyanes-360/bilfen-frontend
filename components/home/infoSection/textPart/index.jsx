@@ -6,15 +6,17 @@ const TextPart = () => {
     <div className="z-30 my-4 sm:my-5 md:my-8 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
       <div className="flex flex-col gap-4 sm:gap-6 md:gap-8 mb-8 sm:mb-10 md:mb-12">
         <div>
-          <h2 className="font-nunito text-antrasit font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl break-words leading-tight">
-            Erken eğitimin en keyifli yolu
-          </h2>
+          <div>
+            <h2 className="font-nunito text-antrasit font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl whitespace-nowrap leading-tight">
+              Erken eğitimin en keyifli yolu
+            </h2>
+          </div>
         </div>
         <div>
           <p className="font-light text-base sm:text-lg md:text-xl text-darkGray leading-relaxed">
-          Çocuğunuzun eğitim yolculuğunu unutulmaz kılmaya ne dersiniz?
-Merak eden, keşfeden ve öğrenen mutlu çocuklar için özel bir ortam sunuyoruz!
-Bilimden sanata, oyunlardan dil gelişimine kadar zengin eğitim programlarımızla çocuğunuzun geleceğine değer katın.
+            Çocuğunuzun eğitim yolculuğunu unutulmaz kılmaya ne dersiniz?
+            Merak eden, keşfeden ve öğrenen mutlu çocuklar için özel bir ortam sunuyoruz!
+            Bilimden sanata, oyunlardan dil gelişimine kadar zengin eğitim programlarımızla çocuğunuzun geleceğine değer katın.
           </p>
         </div>
       </div>
