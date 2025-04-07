@@ -162,6 +162,44 @@ const getTypeInfo = (type) => {
           </svg>
         ),
       };
+    case "audio":
+      return {
+        icon: (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-8 h-8"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polygon points="11 5 6 9 6 15 11 19 11 5"></polygon>
+            <path d="M19.5 12a4.5 4.5 0 0 0-4.5-4.5v9a4.5 4.5 0 0 0 4.5-4.5z"></path>
+          </svg>
+        ),
+        bgColor: "bg-yellow-50",
+        color: "text-yellow-600",
+        borderColor: "border-yellow-200",
+        label: "Ses",
+        buttonText: "Dinle",
+        buttonIcon: (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-4 h-4 mr-1"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polygon points="11 5 6 9 6 15 11 19 11 5"></polygon>
+            <path d="M19.5 12a4.5 4.5 0 0 0-4.5-4.5v9a4.5 4.5 0 0 0 4.5-4.5z"></path>
+          </svg>
+        ),
+      };
     default:
       return {
         icon: (
@@ -215,6 +253,28 @@ const MaterialCard = ({ material }) => {
     setIsModalOpen(false);
   };
 
+  const getFileExtension = (fileUrl) => {
+    if (!fileUrl) return "";
+
+    try {
+      // If it's a full URL, use URL object to get pathname
+      const url = new URL(fileUrl, window.location.origin);
+      const pathname = url.pathname;
+      const fileName = pathname.split("/").pop();
+      const extension = fileName?.split(".").pop();
+
+      // Prevent edge case where there's no extension (e.g., file ends with a slash)
+      if (fileName === extension) return "";
+      return extension?.toLowerCase() || "";
+    } catch (e) {
+      // Fallback for plain filenames or malformed URLs
+      const fileName = fileUrl.split("/").pop();
+      const extension = fileName?.split(".").pop();
+      if (fileName === extension) return "";
+      return extension?.toLowerCase() || "";
+    }
+  };
+
   return (
     <>
       <div className="group flex border border-gray-200 rounded-lg overflow-hidden bg-white hover:shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:border-blue-200">
@@ -233,7 +293,9 @@ const MaterialCard = ({ material }) => {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
               <div className="min-w-0 pr-1">
                 <h3 className="font-semibold text-gray-800 text-sm sm:text-base flex items-center flex-wrap gap-1 truncate group-hover:text-blue-700 transition-colors duration-300">
-                  {material.title}
+                  <span className="break-words whitespace-normal">
+                    {material.title}
+                  </span>
                   {material.viewed && (
                     <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full whitespace-nowrap group-hover:bg-green-200 transition-colors duration-300">
                       ✓ İncelendi
@@ -245,20 +307,16 @@ const MaterialCard = ({ material }) => {
                 </p>
               </div>
               <div
-                className={`text-xs px-2 py-1 rounded-full ${typeInfo.bgColor} ${typeInfo.color} font-medium whitespace-nowrap group-hover:shadow-sm group-hover:scale-105 transition-all duration-300 w-fit`}
+                className={`text-xs px-2 py-1 rounded-full ${typeInfo.bgColor} ${typeInfo.color} font-medium whitespace-nowrap group-hover:shadow-sm group-hover:scale-105 transition-all duration-300 w-fit uppercase`}
               >
-                {typeInfo.label}
+                {getFileExtension(material.fileUrl)}
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 gap-3 sm:gap-0">
               <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 gap-4 group-hover:text-gray-700 transition-colors duration-300">
                 <span className="flex items-center whitespace-nowrap">
-                  {material.type === "document" ? "📄" : "⏱️"}{" "}
-                  {material.duration}
-                </span>
-                <span className="flex items-center whitespace-nowrap">
-                  📅 {material.date}
+                  📅 {material?.publishDateTeacher}
                 </span>
               </div>
 
@@ -292,7 +350,7 @@ const MaterialCard = ({ material }) => {
 
                 {/* Başlık + Açıklama */}
                 <div className="text-start">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-1">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-1 break-words whitespace-normal">
                     {material.title}
                   </h2>
                   {material.description && (
@@ -308,7 +366,7 @@ const MaterialCard = ({ material }) => {
               {material.type === "video" && (
                 <div className="w-full h-[200px] sm:h-[400px] md:h-[500px]">
                   <ReactPlayer
-                    url={material.content}
+                    url={material.fileUrl}
                     className="rounded"
                     controls
                     width="100%"
@@ -330,19 +388,11 @@ const MaterialCard = ({ material }) => {
               {material.type === "document" && (
                 <div className="w-full h-[400px] sm:h-[500px]">
                   <iframe
-                    src={material.content}
+                    src={material.fileUrl}
                     className="w-full h-full border rounded"
                     title="Doküman Önizleme"
                   />
                 </div>
-              )}
-
-              {material.type === "image" && (
-                <img
-                  src={material.source}
-                  alt={material.title}
-                  className="w-full max-h-[400px] sm:max-h-[600px] object-contain rounded"
-                />
               )}
             </div>
 

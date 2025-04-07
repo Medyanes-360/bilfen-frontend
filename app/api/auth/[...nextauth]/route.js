@@ -14,11 +14,14 @@ export const authOptions = {
 
         try {
           // backend projesindeki verify API endpoint'ine istek atılır
-          const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/verify`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ tc, password }),
-          });
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/verify`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ tc, password }),
+            }
+          );
 
           if (!response.ok) {
             return null;
@@ -41,12 +44,16 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.branch = user.branch ? user.branch : null;
+        token.age = user.age ? user.age : null;
       }
       return token;
     },
     async session({ session, token }) {
       if (token?.role) {
         session.user.role = token.role;
+        session.user.branch = token.branch ? token.branch : null;
+        session.user.age = token.age ? token.age : null;
       }
       return session;
     },

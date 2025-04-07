@@ -1,62 +1,87 @@
 "use client";
 import { useState, useEffect } from "react";
-import { MATERIALS_DATA } from "@/data/teacherDashboardMockData";
 import Header from "@/components/teacherDashboard/header";
 import MaterialList from "@/components/teacherDashboard/materialList";
 import Calendar from "@/components/teacherDashboard/calendar";
 import { motion, AnimatePresence } from "framer-motion";
 import ArchiveModal from "@/components/modal/archiveModal";
 import { getSession } from "next-auth/react";
+import LoadingState from "@/components/loadingState";
+import ErrorState from "@/components/errorState";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
+  const [materials, setMaterials] = useState([]);
   const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
+  
+  console.log("user", user);  
 
   const [isOpen, setIsOpen] = useState(true);
   const [isExtraOpen, setIsExtraOpen] = useState(true);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [showArchive, setShowArchive] = useState(false);
 
-  useEffect(() => {
-    async function fetchDailyMaterials() {
-      try {
-        const request = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true`);
-        if (!request.ok) {
-          throw new Error(`HTTP error! Status: ${request.status}`);
-        }
+  const today = new Date();
 
-        const data = await request.json();
-        setDailyMaterials(data);
-      } catch (error) {
-        console.error("Error fetching data:", error.message);
+  async function fetchMaterials(isExtra = false, setter) {
+    try {
+      setIsLoading(true);
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true&isExtra=${isExtra}`
+      );
+
+      if (!res.ok) {
+        setError(res.status);
+        throw new Error(`HTTP error! Status: ${res.status}`);
       }
-    }
 
-    fetchDailyMaterials();
+      const data = await res.json();
+      // it will be filtered via query named 'branch'
+      const filteredMaterialsByBranch = data.filter((material) => {
+        const materialBranch = material?.branch?.toLowerCase() || "";
+        const userBranch = user?.branch?.toLowerCase() || "";
+        return materialBranch === userBranch;
+      })
+      setter(filteredMaterialsByBranch);
+    } catch (error) {
+      console.error("Error fetching materials:", error.message);
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchMaterials(false, setMaterials);
+    fetchMaterials(true, setExtraMaterials);
   }, []);
 
   useEffect(() => {
-    const today = new Date();
     setSelectedDate(today);
     updateMaterialsForDate(today);
-    filterExtraMaterials();
-  }, []);
+  }, [materials]);
 
   useEffect(() => {
     const fetchSession = async () => {
-      const session = await getSession();
-      if (session) {
-        setUser(session.user);
+      try {
+        const session = await getSession();
+        if (session) {
+          setUser(session.user);
+        }
+      } catch (error) {
+        setError(error.message);
       }
     };
 
     fetchSession();
 
-    const today = new Date();
     const formattedDate = today.toLocaleDateString("tr-TR", {
       weekday: "long",
       day: "numeric",
@@ -68,19 +93,11 @@ export default function Home() {
   }, []);
 
   const updateMaterialsForDate = (date) => {
-    const formatted = formatDate(date);
-    const filtered = MATERIALS_DATA.filter(
-      (material) =>
-        material.date === formatted && material.isExtraMaterial === false
+    const formattedDate = formatDate(date);
+    const filtered = materials.filter(
+      (material) => material?.publishDateTeacher === formattedDate
     );
     setDailyMaterials(filtered);
-  };
-
-  const filterExtraMaterials = () => {
-    const filtered = MATERIALS_DATA.filter(
-      (material) => material.isExtraMaterial === true
-    );
-    setExtraMaterials(filtered);
   };
 
   const formatDate = (date) => {
@@ -90,6 +107,22 @@ export default function Home() {
     return `${year}-${month}-${day}`;
   };
 
+  // Loading state
+  if (isLoading && !user && dailyMaterials.length === 0) {
+    return <LoadingState role="teacher" />;
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <ErrorState
+        role="teacher"
+        error={error}
+        onRetry={() => window.location.reload()}
+      />
+    );
+  }
+
   return (
     <>
       <div className="min-h-screen flex flex-col bg-gray-50">
@@ -98,7 +131,6 @@ export default function Home() {
 
         {/* Ana içerik bölümü */}
         <div className="flex flex-1 pt-0">
-          {/* Ana içerik - Ortalaması düzeltildi */}
           <main className="flex-1 overflow-auto p-4 md:p-6 w-full">
             <div className="mx-auto max-w-4xl md:max-w-3xl lg:max-w-4xl">
               {/* Mobilde görünen mini başlık */}
@@ -169,13 +201,14 @@ export default function Home() {
                       className="overflow-hidden"
                     >
                       <div className="p-4">
-                        <MaterialList materials={materials} />
+                        <MaterialList materials={dailyMaterials} />
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
+              {/* Ekstra Materyaller Kartı */}
               {extraMaterials && (
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
                   <button
@@ -226,7 +259,12 @@ export default function Home() {
       </div>
 
       {showArchive && (
-        <ArchiveModal onClose={() => setShowArchive(false)} visibleDays={7} />
+        <ArchiveModal
+          onClose={() => setShowArchive(false)}
+          visibleDays={3}
+          mode="past"
+          materials={materials}
+        />
       )}
     </>
   );
