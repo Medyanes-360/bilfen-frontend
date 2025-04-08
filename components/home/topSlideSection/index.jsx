@@ -11,13 +11,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const slides = [
   {
-    image: '/images/top-slide-1.jpg',
+    image: '/images/top-slide-4.jpg',
   },
   {
-    image: '/images/top-slide-2.jpg',
+    image: '/images/top-slide-6.jpg',
   },
   {
-    image: '/images/top-slide-3.jpg',
+    image: '/images/top-slide-5.jpg',
   },
 ];
 
@@ -64,15 +64,15 @@ export default function TopSlideSection() {
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-              current === index ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'
-            }`}
+            className={`absolute inset-0 transition-all duration-1000 ease-in-out ${current === index ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-105 z-0'
+              }`}
           >
             <Image
               src={slide.image || "/top-slide-1.jpg"}
               alt={`Slide ${index + 1}`}
               fill
               sizes="100vw"
+              quality={100}
               priority={index === 0}
               className="object-cover object-center"
             />
@@ -117,9 +117,8 @@ export default function TopSlideSection() {
           {slides.map((_, index) => (
             <div
               key={index}
-              className={`h-2 w-2 rounded-full transition-all ${
-                current === index ? 'bg-white scale-125' : 'bg-white/50'
-              }`}
+              className={`h-2 w-2 rounded-full transition-all ${current === index ? 'bg-white scale-125' : 'bg-white/50'
+                }`}
             />
           ))}
         </div>
