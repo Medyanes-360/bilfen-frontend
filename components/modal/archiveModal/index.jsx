@@ -3,12 +3,11 @@
 import { useMemo, useState } from "react";
 import { Modal } from "..";
 import MaterialList from "@/components/teacherDashboard/materialList";
-import { MATERIALS_DATA } from "@/data/teacherDashboardMockData";
 
 export default function ArchiveModal({
   onClose,
   visibleDays = 3,
-  mode = "past", // 🆕 "past" | "future"
+  mode = "past",
   materials
 }) {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -38,7 +37,7 @@ export default function ArchiveModal({
   const filteredMaterials = useMemo(() => {
     if (!selectedDate) return [];
     const selectedKey = formattedDate(selectedDate);
-    return MATERIALS_DATA.filter((material) => material.publishDateTeacher === selectedKey);
+    return materials.filter((material) => material.publishDateTeacher === selectedKey);
   }, [selectedDate]);
 
   const getMonthLabel = (date) => {

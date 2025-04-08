@@ -12,12 +12,18 @@ import { buildUrl } from "@/lib/utils";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
+
   const [materials, setMaterials] = useState([]);
   const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
+  // archiveMaterials will be soon altered
+  const [archiveMaterials, setArchiveMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
+
+  const [visibleDays, setVisibleDays] = useState(2);
+  const [mode, setMode] = useState("future"); // "past" | "future"
 
   const [isOpen, setIsOpen] = useState(true);
   const [isExtraOpen, setIsExtraOpen] = useState(true);
@@ -69,7 +75,6 @@ export default function Home() {
     try {
       setIsLoading(true);
       const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
-        isPublished: true,
         isExtra,
         branch: user.branch,
       });
@@ -103,6 +108,13 @@ export default function Home() {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  };
+
+  const handleOpenArchive = () => {
+    setShowArchive(true);
+    if (archiveMaterials.length === 0) {
+      fetchMaterials(false, setArchiveMaterials);
+    }
   };
 
   // Loading state
@@ -155,7 +167,7 @@ export default function Home() {
 
               <div className="flex justify-end gap-4 mb-4">
                 <button
-                  onClick={() => setShowArchive(true)}
+                  onClick={handleOpenArchive}
                   className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
                 >
                   Arşiv
@@ -259,9 +271,9 @@ export default function Home() {
       {showArchive && (
         <ArchiveModal
           onClose={() => setShowArchive(false)}
-          visibleDays={3}
-          mode="past"
-          materials={materials}
+          visibleDays={visibleDays}
+          mode={mode}
+          materials={archiveMaterials}
         />
       )}
     </>

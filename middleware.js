@@ -11,31 +11,30 @@ export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
-  // // 👉 Root sayfadaysa ve giriş yapılmışsa yönlendir
-  // if (pathname === "/" && token) {
-  //   const userRole = token?.role;
-  //   const expectedPath = protectedRoutes[userRole];
+  // Root sayfadaysa ve giriş yapılmışsa yönlendir
+  if (pathname === "/" && token) {
+    const userRole = token?.role;
+    const expectedPath = protectedRoutes[userRole];
 
-  //   return NextResponse.redirect(new URL(expectedPath, req.url));
-  // }
+    return NextResponse.redirect(new URL(expectedPath, req.url));
+  }
 
-  // const isProtected = Object.values(protectedRoutes).some((path) =>
-  //   pathname.startsWith(path)
-  // );
+  const isProtected = Object.values(protectedRoutes).some((path) =>
+    pathname.startsWith(path)
+  );
 
-  // if (!isProtected) return NextResponse.next();
+  if (!isProtected) return NextResponse.next();
 
-  // if (!token) {
-  //   return NextResponse.redirect(new URL("/", req.url));
-  // }
+  if (!token) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
 
-  // const userRole = token?.role;
-  // const expectedPath = protectedRoutes[userRole];
+  const userRole = token?.role;
+  const expectedPath = protectedRoutes[userRole];
 
-  // if (pathname.startsWith(expectedPath)) {
-  //   return NextResponse.next();
-  // }
+  if (pathname.startsWith(expectedPath)) {
+    return NextResponse.next();
+  }
 
-  // return NextResponse.redirect(new URL(expectedPath, req.url));
-  return NextResponse.next();
+  return NextResponse.redirect(new URL(expectedPath, req.url));
 }

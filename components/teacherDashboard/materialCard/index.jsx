@@ -1,278 +1,38 @@
 "use client";
 import { Modal } from "@/components/modal";
-import { useState } from "react";
+import { useModalCompletion } from "@/hooks/useModalCompletion";
+import { getFileExtension } from "@/lib/utils";
+import { IconByTypeInfo } from "@/public/icons/TeacherMaterialIcons";
+import { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-const getTypeInfo = (type) => {
-  switch (type) {
-    case "video":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="23 7 16 12 23 17 23 7"></polygon>
-            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-          </svg>
-        ),
-        bgColor: "bg-green-50",
-        color: "text-green-600",
-        borderColor: "border-green-200",
-        label: "Video",
-        buttonText: "Görüntüle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        ),
-      };
-    case "document":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
-          </svg>
-        ),
-        bgColor: "bg-blue-50",
-        color: "text-blue-600",
-        borderColor: "border-blue-200",
-        label: "PDF",
-        buttonText: "Görüntüle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        ),
-      };
-    case "game":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="6" y1="11" x2="10" y2="11"></line>
-            <line x1="8" y1="9" x2="8" y2="13"></line>
-            <line x1="15" y1="12" x2="15.01" y2="12"></line>
-            <line x1="18" y1="10" x2="18.01" y2="10"></line>
-            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
-          </svg>
-        ),
-        bgColor: "bg-orange-50",
-        color: "text-orange-600",
-        borderColor: "border-orange-200",
-        label: "Eğitsel Oyun",
-        buttonText: "Başlat",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-          </svg>
-        ),
-      };
-    case "quiz":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <circle cx="12" cy="14" r="2"></circle>
-            <polyline points="14 2 14 8 20 8"></polyline>
-          </svg>
-        ),
-        bgColor: "bg-purple-50",
-        color: "text-purple-600",
-        borderColor: "border-purple-200",
-        label: "Çalışma Kağıdı",
-        buttonText: "Görüntüle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        ),
-      };
-    case "audio":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="11 5 6 9 6 15 11 19 11 5"></polygon>
-            <path d="M19.5 12a4.5 4.5 0 0 0-4.5-4.5v9a4.5 4.5 0 0 0 4.5-4.5z"></path>
-          </svg>
-        ),
-        bgColor: "bg-yellow-50",
-        color: "text-yellow-600",
-        borderColor: "border-yellow-200",
-        label: "Ses",
-        buttonText: "Dinle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="11 5 6 9 6 15 11 19 11 5"></polygon>
-            <path d="M19.5 12a4.5 4.5 0 0 0-4.5-4.5v9a4.5 4.5 0 0 0 4.5-4.5z"></path>
-          </svg>
-        ),
-      };
-    default:
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-            <polyline points="13 2 13 9 20 9"></polyline>
-          </svg>
-        ),
-        bgColor: "bg-gray-50",
-        color: "text-gray-600",
-        borderColor: "border-gray-200",
-        label: "Materyal",
-        buttonText: "Görüntüle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        ),
-      };
-  }
-};
 
 const MaterialCard = ({ material }) => {
-  const typeInfo = getTypeInfo(material.type);
+  const typeInfo = useMemo(
+    () => new IconByTypeInfo(material.type),
+    [material?.type]
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { onOpen, onClose } = useModalCompletion(async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${material?.id}?isComplete=true`;
+      await fetch(url, {
+        method: "PATCH",
+      });
+      console.log("Materyal güncellendi");
+    } catch (error) {
+      console.log("Hata: ", error);
+    }
+  });
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
+    onOpen();
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-  };
-
-  const getFileExtension = (fileUrl) => {
-    if (!fileUrl) return "";
-
-    try {
-      // If it's a full URL, use URL object to get pathname
-      const url = new URL(fileUrl, window.location.origin);
-      const pathname = url.pathname;
-      const fileName = pathname.split("/").pop();
-      const extension = fileName?.split(".").pop();
-
-      // Prevent edge case where there's no extension (e.g., file ends with a slash)
-      if (fileName === extension) return "";
-      return extension?.toLowerCase() || "";
-    } catch (e) {
-      // Fallback for plain filenames or malformed URLs
-      const fileName = fileUrl.split("/").pop();
-      const extension = fileName?.split(".").pop();
-      if (fileName === extension) return "";
-      return extension?.toLowerCase() || "";
-    }
+    onClose();
   };
 
   return (
