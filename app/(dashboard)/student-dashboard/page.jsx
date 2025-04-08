@@ -12,8 +12,8 @@ import LearningPath from "@/components/studentDashboard/learningPath"
 import ExtraMaterials from "@/components/studentDashboard/extraMaterials"
 import ArchiveButton from "@/components/studentDashboard/archiveButton"
 import BottomNavigation from "@/components/studentDashboard/bottomNav"
-import LoadingState from "@/components/studentDashboard/LoadingState"
-import ErrorState from "@/components/studentDashboard/ErrorState"
+import LoadingState from "@/components/loadingState"
+import ErrorState from "@/components/errorState"
 
 // Modal Components
 import TaskModal from "@/components/studentDashboard/modals/TaskModal"

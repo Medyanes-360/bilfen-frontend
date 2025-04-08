@@ -1,218 +1,38 @@
 "use client";
 import { Modal } from "@/components/modal";
-import { useState } from "react";
+import { useModalCompletion } from "@/hooks/useModalCompletion";
+import { getFileExtension } from "@/lib/utils";
+import { IconByTypeInfo } from "@/public/icons/TeacherMaterialIcons";
+import { useMemo, useState } from "react";
 import ReactPlayer from "react-player";
-const getTypeInfo = (type) => {
-  switch (type) {
-    case "video":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="23 7 16 12 23 17 23 7"></polygon>
-            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-          </svg>
-        ),
-        bgColor: "bg-green-50",
-        color: "text-green-600",
-        borderColor: "border-green-200",
-        label: "Video",
-        buttonText: "Görüntüle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        ),
-      };
-    case "document":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
-          </svg>
-        ),
-        bgColor: "bg-blue-50",
-        color: "text-blue-600",
-        borderColor: "border-blue-200",
-        label: "PDF",
-        buttonText: "Görüntüle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        ),
-      };
-    case "game":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="6" y1="11" x2="10" y2="11"></line>
-            <line x1="8" y1="9" x2="8" y2="13"></line>
-            <line x1="15" y1="12" x2="15.01" y2="12"></line>
-            <line x1="18" y1="10" x2="18.01" y2="10"></line>
-            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
-          </svg>
-        ),
-        bgColor: "bg-orange-50",
-        color: "text-orange-600",
-        borderColor: "border-orange-200",
-        label: "Eğitsel Oyun",
-        buttonText: "Başlat",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-          </svg>
-        ),
-      };
-    case "quiz":
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <circle cx="12" cy="14" r="2"></circle>
-            <polyline points="14 2 14 8 20 8"></polyline>
-          </svg>
-        ),
-        bgColor: "bg-purple-50",
-        color: "text-purple-600",
-        borderColor: "border-purple-200",
-        label: "Çalışma Kağıdı",
-        buttonText: "Görüntüle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        ),
-      };
-    default:
-      return {
-        icon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-8 h-8"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-            <polyline points="13 2 13 9 20 9"></polyline>
-          </svg>
-        ),
-        bgColor: "bg-gray-50",
-        color: "text-gray-600",
-        borderColor: "border-gray-200",
-        label: "Materyal",
-        buttonText: "Görüntüle",
-        buttonIcon: (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-4 h-4 mr-1"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        ),
-      };
-  }
-};
 
 const MaterialCard = ({ material }) => {
-  const typeInfo = getTypeInfo(material.type);
+  const typeInfo = useMemo(
+    () => new IconByTypeInfo(material.type),
+    [material?.type]
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { onOpen, onClose } = useModalCompletion(async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${material?.id}?isComplete=true`;
+      await fetch(url, {
+        method: "PATCH",
+      });
+      console.log("Materyal güncellendi");
+    } catch (error) {
+      console.log("Hata: ", error);
+    }
+  });
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
+    onOpen();
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    onClose();
   };
 
   return (
@@ -233,7 +53,9 @@ const MaterialCard = ({ material }) => {
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
               <div className="min-w-0 pr-1">
                 <h3 className="font-semibold text-gray-800 text-sm sm:text-base flex items-center flex-wrap gap-1 truncate group-hover:text-blue-700 transition-colors duration-300">
-                  {material.title}
+                  <span className="break-words whitespace-normal">
+                    {material.title}
+                  </span>
                   {material.viewed && (
                     <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full whitespace-nowrap group-hover:bg-green-200 transition-colors duration-300">
                       ✓ İncelendi
@@ -245,20 +67,16 @@ const MaterialCard = ({ material }) => {
                 </p>
               </div>
               <div
-                className={`text-xs px-2 py-1 rounded-full ${typeInfo.bgColor} ${typeInfo.color} font-medium whitespace-nowrap group-hover:shadow-sm group-hover:scale-105 transition-all duration-300 w-fit`}
+                className={`text-xs px-2 py-1 rounded-full ${typeInfo.bgColor} ${typeInfo.color} font-medium whitespace-nowrap group-hover:shadow-sm group-hover:scale-105 transition-all duration-300 w-fit uppercase`}
               >
-                {typeInfo.label}
+                {getFileExtension(material.fileUrl)}
               </div>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 gap-3 sm:gap-0">
               <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 gap-4 group-hover:text-gray-700 transition-colors duration-300">
                 <span className="flex items-center whitespace-nowrap">
-                  {material.type === "document" ? "📄" : "⏱️"}{" "}
-                  {material.duration}
-                </span>
-                <span className="flex items-center whitespace-nowrap">
-                  📅 {material.date}
+                  📅 {material?.publishDateTeacher}
                 </span>
               </div>
 
@@ -292,7 +110,7 @@ const MaterialCard = ({ material }) => {
 
                 {/* Başlık + Açıklama */}
                 <div className="text-start">
-                  <h2 className="text-xl sm:text-2xl font-bold mb-1">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-1 break-words whitespace-normal">
                     {material.title}
                   </h2>
                   {material.description && (
@@ -308,7 +126,7 @@ const MaterialCard = ({ material }) => {
               {material.type === "video" && (
                 <div className="w-full h-[200px] sm:h-[400px] md:h-[500px]">
                   <ReactPlayer
-                    url={material.content}
+                    url={material.fileUrl}
                     className="rounded"
                     controls
                     width="100%"
@@ -330,19 +148,11 @@ const MaterialCard = ({ material }) => {
               {material.type === "document" && (
                 <div className="w-full h-[400px] sm:h-[500px]">
                   <iframe
-                    src={material.content}
+                    src={material.fileUrl}
                     className="w-full h-full border rounded"
                     title="Doküman Önizleme"
                   />
                 </div>
-              )}
-
-              {material.type === "image" && (
-                <img
-                  src={material.source}
-                  alt={material.title}
-                  className="w-full max-h-[400px] sm:max-h-[600px] object-contain rounded"
-                />
               )}
             </div>
 
