@@ -65,7 +65,7 @@ const Navbar = () => {
               <DesktopNav menuItems={menuItems} />
 
               {session ? (
-                <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
+                <div className="hidden lg:block text-orange text-[14px] lg:text-base hover:text-white font-poppins text-base font-semibold">
                   <button
                     onClick={() =>
                       signOut({ redirect: true, callbackUrl: "/" })
@@ -73,17 +73,17 @@ const Navbar = () => {
                     className="cursor-pointer relative flex items-center gap-2"
                   >
                     Çıkış Yap
-                    <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-11 hover:scale-85 transition duration-300" />
+                    <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-13 hover:scale-85 transition duration-300" />
                   </button>
                 </div>
               ) : (
-                <div className="hidden lg:block text-orange hover:text-white font-poppins text-base font-semibold">
+                <div className="hidden md:block text-orange text-[14px] lg:text-base hover:text-white font-poppins text-base font-semibold">
                   <button
                     onClick={() => setIsOpen(true)}
                     className="cursor-pointer relative flex items-center gap-2"
                   >
                     Giriş Yap
-                    <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-11 hover:scale-85 transition duration-300" />
+                    <Icons.Sparkles className="absolute top-1/2 translate-x-0 -translate-y-1/2 w-40 h-22 -right-13 hover:scale-85 transition duration-300" />
                   </button>
                 </div>
               )}

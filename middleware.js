@@ -11,7 +11,7 @@ export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const { pathname } = req.nextUrl;
 
-  // 👉 Root sayfadaysa ve giriş yapılmışsa yönlendir
+  // Root sayfadaysa ve giriş yapılmışsa yönlendir
   if (pathname === "/" && token) {
     const userRole = token?.role;
     const expectedPath = protectedRoutes[userRole];

@@ -13,10 +13,7 @@ const VideoPart = () => {
   return (
     <div className="relative py-12 md:py-16 lg:py-28 xl:py-46 px-4 sm:px-6 md:px-8 bg-[#b2eaee] overflow-hidden group">
       {/* Stars and the moon will move */}
-      <Parallax
-        sensitivity={0.05}
-        className="absolute top-1 left-10 w-12 h-12"
-      >
+      <Parallax sensitivity={0.05} className="absolute top-1 left-10 w-12 h-12">
         <Image src="/images/star_2.png" alt="Star" width={48} height={48} />
       </Parallax>
 
@@ -58,33 +55,34 @@ const VideoPart = () => {
               ></iframe>
             </div>
             <div className="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent w-full h-full"></div>
-            <div className="absolute top-8 left-4 sm:left-6 md:left-8">
+            <div className="absolute top-4 left-4 md:top-6 lg:top-8 sm:left-6 lg:left-8">
               <div
                 onClick={() => setIsOpen(true)}
-                className="w-20 h-20 md:w-24 md:h-24 rounded-full cursor-pointer hover:scale-110 transition-transform duration-300 flex items-center justify-center"
+                className="w-12 h-12 sm:w-14 sm:h-14 lg:w-24 lg:h-24 rounded-full cursor-pointer hover:scale-110 transition-transform duration-300 flex items-center justify-center"
               >
                 <Icons.Play className="w-full h-full" />
               </div>
             </div>
 
-            <div className="absolute bottom-2 left-12 md:bottom-2 md:left-0 p-4 sm:p-5 md:p-6">
-              <h3 className="font-nunito text-5xl font-bold text-white">
-                BİLFEN
-                <br />
-                EĞİTİM
+            <div className="absolute bottom-2 md:bottom-2 md:left-0 p-4 sm:p-5 md:p-6">
+              <h3 className="font-nunito text-2xl md:text-3xl lg:text-5xl font-bold text-white">
+                BİLFEN EĞİTİM
               </h3>
             </div>
           </div>
 
           {/* Text Section */}
           <div className="text-[#341c77] w-full max-w-lg mx-auto md:mx-0 mt-6 md:mt-0">
-            <h2 className="text-3xl lg:text-5xl font-nunito font-bold mb-4 sm:mb-5 md:mb-6">
-              Değerlerimize
-              <br className="hidden sm:block" /> Bağlıyız
-            </h2>
-            <p className="text-antrasit font-extralight text-base sm:text-lg mb-6 sm:mb-7 md:mb-8">
-            Merkezimiz, çocuklarınız için güvenli, eğlenceli ve öğretici bir dünya sunuyor!
-Uzman eğitmenler eşliğinde, keşfederek öğrenebilecekleri, verimli vakit geçirebilecekleri ve yeni arkadaşlıklar kurabilecekleri özel bir ortam sağlıyoruz
+            <div className="w-full md:max-w-[360px] mb-4 sm:mb-5 md:mb-6">
+              <h2 className="text-3xl lg:text-5xl font-nunito font-bold">
+                Değerlerimize Bağlıyız
+              </h2>
+            </div>
+            <p className="text-antrasit font-extralight text-base sm:text-lg mb-6 sm:mb-7 md:mb-8 drop-shadow-sm">
+              Merkezimiz, çocuklarınız için güvenli, eğlenceli ve öğretici bir
+              dünya sunuyor! Uzman eğitmenler eşliğinde, keşfederek
+              öğrenebilecekleri, verimli vakit geçirebilecekleri ve yeni
+              arkadaşlıklar kurabilecekleri özel bir ortam sağlıyoruz
             </p>
             <Button
               className="px-6 py-8 xl:px-8 xl:py-9 text-base sm:text-lg bg-darklila hover:bg-orange text-white"

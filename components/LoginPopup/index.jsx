@@ -91,7 +91,7 @@ const LoginPopup = ({ isOpen, setIsOpen }) => {
             <button
               onClick={() => {
                 setIsOpen(false);
-                formik.resetForm();  
+                formik.resetForm();
               }}
               className="absolute top-4 right-4 text-darklila transition-all duration-200 z-10 bg-orange bg-opacity-50 rounded-full p-1 cursor-pointer"
               aria-label="Kapat"
@@ -222,11 +222,10 @@ const LoginPopup = ({ isOpen, setIsOpen }) => {
                 className="w-full py-4 mt-6 bg-orange-500 hover:bg-orange-600 text-white text-xl font-bold rounded-xl shadow-lg transform hover:translate-y-px hover:shadow-xl transition-all duration-300 relative overflow-hidden cursor-pointer"
               >
                 <span
-                  className={`flex justify-center items-center transition-opacity duration-300 ${
-                    formik.isSubmitting ? "opacity-0" : "opacity-100"
-                  }`}
+                  className={`flex justify-center items-center transition-opacity duration-300 ${formik.isSubmitting ? "opacity-0" : "opacity-100"
+                    }`}
                 >
-                  Maceraya Atla!
+                  Giriş Yap
                 </span>
 
                 {formik.isSubmitting && (
@@ -234,11 +233,6 @@ const LoginPopup = ({ isOpen, setIsOpen }) => {
                     <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
                   </div>
                 )}
-
-                {/* Hareketli Dalgalar */}
-                <div className="absolute bottom-0 left-0 w-full h-1 overflow-hidden pointer-events-none">
-                  <div className="h-full w-full bg-white bg-opacity-30 animate-wave"></div>
-                </div>
               </button>
             </form>
 

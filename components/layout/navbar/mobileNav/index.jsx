@@ -11,7 +11,6 @@ import { Collapsible } from "@/components/ui/collapsible";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import Icons from "@/public/icons/Icons";
 import { signOut, useSession } from "next-auth/react";
 
 const MobileNav = ({ menuItems, setActiveModal }) => {
@@ -92,7 +91,7 @@ const MobileNav = ({ menuItems, setActiveModal }) => {
 
           {/* Navigation Items */}
           <div className="flex-1 h-full px-6 flex items-center justify-center">
-            <ul className="space-y-6 uppercase font-poppins font-semibold text-darklila text-center max-w-xs w-full">
+            <ul className="space-y-6 font-poppins font-semibold text-darklila text-center max-w-xs w-full">
               {menuItems.map((menu, index) => (
                 <li key={index}>
                   <Collapsible>

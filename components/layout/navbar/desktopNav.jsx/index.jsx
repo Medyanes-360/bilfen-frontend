@@ -10,7 +10,7 @@ export function DesktopNav({ menuItems, className = "" }) {
           <Link
             key={index}
             href={menu.url}
-            className="cursor-pointer flex items-center justify-center px-4 py-2 text-[#8E89C0] hover:text-white font-fredoka font-medium transition-colors relative"
+            className="cursor-pointer flex items-center justify-center px-4 py-2 text-[14px] lg:text-base text-[#8E89C0] hover:text-white font-fredoka font-medium transition-colors relative"
           >
             {menu.title}
           </Link>

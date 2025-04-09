@@ -1,66 +1,54 @@
 "use client";
 import { useState, useEffect } from "react";
-import { MATERIALS_DATA } from "@/data/teacherDashboardMockData";
 import Header from "@/components/teacherDashboard/header";
 import MaterialList from "@/components/teacherDashboard/materialList";
 import Calendar from "@/components/teacherDashboard/calendar";
 import { motion, AnimatePresence } from "framer-motion";
 import ArchiveModal from "@/components/modal/archiveModal";
 import { getSession } from "next-auth/react";
+import LoadingState from "@/components/loadingState";
+import ErrorState from "@/components/errorState";
+import { buildUrl } from "@/lib/utils";
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
+
   const [materials, setMaterials] = useState([]);
+  const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
+  // archiveMaterials will be soon altered
+  const [archiveMaterials, setArchiveMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
 
+  const [visibleDays, setVisibleDays] = useState(2);
+  const [mode, setMode] = useState("future"); // "past" | "future"
+
   const [isOpen, setIsOpen] = useState(true);
   const [isExtraOpen, setIsExtraOpen] = useState(true);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const [showArchive, setShowArchive] = useState(false);
 
-  // Materials: fetch data which date is the same as today
-  // Extra Materials: fetch data which isExtraMaterial is true
-  // Archive: fetch data which isExtraMaterial is false and date is older than today
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const request = await fetch("http://localhost:3001/api/contents");
-        if (!request.ok) {
-          throw new Error(`HTTP error! Status: ${request.status}`);
-        }
-
-        const data = await request.json();
-        console.log(data);
-      } catch (error) {
-        console.error("Error fetching data:", error.message);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const today = new Date();
-    setSelectedDate(today);
-    updateMaterialsForDate(today);
-    filterExtraMaterials();
-  }, []);
+  const today = new Date();
 
   useEffect(() => {
     const fetchSession = async () => {
-      const session = await getSession();
-      if (session) {
-        setUser(session.user);
+      try {
+        const session = await getSession();
+        if (session) {
+          setUser(session.user);
+        }
+      } catch (error) {
+        setError(error.message);
       }
     };
 
     fetchSession();
 
-    const today = new Date();
     const formattedDate = today.toLocaleDateString("tr-TR", {
       weekday: "long",
       day: "numeric",
@@ -71,20 +59,48 @@ export default function Home() {
     setCurrentDate(formattedDate);
   }, []);
 
-  const updateMaterialsForDate = (date) => {
-    const formatted = formatDate(date);
-    const filtered = MATERIALS_DATA.filter(
-      (material) =>
-        material.date === formatted && material.isExtraMaterial === false
-    );
-    setMaterials(filtered);
-  };
+  useEffect(() => {
+    if (!user) return;
 
-  const filterExtraMaterials = () => {
-    const filtered = MATERIALS_DATA.filter(
-      (material) => material.isExtraMaterial === true
+    fetchMaterials(false, setMaterials);
+    fetchMaterials(true, setExtraMaterials);
+  }, [user]);
+
+  useEffect(() => {
+    setSelectedDate(today);
+    updateMaterialsForDate(today);
+  }, [materials]);
+
+  async function fetchMaterials(isExtra = false, setter) {
+    try {
+      setIsLoading(true);
+      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
+        isExtra,
+        branch: user.branch,
+      });
+      const res = await fetch(url);
+
+      if (!res.ok) {
+        setError(res.status);
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setter(data);
+    } catch (error) {
+      console.error("Error fetching materials:", error.message);
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const updateMaterialsForDate = (date) => {
+    const formattedDate = formatDate(date);
+    const filtered = materials.filter(
+      (material) => material?.publishDateTeacher === formattedDate
     );
-    setExtraMaterials(filtered);
+    setDailyMaterials(filtered);
   };
 
   const formatDate = (date) => {
@@ -94,6 +110,29 @@ export default function Home() {
     return `${year}-${month}-${day}`;
   };
 
+  const handleOpenArchive = () => {
+    setShowArchive(true);
+    if (archiveMaterials.length === 0) {
+      fetchMaterials(false, setArchiveMaterials);
+    }
+  };
+
+  // Loading state
+  if (isLoading && !user && dailyMaterials.length === 0) {
+    return <LoadingState role="teacher" />;
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <ErrorState
+        role="teacher"
+        error={error}
+        onRetry={() => window.location.reload()}
+      />
+    );
+  }
+
   return (
     <>
       <div className="min-h-screen flex flex-col bg-gray-50">
@@ -102,12 +141,11 @@ export default function Home() {
 
         {/* Ana içerik bölümü */}
         <div className="flex flex-1 pt-0">
-          {/* Ana içerik - Ortalaması düzeltildi */}
           <main className="flex-1 overflow-auto p-4 md:p-6 w-full">
             <div className="mx-auto max-w-4xl md:max-w-3xl lg:max-w-4xl">
               {/* Mobilde görünen mini başlık */}
               <div className="md:hidden text-center mb-4">
-                <h2 className="font-bold text-gray-800">
+                <h2 className="font-bold text-gray-800 capitalize">
                   Merhaba, {user ? user.name : "Misafir"}
                 </h2>
                 <p className="text-xs text-gray-500">{currentDate}</p>
@@ -129,7 +167,7 @@ export default function Home() {
 
               <div className="flex justify-end gap-4 mb-4">
                 <button
-                  onClick={() => setShowArchive(true)}
+                  onClick={handleOpenArchive}
                   className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
                 >
                   Arşiv
@@ -173,13 +211,14 @@ export default function Home() {
                       className="overflow-hidden"
                     >
                       <div className="p-4">
-                        <MaterialList materials={materials} />
+                        <MaterialList materials={dailyMaterials} />
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
+              {/* Ekstra Materyaller Kartı */}
               {extraMaterials && (
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mb-6">
                   <button
@@ -230,7 +269,12 @@ export default function Home() {
       </div>
 
       {showArchive && (
-        <ArchiveModal onClose={() => setShowArchive(false)} visibleDays={7} />
+        <ArchiveModal
+          onClose={() => setShowArchive(false)}
+          visibleDays={visibleDays}
+          mode={mode}
+          materials={archiveMaterials}
+        />
       )}
     </>
   );
