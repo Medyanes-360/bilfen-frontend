@@ -47,8 +47,7 @@ const InfoSection = () => {
         {/* Text Section */}
         <TextPart />
         {/* ImagePart */}
-        <div className="relative z-10 rounded-2xl sm:bg-[url('/images/happy.png')] bg-center bg-no-repeat bg-cover w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] flex-shrink-0 self-center mt-4 sm:mt-6">
-        </div>
+        <div className="hidden sm:block relative z-10 rounded-2xl bg-[url('/images/happy.png')] bg-center bg-no-repeat bg-cover w-full h-[300px] sm:h-[350px] md:h-[400px] lg:h-[450px] flex-shrink-0 self-center mt-4 sm:mt-6"/>
       </div>
     </PageContainer>
   );

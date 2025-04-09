@@ -1,62 +1,76 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import Image from "next/image"
+import { useEffect } from "react";
+import Image from "next/image";
 
 const features = [
   {
     icon: "ugllxeyl", // Shield icon
     title: "Güvenli ve Korunaklı",
-    description: "En yüksek güvenlik standartlarıyla, çocuklarınızın güvenle öğrenebileceği bir dijital ortam sunuyoruz.",
+    description:
+      "En yüksek güvenlik standartlarıyla, çocuklarınızın güvenle öğrenebileceği bir dijital ortam sunuyoruz.",
   },
   {
     icon: "sviehykt", // Clean icon
     title: "Düzenli ve Bakımlı",
-    description: "Çocuklarınızın rahatça öğrenebileceği, her zaman düzenli ve profesyonelce hazırlanmış içerikler sunuyoruz.",
+    description:
+      "Çocuklarınızın rahatça öğrenebileceği, her zaman düzenli ve profesyonelce hazırlanmış içerikler sunuyoruz.",
   },
   {
     icon: "vvyxyrur", // Eco-friendly icon
     title: "Eğitimde Yenilikçi Yaklaşım",
-    description: "Bilfen'in zengin online eğitim içerikleriyle çocuklarınızın gelişimini her adımda destekliyoruz.",
+    description:
+      "Bilfen'in zengin online eğitim içerikleriyle çocuklarınızın gelişimini her adımda destekliyoruz.",
   },
-]
+];
 
 const FeatureSection = () => {
   // Load the lordicon script
   useEffect(() => {
-    const script = document.createElement("script")
-    script.src = "https://cdn.lordicon.com/lordicon.js"
-    script.defer = true
+    const script = document.createElement("script");
+    script.src = "https://cdn.lordicon.com/lordicon.js";
+    script.defer = true;
 
     // Make sure we don't add the script multiple times
-    if (!document.querySelector('script[src="https://cdn.lordicon.com/lordicon.js"]')) {
-      document.body.appendChild(script)
+    if (
+      !document.querySelector(
+        'script[src="https://cdn.lordicon.com/lordicon.js"]'
+      )
+    ) {
+      document.body.appendChild(script);
     }
 
     return () => {
       // Clean up is optional since the script might be used elsewhere
-    }
-  }, [])
+    };
+  }, []);
 
   return (
     <section className="relative py-20 md:py-32 bg-black text-white overflow-hidden">
       {/* Background Image & Overlay */}
       <div className="absolute inset-0 z-0">
-        <Image src="/images/bg-4-copyright.jpg" alt="Background" fill className="object-cover object-center" priority />
+        <Image
+          src="/images/bg-4-copyright.jpg"
+          alt="Background"
+          fill
+          className="object-cover object-center"
+          priority
+        />
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       </div>
 
       {/* Content Container */}
       <div className="relative z-10 container mx-auto px-4">
         {/* Heading */}
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-nunito font-bold text-center mb-20 tracking-tight leading-tight">
-        ÖZGÜN EĞİTİMLE GELECEĞE GÜVENLE!
-                  <div className="pt-3 text-orange text-2xl md:text-3xl font-light tracking-wide">
-                  🎉 Eğlenerek Öğrenin          </div>
+        <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-nunito font-bold text-center mb-20 tracking-tight leading-tight">
+          ÖZGÜN EĞİTİMLE GELECEĞE GÜVENLE!
+          <div className="pt-3 text-orange text-xl sm:text-2xl md:text-3xl font-light tracking-wide">
+            🎉 Eğlenerek Öğrenin{" "}
+          </div>
         </h2>
 
         {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-14 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-14 max-w-6xl mx-auto">
           {features.map((feature, index) => (
             <div
               key={index}
@@ -73,13 +87,15 @@ const FeatureSection = () => {
                 ></lord-icon>
               </div>
               <h3 className="text-2xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-sm text-gray-200 max-w-xs">{feature.description}</p>
+              <p className="text-sm text-gray-200 max-w-xs">
+                {feature.description}
+              </p>
             </div>
           ))}
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
 export default FeatureSection;
