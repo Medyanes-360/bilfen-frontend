@@ -3,11 +3,14 @@ import PageContainer from "@/containers/pageContainer";
 import { Parallax } from "@/globalElements/Parallax";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useState } from "react";
 
 // Prevent hydration mismatch warning
 const ReactPlayer = dynamic(() => import("react-player/lazy"), { ssr: false });
 
 const GuideSection = () => {
+  const [playVideo, setPlayVideo] = useState(false);
+
   return (
     <div className="bg-[#fff6e9]">
       <PageContainer className="px-3 md:px-6">
@@ -68,12 +71,16 @@ const GuideSection = () => {
 
             {/* ReactPlayer Video */}
             <div className="md:col-span-3 w-full h-full max-h-[350px] order-1 lg:order-2">
-              <div className="relative overflow-hidden rounded-xl shadow-lg bg-black">
+              <div className="relative pt-[56.25%] overflow-hidden rounded-xl shadow-lg bg-black">
                 <ReactPlayer
                   url="/example-video.mp4"
+                  playing={playVideo}
+                  light="/images/thumbnail.webp"
                   controls
                   width="100%"
                   height="100%"
+                  onClickPreview={() => setPlayVideo(true)}
+                  className="absolute top-0 left-0"
                   config={{
                     file: {
                       attributes: {
