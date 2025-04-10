@@ -4,7 +4,7 @@ import { buildUrl } from "@/lib/utils";
 import { AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // Dashboard Components
 import DailyCalendar from "@/components/DailyCalendar";
@@ -12,7 +12,6 @@ import ErrorState from "@/components/errorState";
 import LoadingState from "@/components/loadingState";
 import ArchiveButton from "@/components/studentDashboard/archiveButton";
 import BottomNavigation from "@/components/studentDashboard/bottomNav";
-import ExtraMaterials from "@/components/studentDashboard/extraMaterials";
 import DashboardHeader from "@/components/studentDashboard/header";
 import LearningPath from "@/components/studentDashboard/learningPath";
 
@@ -33,12 +32,11 @@ export default function Home() {
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
   const [isMobile, setIsMobile] = useState(false);
-  const [extraMaterialsOpen, setExtraMaterialsOpen] = useState(false);
   const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
-  const [extraMaterials, setExtraMaterials] = useState([]);
   const [archiveMaterials, setArchiveMaterials] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const taskOpenTimeRef = useRef(null);
 
   // Derived state for learning path (today's tasks)
   const learningPath = contents.filter((content) => {
@@ -140,49 +138,52 @@ export default function Home() {
     }
   }, [contents]);
 
-  // Fetch all contents
-  useEffect(() => {
-    const fetchContents = async () => {
-      if (!session) return;
+// Fetch all contents
+useEffect(() => {
+  const fetchContents = async () => {
+    if (!session) return;
 
-      try {
-        setIsLoading(true);
-        const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL);
-        const response = await fetch(url);
+    try {
+      setIsLoading(true);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch contents");
-        }
+      // query parameters
+      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
+        isPublished: true, // fetch only published tasks
+        grade: session.user.grade, // fetch tasks for the student's grade
+      });
 
-        const data = await response.json();
-        setContents(data);
+      console.log("Fetching tasks from URL:", url);
+      const response = await fetch(url);
 
-        // Process materials
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        // Extra materials: isExtraMaterial is true
-        const extra = data.filter((item) => item.isExtraMaterial === true);
-
-        // Archive materials: isExtraMaterial is false and date is older than today
-        const archive = data.filter((item) => {
-          const itemDate = new Date(item.date);
-          itemDate.setHours(0, 0, 0, 0);
-          return !item.isExtraMaterial && itemDate < today;
-        });
-
-        setExtraMaterials(extra);
-        setArchiveMaterials(archive);
-      } catch (error) {
-        console.error("Error fetching contents:", error);
-        setError("Failed to load contents");
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch contents");
       }
-    };
 
-    fetchContents();
-  }, [session]);
+      const data = await response.json();
+      setContents(data);
+
+      // Process materials
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Archive materials: isExtraMaterial is false and date is older than today
+      const archive = data.filter((item) => {
+        const itemDate = new Date(item.date);
+        itemDate.setHours(0, 0, 0, 0);
+        return !item.isExtraMaterial && itemDate < today;
+      });
+
+      setArchiveMaterials(archive);
+    } catch (error) {
+      console.error("Error fetching contents:", error);
+      setError("Failed to load contents");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchContents();
+}, [session]);
 
   const handleDaySelect = (day) => {
     setSelectedDay(day);
@@ -205,11 +206,15 @@ export default function Home() {
       }
 
       setIsTaskPopupOpen(true);
+      // time starts when task is opened
+      taskOpenTimeRef.current = Date.now();
     } catch (error) {
       console.error("Error fetching task details:", error);
-      // Fall back to using the existing task data
+      // fallback to using the existing task data
       setSelectedTask(task);
       setIsTaskPopupOpen(true);
+      // time starts when task is opened
+      taskOpenTimeRef.current = Date.now();
     }
   };
 
@@ -226,6 +231,26 @@ export default function Home() {
     } catch (error) {
       console.error("Error completing task:", error);
     }
+  };
+
+  // Handle task modal close
+  const handleTaskModalClose = () => {
+    // check if the task was open for AT LEAST 30 seconds
+    if (taskOpenTimeRef.current && selectedTask) {
+      const timeSpent = Date.now() - taskOpenTimeRef.current;
+      if (timeSpent >= 30000) { // 30 seconds in ms
+        // mark as completed
+        handleCompleteTask(selectedTask._id);
+      } else {
+        // else, close the modal without marking as completed
+        setIsTaskPopupOpen(false);
+      }
+    } else {
+      setIsTaskPopupOpen(false);
+    }
+    
+    // reset the timer
+    taskOpenTimeRef.current = null;
   };
 
   // Prevent body scroll when modals are open
@@ -340,15 +365,6 @@ export default function Home() {
                 onTaskClick={handleTaskClick}
               />
 
-              {/* Extra Materials Toggle Section */}
-              <ExtraMaterials
-                extraMaterials={extraMaterials}
-                extraMaterialsOpen={extraMaterialsOpen}
-                setExtraMaterialsOpen={setExtraMaterialsOpen}
-                onMaterialClick={handleMaterialClick}
-                isMobile={isMobile}
-              />
-
               {/* Archive Button Section */}
               <ArchiveButton onClick={() => setIsArchiveModalOpen(true)} />
             </div>
@@ -366,7 +382,7 @@ export default function Home() {
         {isTaskPopupOpen && selectedTask && (
           <TaskModal
             task={selectedTask}
-            onClose={() => setIsTaskPopupOpen(false)}
+            onClose={handleTaskModalClose}
             onCompleteTask={handleCompleteTask}
             onMaterialClick={handleMaterialClick}
             isMobile={isMobile}

@@ -38,7 +38,7 @@ export default function DashboardHeader({
 
         {/* Responsive Sign Out Button */}
         <button
-          className="cursor-pointer absolute right-4 sm:right-8 top-[75%] sm:top-[75%] transform -translate-y-1/2 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2"
+          className="cursor-pointer absolute right-4 sm:right-4 top-[75%] sm:top-[75%] transform -translate-y-1/2 bg-gradient-to-r from-red-500 to-red-600 text-white px-3 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-1 sm:gap-2"
           onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
         >
           <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
