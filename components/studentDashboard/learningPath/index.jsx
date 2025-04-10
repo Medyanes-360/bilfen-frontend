@@ -88,7 +88,7 @@ function TaskItem({ task, onClick }) {
         <div className="flex justify-between items-center">
           <button
             className={`
-              py-2 px-4 rounded-full text-sm font-bold text-white flex items-center gap-1 whitespace-nowrap transition-all
+              py-2 px-4 rounded-full text-sm font-bold text-white flex items-center gap-1 whitespace-nowrap transition-all cursor-pointer 
               ${task.completed ? "bg-green-500 hover:bg-green-600" : "bg-blue-500 hover:bg-blue-600"}
             `}
             onClick={onClick}

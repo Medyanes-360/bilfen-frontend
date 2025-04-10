@@ -205,7 +205,7 @@ const LoginPopup = ({ isOpen, setIsOpen }) => {
                     value={formik.values.password}
                     onChange={formik.handleChange}
                     className="pl-4 pr-4 py-4 w-full bg-white border-2 border-purple-300 rounded-xl focus:border-purple-500 focus:ring focus:ring-purple-200 focus:ring-opacity-50 text-lg transition-all duration-300 shadow-sm group-hover:shadow-md hover:border-purple-400 outline-none"
-                    placeholder="Süper gizli şifreni yaz"
+                    placeholder="Şifreni yaz"
                   />
                   {formik.touched.password && formik.errors.password && (
                     <p className="text-orange-500 text-sm">
