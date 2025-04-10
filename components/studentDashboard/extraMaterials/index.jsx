@@ -12,10 +12,10 @@ export default function ExtraMaterials({
   isMobile,
 }) {
   return (
-    <div className="mb-8">
+    <div className="cursor-pointer mb-8">
       <div
         className={`
-          bg-white border-2 rounded-xl overflow-hidden transition-all duration-300 shadow-md
+          bg-white border-2 rounded-xl overflow-hidden transition-all duration-300 shadow-md cursor-pointer 
           ${extraMaterialsOpen ? "border-orange-300" : "border-gray-200 hover:border-orange-200"}
         `}
       >
@@ -28,13 +28,13 @@ export default function ExtraMaterials({
             ${extraMaterialsOpen ? "bg-orange-50" : "hover:bg-orange-50/50"}
           `}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer ">
             <span className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-xl transition-transform hover:scale-110">
               📚
             </span>
             <h2 className="text-lg font-bold text-orange-600">Ekstra Materyaller</h2>
           </div>
-          <div className={`transition-transform duration-300 ${extraMaterialsOpen ? "rotate-180" : ""}`}>
+          <div className={`transition-transform duration-300 cursor-pointer ${extraMaterialsOpen ? "rotate-180" : ""}`}>
             <ChevronDown className="h-6 w-6 text-orange-500" />
           </div>
         </button>
@@ -72,7 +72,7 @@ export default function ExtraMaterials({
                               <span>{material.type === "video" ? "Video" : "Doküman"}</span>
                             </div>
                           </div>
-                          <div className="text-gray-400 group-hover:text-orange-500 transition-colors">
+                          <div className="text-gray-400 group-hover:text-orange-500 transition-colors cursor-pointer ">
                             {material.type === "video" || !isMobile ? (
                               <ExternalLink className="h-5 w-5" />
                             ) : (

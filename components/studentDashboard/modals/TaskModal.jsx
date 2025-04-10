@@ -30,7 +30,7 @@ export default function TaskModal({ task, onClose, onCompleteTask, onMaterialCli
                   </div>
                   <button
                     onClick={() => onMaterialClick(material)}
-                    className="flex-1 text-left text-blue-500 hover:text-blue-700 transition-colors"
+                    className="flex-1 text-left text-blue-500 hover:text-blue-700 transition-colors cursor-pointer "
                   >
                     {material.name}
                   </button>
@@ -53,7 +53,7 @@ export default function TaskModal({ task, onClose, onCompleteTask, onMaterialCli
           <div className="mb-4">
             <button
               onClick={() => onCompleteTask(task._id)}
-              className="w-full py-3 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors"
+              className="cursor-pointer w-full py-3 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors"
             >
               Görevi Tamamla
             </button>
@@ -62,7 +62,7 @@ export default function TaskModal({ task, onClose, onCompleteTask, onMaterialCli
 
         <div className="flex justify-end">
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+            className="cursor-pointer bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
             onClick={onClose}
           >
             Kapat
