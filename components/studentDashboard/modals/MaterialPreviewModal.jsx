@@ -33,14 +33,14 @@ export default function MaterialPreviewModal({ material, onClose, isMobile }) {
                     link.download = material.name
                     link.click()
                   }}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm cursor-pointer"
                 >
                   <Download className="h-4 w-4" />
                   <span>İndir</span>
                 </button>
               )}
             <button
-              className="flex items-center gap-1 px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm"
+              className="flex items-center gap-1 px-3 py-1.5 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm cursor-pointer "
               onClick={onClose}
             >
               <span>Kapat</span>

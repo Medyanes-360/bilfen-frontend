@@ -137,7 +137,7 @@ export default function ArchiveModal({ onClose, materials, isMobile }) {
           )}
           <button
             onClick={() => onClose()}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer "
           >
             <X className="h-5 w-5 text-gray-500" />
           </button>
@@ -195,7 +195,7 @@ export default function ArchiveModal({ onClose, materials, isMobile }) {
                     <li key={material.id || idx}>
                       <button
                         onClick={() => handleMaterialClick(material)}
-                        className="w-full flex items-start gap-3 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-left group border border-gray-200 hover:border-orange-200 hover:shadow-md"
+                        className="w-full flex items-start gap-3 p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors text-left group border border-gray-200 hover:border-orange-200 hover:shadow-md cursor-pointer"
                       >
                         <div className="w-10 h-10 flex-shrink-0 rounded-full bg-orange-100 flex items-center justify-center text-xl mt-1">
                           {getMaterialIcon(material)}
@@ -262,7 +262,7 @@ export default function ArchiveModal({ onClose, materials, isMobile }) {
         <div className="p-5 border-t flex justify-end">
           <button
             onClick={() => onClose()}
-            className="px-4 py-2 rounded-md text-sm bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+            className="cursor-pointer px-4 py-2 rounded-md text-sm bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
           >
             Kapat
           </button>
