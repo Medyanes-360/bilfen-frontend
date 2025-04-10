@@ -53,8 +53,6 @@ export const authOptions = {
     async session({ session, token }) {
       if (token?.id) {
         session.user.id = token.id;
-      }
-      if (token?.role) {
         session.user.role = token.role;
         session.user.branch = token.branch ? token.branch : null;
         session.user.grade = token.grade ? token.grade : null;

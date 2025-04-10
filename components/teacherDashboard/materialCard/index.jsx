@@ -12,18 +12,42 @@ const MaterialCard = ({ material }) => {
     [material?.type]
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(material.isCompleted);
+  const [materialContent, setMaterialContent] = useState(null);
 
-  const { onOpen, onClose } = useModalCompletion(async () => {
-    try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${material?.id}?isComplete=true`;
-      await fetch(url, {
-        method: "PATCH",
-      });
-      console.log("Materyal güncellendi");
-    } catch (error) {
-      console.log("Hata: ", error);
+  const { onOpen, onClose } = useModalCompletion(5000, async () => {
+    if (!isCompleted) {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${material?.id}`;
+        await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ isCompleted: true }),
+        });
+
+        setIsCompleted(true)
+      } catch (error) {
+        console.log("Hata: ", error);
+      }
     }
+
+    return null;
   });
+
+  const fetchMaterialContent = async () => {
+    if (!material?.fileUrl) {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/`;
+        await fetch(url);
+      } catch (error) {
+        console.log("Hata: ", error);
+      }
+    }
+
+    return null;
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -56,7 +80,7 @@ const MaterialCard = ({ material }) => {
                   <span className="break-words whitespace-normal">
                     {material.title}
                   </span>
-                  {material.viewed && (
+                  {isCompleted && (
                     <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full whitespace-nowrap group-hover:bg-green-200 transition-colors duration-300">
                       ✓ İncelendi
                     </span>
