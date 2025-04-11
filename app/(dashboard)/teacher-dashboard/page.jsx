@@ -78,7 +78,7 @@ export default function Home() {
         isExtra,
         branch: user.branch,
       });
-      const res = await fetch(url);
+      const res = await fetch(url, { cache:'no-store' });
 
       if (!res.ok) {
         setError(res.status);

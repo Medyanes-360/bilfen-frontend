@@ -50,7 +50,7 @@ const MaterialCard = ({ material }) => {
       const fileUrl = material?.fileUrl;
       const url = `${
         process.env.NEXT_PUBLIC_BACKEND_URL
-      }/api/file/view?fileUrl=${encodeURIComponent(fileUrl)}`;
+      }api/file/view?fileUrl=${fileUrl}`;
 
       const response = await fetch(url);
       if (!response.ok) {
