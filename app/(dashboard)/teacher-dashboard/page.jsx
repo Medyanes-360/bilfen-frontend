@@ -17,8 +17,6 @@ export default function Home() {
   const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
   // archiveMaterials will be soon altered
-
-  console.log(dailyMaterials,'dailyMaterials')
   const [archiveMaterials, setArchiveMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
@@ -99,7 +97,7 @@ export default function Home() {
 
   const updateMaterialsForDate = (date) => {
     const formattedDate = formatDate(date);
-    const filtered = materials.filter((material) => material?.publishDateTeacher === formattedDate);
+    const filtered = materials.filter((material) => material?.publishDateTeacher === "2025-04-11");
     setDailyMaterials(filtered);
   };
 
