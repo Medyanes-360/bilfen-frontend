@@ -57,7 +57,7 @@ export default function DashboardHeader({
               <LogOut
                 className={`h-4 w-4 transition-all duration-300 ${isHovering ? "text-red-300 rotate-12" : "text-white"}`}
               />
-              <span className="hidden sm:inline font-medium">Çıkış Yap</span>
+              <span className="cursor-pointer hidden sm:inline font-medium">Çıkış Yap</span>
             </span>
           </button>
         </div>
