@@ -97,7 +97,7 @@ export default function Home() {
 
   const updateMaterialsForDate = (date) => {
     const formattedDate = formatDate(date);
-    const filtered = materials.filter((material) => material?.publishDateTeacher === "2025-04-11");
+    const filtered = materials.filter((material) => material?.publishDateTeacher === formattedDate);
     setDailyMaterials(filtered);
   };
 
