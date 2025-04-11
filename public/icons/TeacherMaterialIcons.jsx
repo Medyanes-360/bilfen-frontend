@@ -7,14 +7,14 @@ export class IconByTypeInfo {
     switch (this.type) {
       case "video":
         return this.getVideoIcon();
+      case "audio":
+        return this.getAudioIcon();
       case "document":
         return this.getDocumentIcon();
       case "game":
         return this.getGameIcon();
       case "quiz":
         return this.getQuizIcon();
-      case "audio":
-        return this.getAudioIcon();
       default:
         return this.getDefaultIcon();
     }
