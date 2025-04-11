@@ -50,7 +50,7 @@ export default function LearningPath({
         {/* Tasks */}
         <div className="relative z-10 flex flex-col gap-6">
           {displayContents.length > 0 ? (
-            displayContents.map((task) => <TaskItem key={task._id} task={task} onClick={() => onTaskClick(task)} />)
+            displayContents.map((task) => <TaskItem key={task.id} task={task} onClick={() => onTaskClick(task)} />)
           ) : (
             <div className="bg-gray-100 rounded-2xl p-6 border-2 border-dashed border-gray-300 text-center text-gray-500 italic">
               {selectedDay && !selectedDay.isToday
