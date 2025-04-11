@@ -1,120 +1,166 @@
-"use client";
+"use client"
 
-import { buildUrl } from "@/lib/utils";
-import { AnimatePresence } from "framer-motion";
-import { useSession } from "next-auth/react";
-import Head from "next/head";
-import { useEffect, useState, useRef } from "react";
+import { buildUrl } from "@/lib/utils"
+import { AnimatePresence } from "framer-motion"
+import { useSession } from "next-auth/react"
+import Head from "next/head"
+import { useEffect, useState, useMemo, useCallback } from "react"
 
 // Dashboard Components
-import DailyCalendar from "@/components/DailyCalendar";
-import ErrorState from "@/components/errorState";
-import LoadingState from "@/components/loadingState";
-import ArchiveButton from "@/components/studentDashboard/archiveButton";
-import BottomNavigation from "@/components/studentDashboard/bottomNav";
-import DashboardHeader from "@/components/studentDashboard/header";
-import LearningPath from "@/components/studentDashboard/learningPath";
+import DailyCalendar from "@/components/DailyCalendar"
+import ErrorState from "@/components/errorState"
+import LoadingState from "@/components/loadingState"
+import ArchiveButton from "@/components/studentDashboard/archiveButton"
+import BottomNavigation from "@/components/studentDashboard/bottomNav"
+import DashboardHeader from "@/components/studentDashboard/header"
+import LearningPath from "@/components/studentDashboard/learningPath"
 
 // Modal Components
-import ArchiveModal from "@/components/modal/studentArchive/archive-modal";
-import MaterialPreviewModal from "@/components/studentDashboard/modals/MaterialPreviewModal";
-import TaskModal from "@/components/studentDashboard/modals/TaskModal";
+import ArchiveModal from "@/components/modal/studentArchive/archive-modal"
+import MaterialPreviewModal from "@/components/studentDashboard/modals/MaterialPreviewModal"
+import TaskModal from "@/components/studentDashboard/modals/TaskModal"
+
+// ModalCompletion hook
+import { useModalCompletion } from "@/hooks/useModalCompletion"
 
 export default function Home() {
-  const { data: session } = useSession();
-  const [userData, setUserData] = useState(null);
-  const [contents, setContents] = useState([]);
-  const [calendarData, setCalendarData] = useState([]);
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [isTaskPopupOpen, setIsTaskPopupOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [isMaterialPreviewOpen, setIsMaterialPreviewOpen] = useState(false);
-  const [selectedMaterial, setSelectedMaterial] = useState(null);
-  const [currentDate, setCurrentDate] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
-  const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false);
-  const [archiveMaterials, setArchiveMaterials] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const taskOpenTimeRef = useRef(null);
+  const { data: session } = useSession()
+  const [userData, setUserData] = useState(null)
+  const [contents, setContents] = useState([])
+  const [calendarData, setCalendarData] = useState([])
+  const [selectedDay, setSelectedDay] = useState(null)
+  const [isTaskPopupOpen, setIsTaskPopupOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState(null)
+  const [isMaterialPreviewOpen, setIsMaterialPreviewOpen] = useState(false)
+  const [selectedMaterial, setSelectedMaterial] = useState(null)
+  const [currentDate, setCurrentDate] = useState("")
+  const [isMobile, setIsMobile] = useState(false)
+  const [isArchiveModalOpen, setIsArchiveModalOpen] = useState(false)
+  const [archiveMaterials, setArchiveMaterials] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [accessSettings, setAccessSettings] = useState(null)
+  const [selectedDayContents, setSelectedDayContents] = useState([])
 
-  // Derived state for learning path (today's tasks)
-  const learningPath = contents.filter((content) => {
-    const contentDate = new Date(content.date);
-    const today = new Date();
-    return contentDate.toDateString() === today.toDateString() && !content.isExtraMaterial;
-  });
+  // Memoize the task completion callback
+  const handleCompleteTask = useCallback(async (taskId) => {
+    try {
+      setContents((prevContents) =>
+        prevContents.map((content) => (content._id === taskId ? { ...content, completed: true } : content)),
+      )
+      setIsTaskPopupOpen(false)
+    } catch (error) {
+      console.error("Error completing task:", error)
+    }
+  }, [])
 
-  // Progress calculations
-  const completedTasks = learningPath.filter((task) => task.completed).length;
-  const totalTasks = learningPath.length;
-  const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+  // modalCompletion hook with memoized callback
+  const { onOpen, onClose } = useModalCompletion(
+    30000,
+    useCallback(() => {
+      if (selectedTask) {
+        handleCompleteTask(selectedTask._id)
+      }
+    }, [selectedTask, handleCompleteTask]),
+  )
+
+  // memoize derived values
+  const learningPath = useMemo(() => {
+    return contents.filter((content) => {
+      const contentDate = new Date(content.date)
+      const today = new Date()
+      return contentDate.toDateString() === today.toDateString() && !content.isExtraMaterial
+    })
+  }, [contents])
+
+  // memoize progress calculations
+  const { completedTasks, totalTasks, progressPercentage } = useMemo(() => {
+    const completed = learningPath.filter((task) => task.completed).length
+    const total = learningPath.length
+    const percentage = total > 0 ? (completed / total) * 100 : 0
+    return { completedTasks: completed, totalTasks: total, progressPercentage: percentage }
+  }, [learningPath])
 
   // Check if device is mobile
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+      setIsMobile(window.innerWidth < 768)
+    }
 
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
+    checkIfMobile()
+    window.addEventListener("resize", checkIfMobile)
 
     return () => {
-      window.removeEventListener("resize", checkIfMobile);
-    };
-  }, []);
+      window.removeEventListener("resize", checkIfMobile)
+    }
+  }, [])
 
   // Set current date
   useEffect(() => {
-    const now = new Date();
-    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
-    setCurrentDate(now.toLocaleDateString("tr-TR", options));
-  }, []);
+    const now = new Date()
+    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
+    setCurrentDate(now.toLocaleDateString("tr-TR", options))
+  }, [])
 
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
-      if (!session) return;
+      if (!session) return
 
       try {
-        setIsLoading(true);
-        const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL);
-        const response = await fetch(url);
+        setIsLoading(true)
+        const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL)
+        const response = await fetch(url)
 
         if (!response.ok) {
-          throw new Error("Failed to fetch user data");
+          throw new Error("Failed to fetch user data")
         }
 
-        const data = await response.json();
-        setUserData(data);
+        const data = await response.json()
+        setUserData(data)
       } catch (error) {
-        console.error("Error fetching user data:", error);
-        setError("Failed to load user data");
+        console.error("Error fetching user data:", error)
+        setError("Failed to load user data")
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    fetchUserData();
-  }, [session]);
+    fetchUserData()
+  }, [session])
+
+  // Fetch access settings
+  useEffect(() => {
+    const fetchAccessSettings = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/access-settings`)
+        if (response.ok) {
+          const data = await response.json()
+          setAccessSettings(data)
+        }
+      } catch (error) {
+        console.error("Error fetching access settings:", error)
+      }
+    }
+
+    fetchAccessSettings()
+  }, [])
 
   // Generate calendar data
   useEffect(() => {
     const generateCalendarData = () => {
       try {
-        // Generate basic calendar structure (7 days)
-        const today = new Date();
-        const days = [];
+        const today = new Date()
+        const days = []
 
-        for (let i = -3; i <= 3; i++) {
-          const date = new Date(today);
-          date.setDate(today.getDate() + i);
+        for (let i = -15; i <= 15; i++) {
+          const date = new Date(today)
+          date.setDate(today.getDate() + i)
 
-          // Check if there are any contents for this day
           const hasTask = contents.some((content) => {
-            const contentDate = new Date(content.date);
-            return contentDate.toDateString() === date.toDateString();
-          });
+            const contentDate = new Date(content.date)
+            return contentDate.toDateString() === date.toDateString()
+          })
 
           days.push({
             date: date,
@@ -122,209 +168,205 @@ export default function Home() {
             weekday: date.toLocaleDateString("tr-TR", { weekday: "short" }),
             isToday: i === 0,
             hasTask: hasTask,
-          });
+          })
         }
 
-        setCalendarData(days);
-        setSelectedDay(days.find((day) => day.isToday));
+        setCalendarData(days)
+
+        // today is the selected day on initial load
+        if (!selectedDay) {
+          const todayDay = days.find((day) => day.isToday)
+          setSelectedDay(todayDay)
+
+          // today's contents
+          if (todayDay) {
+            const todayContents = contents.filter((content) => {
+              const contentDate = new Date(content.date)
+              return contentDate.toDateString() === todayDay.date.toDateString() && !content.isExtraMaterial
+            })
+            setSelectedDayContents(todayContents)
+          }
+        }
       } catch (error) {
-        console.error("Error generating calendar data:", error);
-        setError("Failed to generate calendar");
+        console.error("Error generating calendar data:", error)
+        setError("Failed to generate calendar")
       }
-    };
+    }
 
     if (contents.length > 0) {
-      generateCalendarData();
+      generateCalendarData()
     }
-  }, [contents]);
+  }, [contents, selectedDay])
 
-// Fetch all contents
-useEffect(() => {
-  const fetchContents = async () => {
-    if (!session) return;
+  // Fetch all contents
+  useEffect(() => {
+    const fetchContents = async () => {
+      if (!session) return
 
-    try {
-      setIsLoading(true);
+      try {
+        setIsLoading(true)
 
-      // query parameters
-      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
-        isPublished: true, // fetch only published tasks
-        grade: session.user.grade, // fetch tasks for the student's grade
-      });
+        const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
+          isPublished: true,
+          grade: session.user.grade,
+        })
 
-      console.log("Fetching tasks from URL:", url);
-      const response = await fetch(url);
+        const response = await fetch(url)
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch contents");
+        if (!response.ok) {
+          throw new Error("Failed to fetch contents")
+        }
+
+        const data = await response.json()
+        setContents(data)
+
+        // archive materials -- include ALL past materials
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        const archive = data.filter((item) => {
+          const itemDate = new Date(item.date)
+          itemDate.setHours(0, 0, 0, 0)
+          return itemDate < today 
+        })
+
+        setArchiveMaterials(archive)
+      } catch (error) {
+        console.error("Error fetching contents:", error)
+        setError("Failed to load contents")
+      } finally {
+        setIsLoading(false)
       }
-
-      const data = await response.json();
-      setContents(data);
-
-      // Process materials
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      // Archive materials: isExtraMaterial is false and date is older than today
-      const archive = data.filter((item) => {
-        const itemDate = new Date(item.date);
-        itemDate.setHours(0, 0, 0, 0);
-        return !item.isExtraMaterial && itemDate < today;
-      });
-
-      setArchiveMaterials(archive);
-    } catch (error) {
-      console.error("Error fetching contents:", error);
-      setError("Failed to load contents");
-    } finally {
-      setIsLoading(false);
     }
-  };
 
-  fetchContents();
-}, [session]);
+    fetchContents()
+  }, [session])
 
-  const handleDaySelect = (day) => {
-    setSelectedDay(day);
-  };
+  // Memoize the day selection handler
+  const handleDaySelect = useCallback(
+    (day) => {
+      setSelectedDay(day)
 
-  // Handle task click
-  const handleTaskClick = async (task) => {
-    try {
-      // Fetch the latest task data when clicked
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task._id}`
-      );
+      if (day) {
+        const selectedDate = day.date.toDateString()
+        const dayContents = contents.filter((content) => {
+          const contentDate = new Date(content.date)
+          return contentDate.toDateString() === selectedDate && !content.isExtraMaterial
+        })
 
-      if (response.ok) {
-        const updatedTask = await response.json();
-        setSelectedTask(updatedTask);
-      } else {
-        // If fetch fails, use the existing task data
-        setSelectedTask(task);
+        setSelectedDayContents(dayContents)
       }
+    },
+    [contents],
+  )
 
-      setIsTaskPopupOpen(true);
-      // time starts when task is opened
-      taskOpenTimeRef.current = Date.now();
-    } catch (error) {
-      console.error("Error fetching task details:", error);
-      // fallback to using the existing task data
-      setSelectedTask(task);
-      setIsTaskPopupOpen(true);
-      // time starts when task is opened
-      taskOpenTimeRef.current = Date.now();
-    }
-  };
+  // Memoize the task click handler
+  const handleTaskClick = useCallback(
+    async (task) => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task._id}`)
 
-  // Handle task completion
-  const handleCompleteTask = async (taskId) => {
-    try {
-      // Update the task in the local state
-      setContents((prevContents) =>
-        prevContents.map((content) =>
-          content._id === taskId ? { ...content, completed: true } : content
-        )
-      );
-      setIsTaskPopupOpen(false);
-    } catch (error) {
-      console.error("Error completing task:", error);
-    }
-  };
+        if (response.ok) {
+          const updatedTask = await response.json()
+          setSelectedTask(updatedTask)
+        } else {
+          setSelectedTask(task)
+        }
 
-  // Handle task modal close
-  const handleTaskModalClose = () => {
-    // check if the task was open for AT LEAST 30 seconds
-    if (taskOpenTimeRef.current && selectedTask) {
-      const timeSpent = Date.now() - taskOpenTimeRef.current;
-      if (timeSpent >= 30000) { // 30 seconds in ms
-        // mark as completed
-        handleCompleteTask(selectedTask._id);
-      } else {
-        // else, close the modal without marking as completed
-        setIsTaskPopupOpen(false);
+        setIsTaskPopupOpen(true)
+        onOpen()
+      } catch (error) {
+        console.error("Error fetching task details:", error)
+        setSelectedTask(task)
+        setIsTaskPopupOpen(true)
+        onOpen()
       }
-    } else {
-      setIsTaskPopupOpen(false);
-    }
-    
-    // reset the timer
-    taskOpenTimeRef.current = null;
-  };
+    },
+    [onOpen],
+  )
+
+  // Memoize the task modal close handler
+  const handleTaskModalClose = useCallback(() => {
+    onClose()
+    setIsTaskPopupOpen(false)
+  }, [onClose])
 
   // Prevent body scroll when modals are open
   useEffect(() => {
     if (isTaskPopupOpen || isMaterialPreviewOpen || isArchiveModalOpen) {
-      document.body.style.overflow = "hidden";
+      document.body.style.overflow = "hidden"
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "auto"
     }
 
     return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isTaskPopupOpen, isMaterialPreviewOpen, isArchiveModalOpen]);
-
-  // Handle material click
-  const handleMaterialClick = (material) => {
-    if (!material) {
-      console.error("Material is undefined or null:", material);
-      return;
+      document.body.style.overflow = "auto"
     }
+  }, [isTaskPopupOpen, isMaterialPreviewOpen, isArchiveModalOpen])
 
-    const materialUrl = material?.url || material?.content;
+  // Memoize the material click handler
+  const handleMaterialClick = useCallback(
+    (material) => {
+      if (!material) {
+        console.error("Material is undefined or null:", material)
+        return
+      }
 
-    if (!materialUrl) {
-      console.error("Material URL or content is missing:", material);
-      return;
-    }
+      const materialUrl = material?.url || material?.content
 
-    const isVideo =
-      materialUrl.endsWith(".mp4") ||
-      materialUrl.endsWith(".webm") ||
-      materialUrl.endsWith(".mov") ||
-      material.type === "video";
+      if (!materialUrl) {
+        console.error("Material URL or content is missing:", material)
+        return
+      }
 
-    const previewMaterial = {
-      name: material.name || material.title || "Untitled Material",
-      url: materialUrl,
-      type: material.type || "document",
-    };
+      const isVideo =
+        materialUrl.endsWith(".mp4") ||
+        materialUrl.endsWith(".webm") ||
+        materialUrl.endsWith(".mov") ||
+        material.type === "video"
 
-    if (isVideo || !isMobile) {
-      // For videos (any screen size) or any material on desktop: preview
-      setSelectedMaterial(previewMaterial);
-      setIsMaterialPreviewOpen(true);
-    } else {
-      // For non-video materials on mobile: download
-      const link = document.createElement("a");
-      link.href = previewMaterial.url;
-      link.download = previewMaterial.name;
-      link.click();
-    }
-  };
+      const previewMaterial = {
+        name: material.name || material.title || "Untitled Material",
+        url: materialUrl,
+        type: material.type || "document",
+      }
 
-  // Handle archive modal close with optional material selection
-  const handleArchiveModalClose = (material = null) => {
-    setIsArchiveModalOpen(false);
+      if (isVideo || !isMobile) {
+        setSelectedMaterial(previewMaterial)
+        setIsMaterialPreviewOpen(true)
+      } else {
+        const link = document.createElement("a")
+        link.href = previewMaterial.url
+        link.download = previewMaterial.name
+        link.click()
+      }
+    },
+    [isMobile],
+  )
 
-    // If a material was selected in the archive, preview it
-    if (material) {
-      handleMaterialClick(material);
-    }
-  };
+  // Memoize the archive modal close handler
+  const handleArchiveModalClose = useCallback(
+    (material = null) => {
+      setIsArchiveModalOpen(false)
+
+      if (material) {
+        handleMaterialClick(material)
+      }
+    },
+    [handleMaterialClick],
+  )
 
   // Loading state
   if (isLoading && !userData && contents.length === 0) {
-    return <LoadingState />;
+    return <LoadingState />
   }
 
   // Error state
   if (error) {
-    return <ErrorState error={error} onRetry={() => window.location.reload()} />;
+    return <ErrorState error={error} onRetry={() => window.location.reload()} />
   }
 
+  // pass accessSettings to the ArchiveModal
   return (
     <div className="bg-gray-50 min-h-screen">
       <Head>
@@ -334,11 +376,8 @@ useEffect(() => {
       </Head>
 
       <div className="max-w-lg md:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto bg-white min-h-screen shadow-lg relative overflow-hidden pb-20">
-        {/* Main container with 3-column layout for desktop */}
         <div className="lg:flex lg:flex-row lg:justify-center">
-          {/* Main content - centered when sidebar is hidden */}
           <div className="lg:w-3/4 mx-auto">
-            {/* Header */}
             <DashboardHeader
               userData={userData}
               session={session}
@@ -348,36 +387,31 @@ useEffect(() => {
               progressPercentage={progressPercentage}
             />
 
-            {/* Main Content */}
             <div className="px-5 py-4 md:px-6">
-              {/* Calendar Component */}
               <DailyCalendar
                 days={calendarData}
                 selectedDay={selectedDay}
                 onSelectDay={handleDaySelect}
+                accessSettings={accessSettings}
               />
 
-              {/* Learning Path Section */}
               <LearningPath
                 learningPath={learningPath}
                 completedTasks={completedTasks}
                 totalTasks={totalTasks}
                 onTaskClick={handleTaskClick}
+                selectedDay={selectedDay}
+                selectedDayContents={selectedDayContents}
               />
 
-              {/* Archive Button Section */}
               <ArchiveButton onClick={() => setIsArchiveModalOpen(true)} />
             </div>
           </div>
         </div>
 
-        {/* Bottom Navigation - Only visible on mobile and tablet */}
         <BottomNavigation />
       </div>
 
-      {/* MODALS  */}
-
-      {/* Task Popup Modal */}
       <AnimatePresence>
         {isTaskPopupOpen && selectedTask && (
           <TaskModal
@@ -390,7 +424,6 @@ useEffect(() => {
         )}
       </AnimatePresence>
 
-      {/* Material Preview Modal */}
       <AnimatePresence>
         {isMaterialPreviewOpen && selectedMaterial && (
           <MaterialPreviewModal
@@ -401,16 +434,16 @@ useEffect(() => {
         )}
       </AnimatePresence>
 
-      {/* Archive Modal */}
       <AnimatePresence>
         {isArchiveModalOpen && (
           <ArchiveModal
-            onClose={handleArchiveModalClose}
             materials={archiveMaterials}
+            accessSettings={accessSettings}
+            onClose={handleArchiveModalClose}
             isMobile={isMobile}
           />
         )}
       </AnimatePresence>
     </div>
-  );
+  )
 }

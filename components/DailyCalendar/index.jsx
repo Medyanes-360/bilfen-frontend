@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react"
 
-const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
-  const [startIndex, setStartIndex] = useState(0) // Index of the first visible day
-  const visibleDaysCount = 5 // Maximum number of days to display at once
+// accept accessSettings prop
+const DailyCalendar = ({ days, selectedDay, onSelectDay, accessSettings = null }) => {
+  const [startIndex, setStartIndex] = useState(0) // the first visible day
+  const visibleDaysCount = 7 // 7 visible days at once
 
-  // Ensure the current day is visible on page load
+  // current day is visible on page load
   useEffect(() => {
     const todayIndex = days.findIndex((d) => d.isToday)
     if (todayIndex !== -1) {
@@ -50,6 +51,24 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
     return dayDate > today
   }
 
+  // check if day is accessible based on access settings
+  const isDayAccessible = (day) => {
+    if (day.isToday) return true
+    if (!accessSettings) return false
+
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const dayDate = new Date(day.date)
+    dayDate.setHours(0, 0, 0, 0)
+
+    // Calculate days difference
+    const diffTime = Math.abs(dayDate - today)
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+    // Check if within allowed range
+    return diffDays <= accessSettings.studentDays
+  }
+
   return (
     <section className="mb-8">
       <div className="flex items-center justify-between gap-x-4 mb-4">
@@ -62,7 +81,7 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
       </div>
 
       <div className="relative w-full">
-        {/* Calendar Container with Arrows */}
+        {/* Calendar Container */}
         <div className="flex items-center justify-between w-full">
           {/* Left Arrow */}
           <button
@@ -88,31 +107,30 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
             {visibleDays.map((day) => {
               const isPast = isPastDay(day)
               const isFuture = isFutureDay(day)
+              const isAccessible = accessSettings ? isDayAccessible(day) : day.isToday
 
               return (
                 <div
                   key={day.date.toISOString()} // Ensure a unique key
                   data-today={day.isToday ? "true" : "false"}
                   onClick={() => {
-                    if (day.isToday || (!isPast && !isFuture)) {
-                      onSelectDay(day) // Allow selection only for today and valid days
+                    if (day.isToday || isAccessible) {
+                      onSelectDay(day) // allowing selection for today and accessible days
                     }
                   }}
                   className={`flex flex-col items-center py-3 rounded-xl transition-all duration-200
                     flex-1
                     ${day.isToday
                       ? "bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200 cursor-pointer"
-                      : isPast
-                        ? "bg-gray-100 cursor-not-allowed"
-                        : isFuture
-                          ? "bg-gray-100 cursor-not-allowed"
-                          : "bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                      : isAccessible
+                        ? "bg-gray-50 hover:bg-gray-100 cursor-pointer"
+                        : "bg-gray-100 cursor-not-allowed"
                     }
                     ${selectedDay && day.date.toDateString() === selectedDay.date.toDateString() && !day.isToday
                       ? "ring-2 ring-orange-300 shadow-md"
                       : "hover:shadow-sm hover:translate-y-[-2px]"
                     }
-                    ${isPast ? "opacity-90" : ""}`}
+                    ${isPast && !isAccessible ? "opacity-70" : ""}`}
                 >
                   <div className={`text-sm font-medium ${day.isToday ? "text-white/90" : "text-gray-600"}`}>
                     {day.weekday}
@@ -122,8 +140,8 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
                     className={`w-8 h-8 rounded-full flex items-center justify-center my-1.5
                       ${day.isToday
                         ? "bg-white text-orange-500 font-bold shadow-inner"
-                        : isPast
-                          ? "bg-white text-gray-700 font-medium"
+                        : isAccessible
+                          ? "bg-white/70 text-gray-700 font-medium"
                           : "bg-white/70 text-gray-500"
                       }
                       ${selectedDay && day.date.toDateString() === selectedDay.date.toDateString() && !day.isToday ? "ring-1 ring-orange-200" : ""}
@@ -137,9 +155,13 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay }) => {
                       Bugün
                     </span>
                   ) : isPast ? (
-                    <span className="text-xs text-gray-400 italic truncate max-w-full">Geçmiş</span>
+                    <span className="text-xs text-gray-400 italic truncate max-w-full">
+                      {isAccessible ? "Geçmiş" : "Erişilemez"}
+                    </span>
                   ) : (
-                    <span className="text-xs text-gray-400 italic truncate max-w-full">Yakında</span>
+                    <span className="text-xs text-gray-400 italic truncate max-w-full">
+                      {isAccessible ? "Yakında" : "Erişilemez"}
+                    </span>
                   )}
                 </div>
               )
