@@ -3,7 +3,7 @@ import { Modal } from "@/components/modal";
 import { useModalCompletion } from "@/hooks/useModalCompletion";
 import { getFileExtension } from "@/lib/utils";
 import { IconByTypeInfo } from "@/public/icons/TeacherMaterialIcons";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { RingLoader } from "react-spinners";
 
@@ -15,9 +15,12 @@ const MaterialCard = ({ material }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCompleted, setIsCompleted] = useState(material?.isCompleted);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [previewStatus, setPreviewStatus] = useState("idle");
+  const previewStatusRef = useRef(previewStatus);
 
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
-  const [hasPreviewError, setHasPreviewError] = useState(false);
+  useEffect(() => {
+    previewStatusRef.current = previewStatus;
+  }, [previewStatus]);
 
   const { onOpen, onClose } = useModalCompletion(5000, async () => {
     if (!isCompleted) {
@@ -42,44 +45,48 @@ const MaterialCard = ({ material }) => {
 
   const viewMaterialContent = async () => {
     try {
+      setPreviewStatus("pending");
+
       const fileUrl = material?.fileUrl;
       const url = `${
         process.env.NEXT_PUBLIC_BACKEND_URL
       }/api/file/view?fileUrl=${encodeURIComponent(fileUrl)}`;
 
       const response = await fetch(url);
-
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Dosya alınamadı");
+        throw new Error("Yüklenemedi");
       }
 
       const blob = await response.blob();
       const fileURL = URL.createObjectURL(blob);
 
       setPreviewUrl(fileURL);
-    } catch (error) {
-      console.log("Hata: ", error);
-    }
+      setPreviewStatus("success");
 
-    return null;
+      return fileURL;
+    } catch (error) {
+      console.error("Hata:", error);
+      setPreviewStatus("error");
+      return null;
+    }
   };
 
   const handleOpenModal = async () => {
-    setIsPreviewLoading(true);
-    setHasPreviewError(false);
     setIsModalOpen(true);
 
     const timeoutId = setTimeout(() => {
-      setIsPreviewLoading(false);
-      setHasPreviewError(true);
-    }, 10000);
+      if (previewStatusRef.current === "pending") {
+        console.log("Hello");
+        setPreviewStatus("error");
+      }
+    }, 15000);
 
-    await viewMaterialContent();
-
+    const result = await viewMaterialContent();
     clearTimeout(timeoutId);
-    setIsPreviewLoading(false);
-    onOpen();
+
+    if (result) {
+      onOpen();
+    }
   };
 
   const handleCloseModal = () => {
@@ -179,11 +186,11 @@ const MaterialCard = ({ material }) => {
               </div>
             </div>
 
-            {isPreviewLoading ? (
+            {previewStatus === "pending" ? (
               <div className="flex justify-center items-center h-[200px] sm:h-[400px] md:h-[500px]">
                 <RingLoader size={40} color="#155dfc" />
               </div>
-            ) : hasPreviewError ? (
+            ) : previewStatus === "error" ? (
               <div className="flex flex-col items-center justify-center h-[200px] sm:h-[400px] md:h-[500px] gap-4 text-center">
                 <p className="text-red-600 text-sm sm:text-base font-medium">
                   İçerik yüklenemedi. Lütfen tekrar deneyin.
@@ -195,7 +202,7 @@ const MaterialCard = ({ material }) => {
                   Tekrar Dene
                 </button>
               </div>
-            ) : previewUrl && material.type === "video" ? (
+            ) : previewStatus === "success" && material.type === "video" ? (
               <div className="w-full h-[200px] sm:h-[400px] md:h-[500px]">
                 <ReactPlayer
                   url={previewUrl}
@@ -215,7 +222,7 @@ const MaterialCard = ({ material }) => {
                   }}
                 />
               </div>
-            ) : previewUrl ? (
+            ) : previewStatus === "success" ? (
               <iframe
                 src={previewUrl}
                 className="w-full h-96 border border-gray-300 rounded-lg"
