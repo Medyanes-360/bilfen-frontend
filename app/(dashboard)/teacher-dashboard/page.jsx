@@ -17,6 +17,8 @@ export default function Home() {
   const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
   // archiveMaterials will be soon altered
+
+  console.log(dailyMaterials,'dailyMaterials')
   const [archiveMaterials, setArchiveMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
@@ -78,7 +80,7 @@ export default function Home() {
         isExtra,
         branch: user.branch,
       });
-      const res = await fetch(url);
+      const res = await fetch(url, { cache:'no-store' });
 
       if (!res.ok) {
         setError(res.status);
