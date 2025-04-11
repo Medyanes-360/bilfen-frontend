@@ -48,9 +48,8 @@ const MaterialCard = ({ material }) => {
       setPreviewStatus("pending");
 
       const fileUrl = material?.fileUrl;
-      const url = `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/api/file/view?fileUrl=${fileUrl}`;
+      const base = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/+$/, "");
+      const url = `${base}/api/file/view?fileUrl=${fileUrl}`;
 
       const response = await fetch(url);
       if (!response.ok) {
