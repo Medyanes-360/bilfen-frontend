@@ -208,7 +208,7 @@ export default function Home() {
 
         const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
           isPublished: true,
-          grade: session.user.grade,
+          ageGroup: "4-5 yaş",
         })
 
         const response = await fetch(url)
