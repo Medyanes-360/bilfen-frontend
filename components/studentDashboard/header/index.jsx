@@ -44,7 +44,7 @@ export default function DashboardHeader({
         {/* Sign Out Button */}
         <div className="mt-2 sm:mt-0 self-end sm:self-center">
           <button
-            className="group relative overflow-hidden rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 transition-all duration-300 hover:bg-white/20 hover:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-orange-500"
+            className="group relative overflow-hidden rounded-full bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 transition-all duration-300 hover:bg-white/20 hover:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/40 focus:ring-offset-2 focus:ring-offset-orange-500 cursor-pointer"
             onClick={() => signOut({ redirect: true, callbackUrl: "/" })}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
