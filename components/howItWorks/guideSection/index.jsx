@@ -15,7 +15,7 @@ const GuideSection = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-[#fff6e9]">
+    <div className="bg-[#fff6e9] w-full h-full min-h-screen">
       <PageContainer className="px-3 md:px-6">
         <div id="next-section" className="group z-20 relative py-16 xl:py-36">
           <Parallax
@@ -60,9 +60,9 @@ const GuideSection = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 place-items-center">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 place-items-center">
             {/* Image */}
-            <div className="relative md:col-span-2 z-20 order-2 lg:order-1">
+            <div className="relative md:col-span-2 z-20 order-2 md:order-1">
               <Image
                 src="/images/kid-w-laptop.png"
                 width={492}
@@ -73,7 +73,7 @@ const GuideSection = () => {
             </div>
 
             {/* ReactPlayer Video */}
-            <div className="md:col-span-3 w-full h-full max-h-[350px] order-1 lg:order-2">
+            <div className="md:col-span-3 w-full h-full max-h-[350px] order-1 md:order-2">
               <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full ">
                 <div className="relative pb-[56.25%] h-0 overflow-hidden w-full">
                   <iframe
