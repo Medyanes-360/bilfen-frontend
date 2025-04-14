@@ -3,8 +3,7 @@ import PageContainer from "@/containers/pageContainer";
 import { Parallax } from "@/globalElements/Parallax";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useState, useEffect } from "react";
 import Icons from "@/public/icons/Icons";
 
 // Prevent hydration mismatch warning
@@ -14,8 +13,20 @@ const GuideSection = () => {
   const [playVideo, setPlayVideo] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
+
   return (
-    <div className="bg-[#fff6e9] w-full h-full min-h-screen">
+    <div className="bg-[#fff6e9]">
       <PageContainer className="px-3 md:px-6">
         <div id="next-section" className="group z-20 relative py-16 xl:py-36">
           <Parallax
@@ -60,9 +71,9 @@ const GuideSection = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 place-items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 place-items-center">
             {/* Image */}
-            <div className="relative md:col-span-2 z-20 order-2 md:order-1">
+            <div className="relative md:col-span-2 z-20 order-2 lg:order-1">
               <Image
                 src="/images/kid-w-laptop.png"
                 width={492}
@@ -73,7 +84,7 @@ const GuideSection = () => {
             </div>
 
             {/* ReactPlayer Video */}
-            <div className="md:col-span-3 w-full h-full max-h-[350px] order-1 md:order-2">
+            <div className="md:col-span-3 w-full h-full max-h-[350px] order-1 lg:order-2">
               <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full ">
                 <div className="relative pb-[56.25%] h-0 overflow-hidden w-full">
                   <iframe
@@ -93,51 +104,40 @@ const GuideSection = () => {
                   </div>
                 </div>
               </div>
-
-              {/* <div className="relative pt-[56.25%] overflow-hidden rounded-xl shadow-lg bg-black">
-                <ReactPlayer
-                  url="/example-video.mp4"
-                  playing={playVideo}
-                  light="/images/thumbnail.webp"
-                  controls
-                  width="100%"
-                  height="100%"
-                  onClickPreview={() => setPlayVideo(true)}
-                  className="absolute top-0 left-0"
-                  config={{
-                    file: {
-                      attributes: {
-                        controlsList: "nodownload",
-                        disablePictureInPicture: true,
-                        playsInline: true,
-                        preload: "auto",
-                      },
-                    },
-                  }}
-                />
-              </div> */}
             </div>
           </div>
         </div>
       </PageContainer>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-[90vw] md:max-w-4xl p-0 bg-transparent border-none">
-          <DialogTitle className="hidden">Modal</DialogTitle>
-          <div className="relative pb-[56.25%] h-0 overflow-hidden">
-            <iframe
-              src={
-                isOpen
-                  ? "https://player.vimeo.com/video/386232261?autoplay=1"
-                  : "#"
-              }
-              className="absolute top-0 left-0 w-full h-full"
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+      {/* Custom Video Modal */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/80"
+            onClick={() => setIsOpen(false)}
+          ></div>
+          <div className="relative z-10 w-full max-w-xs xs:max-w-sm sm:max-w-md md:max-w-xl lg:max-w-3xl xl:max-w-4xl bg-black rounded-xl overflow-hidden">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="absolute top-2 right-2 z-10 bg-white text-black p-1 rounded-full hover:bg-white/80 transition-colors"
+              aria-label="Close video"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+              <iframe
+                src="https://player.vimeo.com/video/386232261?autoplay=1"
+                className="absolute top-0 left-0 w-full h-full"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </div>
   );
 };
