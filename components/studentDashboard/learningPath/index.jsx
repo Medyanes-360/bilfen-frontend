@@ -51,13 +51,13 @@ export default function LearningPath({
           </div>
         ) : (
           <>
-            {/* Background line */}
-            {displayContents.length > 0 && (
+            {/* Background line - show if there's more than one task */}
+            {displayContents.length > 1 && (
               <div className="absolute top-0 bottom-0 left-[35px] w-1.5 bg-gray-200 rounded z-0"></div>
             )}
 
-            {/* Progress line - only show IF there are completed tasks */}
-            {dayCompletedTasks > 0 && displayContents.length > 0 && (
+            {/* Progress line - only show IF there are completed tasks and more than one task */}
+            {dayCompletedTasks > 0 && displayContents.length > 1 && (
               <div
                 className="absolute top-0 left-[35px] w-1.5 bg-gradient-to-b from-green-500 to-green-400 rounded z-0"
                 style={{
