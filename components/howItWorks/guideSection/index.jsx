@@ -15,8 +15,8 @@ const GuideSection = () => {
 
   // Video oynatma durumuna göre iframe src'sini güncelle
   const videoSrc = playVideo
-    ? "https://player.vimeo.com/video/386232261?autoplay=1&dnt=1"
-    : "https://player.vimeo.com/video/386232261?autoplay=1&muted=1&loop=1&background=1&dnt=1";
+    ? "https://player.vimeo.com/video/386232261?autoplay=1&dnt=1&byline=0&title=0&portrait=0"
+    : "https://player.vimeo.com/video/386232261?autoplay=1&muted=1&background=1&dnt=1";
 
   // Lock body scroll when modal is open
   useEffect(() => {
