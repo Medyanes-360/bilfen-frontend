@@ -18,25 +18,25 @@ const TextPart = () => {
       </div>
 
       {/* Icon Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
-        <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-3 p-5 rounded-lg hover:bg-gray-50 transition duration-300">
-          <Icons.birthdayCake className="w-12 h-12 md:w-16 md:h-16 text-darklila" />
-          <span className="font-medium text-lg md:text-xl text-antrasit">
-            Çocuğunuza <br className="hidden sm:block" /> Özel!
+      <div className="grid grid-cols-3 gap-3 sm:gap-6">
+        <div className="flex flex-col items-center text-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition duration-300">
+          <Icons.birthdayCake className="w-10 h-10 sm:w-12 sm:h-12 text-darklila" />
+          <span className="font-medium text-sm sm:text-lg text-antrasit">
+            Çocuğunuza Özel!
           </span>
         </div>
 
-        <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-3 p-5 rounded-lg hover:bg-gray-50 transition duration-300">
-          <Icons.person className="w-12 h-12 md:w-16 md:h-16 text-darklila" />
-          <span className="font-medium text-lg md:text-xl text-antrasit">
-            Birebir <br className="hidden sm:block" /> Öğrenim Kalitesi
+        <div className="flex flex-col items-center text-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition duration-300">
+          <Icons.person className="w-10 h-10 sm:w-12 sm:h-12 text-darklila" />
+          <span className="font-medium text-sm sm:text-lg text-antrasit">
+            Birebir Öğrenim Kalitesi
           </span>
         </div>
 
-        <div className="flex flex-col items-center sm:items-start text-center sm:text-left gap-3 p-5 rounded-lg hover:bg-gray-50 transition duration-300">
-          <Icons.fun className="w-12 h-12 md:w-16 md:h-16 text-darklila" />
-          <span className="font-medium text-lg md:text-xl text-antrasit">
-            Kolay, Etkili ve <br className="hidden sm:block" /> Eğlenceli Öğrenme!
+        <div className="flex flex-col items-center text-center gap-2 p-3 rounded-lg hover:bg-gray-50 transition duration-300">
+          <Icons.fun className="w-10 h-10 sm:w-12 sm:h-12 text-darklila" />
+          <span className="font-medium text-sm sm:text-lg text-antrasit">
+            Kolay, Etkili ve Eğlenceli Öğrenme!
           </span>
         </div>
       </div>
