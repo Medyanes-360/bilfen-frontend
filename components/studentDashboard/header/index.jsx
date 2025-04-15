@@ -86,9 +86,9 @@ export default function DashboardHeader({
           {/* Progress Star */}
           {progressPercentage > 0 && (
             <div
-              className="absolute top-1/2 z-10 flex items-center justify-center"
+              className="absolute top-1/2 z-10 flex items-center justify-center pointer-events-none"
               style={{
-                left: `${progressPercentage}%`,
+                left: `${Math.min(progressPercentage, 98)}%`, // limited to 98% to prevent overflow
                 transform: `translateX(-50%) translateY(-50%)`,
               }}
             >
