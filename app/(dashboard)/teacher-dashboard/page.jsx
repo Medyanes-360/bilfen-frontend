@@ -46,9 +46,9 @@ export default function Home() {
         // Fetch all data
         await Promise.all([
           fetchVisibleDays(),
-          fetchMaterials(false, setMaterials),
-          fetchMaterials(true, setExtraMaterials),
-          fetchFutureMaterials(),
+          fetchMaterials(false, setMaterials, user),
+          fetchMaterials(true, setExtraMaterials, user),
+          // fetchFutureMaterials(),
         ]);
 
         setAppReady(true);
@@ -100,7 +100,7 @@ export default function Home() {
     }
   };
 
-  async function fetchMaterials(isExtra = false, setter) {
+  async function fetchMaterials(isExtra = false, setter, user) {
     try {
       const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
         isExtra,
@@ -121,23 +121,23 @@ export default function Home() {
     }
   }
 
-  async function fetchFutureMaterials() {
-    try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
-      const res = await fetch(url, { cache: "no-store" });
+  // async function fetchFutureMaterials() {
+  //   try {
+  //     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
+  //     const res = await fetch(url, { cache: "no-store" });
 
-      if (!res.ok) {
-        setError(res.status);
-        throw new Error(`HTTP error! Status: ${res.status}`);
-      }
+  //     if (!res.ok) {
+  //       setError(res.status);
+  //       throw new Error(`HTTP error! Status: ${res.status}`);
+  //     }
 
-      const data = await res.json();
-      setFutureMaterials(data);
-    } catch (error) {
-      console.error("Error fetching materials:", error.message);
-      setError(error.message);
-    }
-  }
+  //     const data = await res.json();
+  //     setFutureMaterials(data);
+  //   } catch (error) {
+  //     console.error("Error fetching materials:", error.message);
+  //     setError(error.message);
+  //   }
+  // }
 
   const updateMaterialsForDate = (date) => {
     const formattedDate = formatDate(date);
