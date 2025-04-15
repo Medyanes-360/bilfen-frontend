@@ -21,7 +21,7 @@ const Header = ({user, currentDate}) => {
           {/* Sağ taraf */}
           <div className="flex items-center ml-auto gap-3">
             <div className="text-right hidden sm:block">
-              <h2 className="font-bold">
+              <h2 className="font-bold capitalize">
                 Merhaba, {user ? user.name : "Misafir"}
               </h2>
               <p className="text-xs text-blue-100">{currentDate}</p>

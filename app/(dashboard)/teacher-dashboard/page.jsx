@@ -11,7 +11,7 @@ import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(null);
 
   const [materials, setMaterials] = useState([]);
   const [dailyMaterials, setDailyMaterials] = useState([]);
@@ -22,32 +22,52 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
 
-  const [visibleDays, setVisibleDays] = useState(2);
+  const [visibleDays, setVisibleDays] = useState(0);
   const [mode, setMode] = useState("future"); // "past" | "future"
 
   const [isOpen, setIsOpen] = useState(true);
   const [isExtraOpen, setIsExtraOpen] = useState(true);
 
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [appReady, setAppReady] = useState(false);
 
   const [showArchive, setShowArchive] = useState(false);
 
   const today = new Date();
 
   useEffect(() => {
-    const fetchSession = async () => {
+    (async () => {
       try {
-        const session = await getSession();
-        if (session) {
-          setUser(session.user);
-        }
-      } catch (error) {
-        setError(error.message);
-      }
-    };
+        // Get session
+        const user = await fetchSession();
 
-    fetchSession();
+        // Fetch all data
+        await Promise.all([
+          fetchVisibleDays(),
+          fetchMaterials(false, setMaterials),
+          fetchMaterials(true, setExtraMaterials),
+        ]);
+
+        setAppReady(true);
+      } catch (err) {
+        console.error("App yüklenirken hata: ", err);
+        setError("Bir hata oluştu");
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    // setSelectedDate(today);
+    updateMaterialsForDate(today);
+  }, []);
+
+  const fetchSession = async () => {
+    const session = await getSession();
+    if (!session) throw new Error("Oturum bulunamadı");
+    setUser(session.user);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     const formattedDate = today.toLocaleDateString("tr-TR", {
       weekday: "long",
@@ -55,30 +75,35 @@ export default function Home() {
       month: "long",
       year: "numeric",
     });
-
     setCurrentDate(formattedDate);
-  }, []);
 
-  useEffect(() => {
-    if (!user) return;
+    return session.user
+  };
 
-    fetchMaterials(false, setMaterials);
-    fetchMaterials(true, setExtraMaterials);
-  }, [user]);
+  const fetchVisibleDays = async () => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/access-settings`;
+      const res = await fetch(url);
 
-  useEffect(() => {
-    setSelectedDate(today);
-    updateMaterialsForDate(today);
-  }, [materials]);
+      if (!res.ok) {
+        setError(res.status);
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setVisibleDays(data.teacherDays);
+    } catch (error) {
+      console.log("Hata: ", error.message);
+    }
+  };
 
   async function fetchMaterials(isExtra = false, setter) {
     try {
-      setIsLoading(true);
       const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
         isExtra,
-        branch: user.branch,
+        branch: user?.branch,
       });
-      const res = await fetch(url, { cache:'no-store' });
+      const res = await fetch(url, { cache: "no-store" });
 
       if (!res.ok) {
         setError(res.status);
@@ -90,14 +115,15 @@ export default function Home() {
     } catch (error) {
       console.error("Error fetching materials:", error.message);
       setError(error.message);
-    } finally {
-      setIsLoading(false);
     }
   }
 
   const updateMaterialsForDate = (date) => {
     const formattedDate = formatDate(date);
-    const filtered = materials.filter((material) => material?.publishDateTeacher === formattedDate);
+
+    const filtered = materials.filter(
+      (material) => material?.publishDateTeacher === formattedDate
+    );
     setDailyMaterials(filtered);
   };
 
@@ -116,13 +142,19 @@ export default function Home() {
   };
 
   // Loading state
-  if (isLoading && !user && dailyMaterials.length === 0) {
+  if (!appReady && !error) {
     return <LoadingState role="teacher" />;
   }
 
   // Error state
   if (error) {
-    return <ErrorState role="teacher" error={error} onRetry={() => window.location.reload()} />;
+    return (
+      <ErrorState
+        role="teacher"
+        error={error}
+        onRetry={() => window.location.reload()}
+      />
+    );
   }
 
   return (
@@ -148,17 +180,25 @@ export default function Home() {
                 <div className="flex items-center p-4 border-b border-gray-100">
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📅</span>
-                    <h2 className="text-lg font-semibold text-gray-800">Takvim</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Takvim
+                    </h2>
                   </div>
                 </div>
 
-                <Calendar selectedDate={selectedDate} />
+                <Calendar
+                  visibleDays={visibleDays}
+                  onSelect={(date) => {
+                    updateMaterialsForDate(date);
+                  }}
+                />
               </div>
 
               <div className="flex justify-end gap-4 mb-4">
                 <button
                   onClick={handleOpenArchive}
-                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition">
+                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
+                >
                   Arşiv
                 </button>
               </div>
@@ -168,18 +208,22 @@ export default function Home() {
                 <button
                   onClick={() => setIsOpen(!isOpen)}
                   className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                  aria-label="Toggle extra materials">
+                  aria-label="Toggle extra materials"
+                >
                   {/* Sabit Başlık */}
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📚</span>
-                    <h2 className="text-lg font-semibold text-gray-800">Dijital Materyaller</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Dijital Materyaller
+                    </h2>
                   </div>
 
                   <div className="text-gray-400 transition">
                     <span
                       className={`inline-block transform transition-transform duration-300 ${
                         isOpen ? "rotate-180" : "rotate-0"
-                      }`}>
+                      }`}
+                    >
                       ▼
                     </span>
                   </div>
@@ -193,7 +237,8 @@ export default function Home() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="overflow-hidden">
+                      className="overflow-hidden"
+                    >
                       <div className="p-4">
                         <MaterialList materials={dailyMaterials} />
                       </div>
@@ -208,18 +253,22 @@ export default function Home() {
                   <button
                     onClick={() => setIsExtraOpen(!isExtraOpen)}
                     className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                    aria-label="Toggle extra materials">
+                    aria-label="Toggle extra materials"
+                  >
                     {/* Sabit Başlık */}
                     <div className="flex items-center">
                       <span className="text-blue-600 mr-2">➕</span>
-                      <h2 className="text-lg font-semibold text-gray-800">Extra Materyaller</h2>
+                      <h2 className="text-lg font-semibold text-gray-800">
+                        Extra Materyaller
+                      </h2>
                     </div>
 
                     <div className="text-gray-400 transition">
                       <span
                         className={`inline-block transform transition-transform duration-300 ${
                           isExtraOpen ? "rotate-180" : "rotate-0"
-                        }`}>
+                        }`}
+                      >
                         ▼
                       </span>
                     </div>
@@ -233,7 +282,8 @@ export default function Home() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.4, ease: "easeInOut" }}
-                        className="overflow-hidden">
+                        className="overflow-hidden"
+                      >
                         <div className="p-4">
                           <MaterialList materials={extraMaterials} />
                         </div>

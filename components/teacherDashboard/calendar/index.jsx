@@ -14,7 +14,10 @@ function generateCalendarDays(centerDate = new Date(), range = 14) {
     const isToday = date.toDateString() === new Date().toDateString();
 
     days.push({
-      id: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
+      id: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}-${String(date.getDate()).padStart(2, "0")}`,
       dayName: date.toLocaleDateString("tr-TR", { weekday: "short" }),
       monthName: date.toLocaleDateString("tr-TR", { month: "long" }),
       dayNumber: date.getDate(),
@@ -28,7 +31,8 @@ function generateCalendarDays(centerDate = new Date(), range = 14) {
   return days;
 }
 
-const Calendar = ({ selectedDate }) => {
+const Calendar = ({ visibleDays, onSelect }) => {
+  const [selectedDate, setSelectedDate] = useState(null);
   const scrollRef = useRef(null);
   const [mounted, setMounted] = useState(false);
   const days = useMemo(() => generateCalendarDays(), []);
@@ -128,7 +132,7 @@ const Calendar = ({ selectedDate }) => {
             }
           }
 
-          .day-today {
+          .pulse {
             animation: pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
           }
         `}</style>
@@ -140,23 +144,47 @@ const Calendar = ({ selectedDate }) => {
             new Date(selectedDate).toDateString() ===
               day.fullDate.toDateString();
 
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          const start = new Date(today);
+          start.setDate(today.getDate() - visibleDays);
+
+          const end = new Date(today);
+          end.setDate(today.getDate() + visibleDays);
+
+          const isClickable = day.fullDate >= start && day.fullDate <= end;
+
           return (
-            <div
+            <button
               key={day.id}
               id={`day-${day.id}`}
               ref={index === todayIndex ? todayRef : null}
+              onClick={() => {
+                if (isClickable) {
+                  onSelect?.(day.fullDate);
+                  setSelectedDate(day.fullDate);
+                }
+              }}
+              disabled={!isClickable}
               className={`
                 flex flex-col items-center justify-center p-2 sm:p-3 min-w-[70px] sm:min-w-[85px] rounded-xl
                 transition-all duration-300 ease-in-out
-                hover:shadow-md hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400
-                ${day.isToday ? "day-today" : ""}
+                ${
+                  isClickable
+                    ? "hover:shadow-md hover:scale-105 cursor-pointer"
+                    : "cursor-not-allowed opacity-50"
+                }
                 ${
                   isSelected
-                    ? "transform -translate-y-1 shadow-lg border-2 border-blue-400 scale-105"
-                    : "shadow-sm border border-gray-200 hover:border-blue-200"
+                    ? "pulse bg-gradient-to-b from-blue-500 to-blue-700 text-white border-2 border-blue-300 shadow-md scale-105"
+                    : isClickable
+                    ? "shadow-sm border border-gray-200 hover:border-blue-300"
+                    : "bg-gray-100 border border-gray-200"
                 }
               `}
               style={gradientStyle}
+              aria-pressed={isSelected}
             >
               <span className="text-xs sm:text-sm font-medium mb-1">
                 {day.dayName}
@@ -169,7 +197,7 @@ const Calendar = ({ selectedDate }) => {
                   <span className="text-xs font-medium">Bu gün</span>
                 </div>
               )}
-            </div>
+            </button>
           );
         })}
       </div>

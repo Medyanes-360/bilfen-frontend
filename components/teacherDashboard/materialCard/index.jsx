@@ -17,40 +17,42 @@ const MaterialCard = ({ material }) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [previewStatus, setPreviewStatus] = useState("idle");
   const previewStatusRef = useRef(previewStatus);
+  const materialCheckTime = 30_000;
 
   useEffect(() => {
     previewStatusRef.current = previewStatus;
   }, [previewStatus]);
 
-  const { onOpen, onClose } = useModalCompletion(5000, async () => {
-    if (!isCompleted) {
-      try {
-        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${material?.id}`;
-        await fetch(url, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ isCompleted: true }),
-        });
+  const { onOpen, onClose } = useModalCompletion(
+    materialCheckTime,
+    async () => {
+      if (!isCompleted) {
+        try {
+          const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${material?.id}`;
+          await fetch(url, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ isCompleted: true }),
+          });
 
-        setIsCompleted(true);
-      } catch (error) {
-        console.log("Hata: ", error);
+          setIsCompleted(true);
+        } catch (error) {
+          console.log("Hata: ", error);
+        }
       }
-    }
 
-    return null;
-  });
+      return null;
+    }
+  );
 
   const viewMaterialContent = async () => {
     try {
       setPreviewStatus("pending");
 
       const fileUrl = material?.fileUrl;
-      const url = `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/api/file/view?fileUrl=${fileUrl}`;
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${fileUrl}`;
 
       const response = await fetch(url);
       if (!response.ok) {
