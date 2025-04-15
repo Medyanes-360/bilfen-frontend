@@ -1,14 +1,14 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export const useModalCompletion = (delay = 30000, onComplete) => {
+  const [completed, setCompleted] = useState(false);
   const timerRef = useRef(null);
 
   const onOpen = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
+    if (timerRef.current) clearTimeout(timerRef.current);
 
     timerRef.current = setTimeout(() => {
+      setCompleted(true);
       onComplete?.();
     }, delay);
   }, [delay, onComplete]);
@@ -24,5 +24,5 @@ export const useModalCompletion = (delay = 30000, onComplete) => {
     return () => onClose();
   }, [onClose]);
 
-  return { onOpen, onClose };
+  return { onOpen, onClose, completed };
 };
