@@ -45,16 +45,21 @@ export default function Home() {
   // Memoize the task completion callback
   const handleCompleteTask = useCallback(async (taskId) => {
     try {
-      setContents((prevContents) =>
-        prevContents.map((content) =>
-          content._id === taskId ? { ...content, completed: true } : content
-        )
+      // update the selected day contents only
+      setSelectedDayContents((prevContents) =>
+        prevContents.map((content) => {
+          if (content._id === taskId) {
+            // completed this specific task
+            return { ...content, completed: true };
+          }
+          return content;
+        })
       );
       setIsTaskPopupOpen(false);
     } catch (error) {
       console.error("Error completing task:", error);
     }
-  }, []);
+  }, []);  
 
   // modalCompletion hook with memoized callback
   const { onOpen, onClose } = useModalCompletion(
@@ -222,7 +227,7 @@ export default function Home() {
 
         const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
           isPublished: true,
-          ageGroup: "4-5 yaş",
+          ageGroup: "3-4 yaş",
           isExtra: false,
         });
 
