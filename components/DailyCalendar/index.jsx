@@ -88,8 +88,8 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay, accessSettings = null }
             onClick={handleScrollLeft}
             disabled={startIndex === 0}
             className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 z-10 transition-all duration-200 ${startIndex === 0
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer hover:bg-orange-50 hover:text-orange-500 hover:shadow-lg"
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer hover:bg-orange-50 hover:text-orange-500 hover:shadow-lg"
               }`}
             aria-label="Previous days"
           >
@@ -103,23 +103,26 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay, accessSettings = null }
           </button>
 
           {/* Visible Days - Full Width */}
-          <div className="flex flex-1 justify-between px-2 gap-x-2">
-            {visibleDays.map((day) => {
+          {/* Her zaman justify-between kullan, mobil için gap-x-2 */}
+          <div className="flex flex-1 justify-between px-1 gap-x-2 sm:gap-x-2">
+            {visibleDays.map((day, index) => { // index'i al
               const isPast = isPastDay(day)
               const isFuture = isFutureDay(day)
               const isAccessible = accessSettings ? isDayAccessible(day) : day.isToday
 
               return (
                 <div
-                  key={day.date.toISOString()} // Ensure a unique key
+                  key={day.date.toISOString()}
                   data-today={day.isToday ? "true" : "false"}
                   onClick={() => {
                     if (day.isToday || isAccessible) {
-                      onSelectDay(day) // allowing selection for today and accessible days
+                      onSelectDay(day)
                     }
                   }}
-                  className={`flex flex-col items-center py-3 rounded-xl transition-all duration-200
-                    flex-1
+                  // Mobil için ilk 2 ve son 2 günü gizle, sm+ için hepsini göster
+                  // Mobil için py-2, sm+ için py-3
+                  className={`flex flex-col items-center py-2 sm:py-3 rounded-xl transition-all duration-200
+                    ${index < 2 || index > 4 ? 'hidden sm:flex' : 'flex'} 
                     ${day.isToday
                       ? "bg-gradient-to-b from-orange-400 to-orange-500 text-white shadow-md shadow-orange-200 cursor-pointer"
                       : isAccessible
@@ -137,7 +140,8 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay, accessSettings = null }
                   </div>
 
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center my-1.5
+                    // Mobil için w-7 h-7 my-1, sm+ için w-8 h-8 my-1.5
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center my-1 sm:my-1.5
                       ${day.isToday
                         ? "bg-white text-orange-500 font-bold shadow-inner"
                         : isAccessible
@@ -147,7 +151,7 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay, accessSettings = null }
                       ${selectedDay && day.date.toDateString() === selectedDay.date.toDateString() && !day.isToday ? "ring-1 ring-orange-200" : ""}
                       transition-transform duration-200 ${day.isToday ? "hover:scale-110" : ""}`}
                   >
-                    {day.day} {/* Display just the day number */}
+                    {day.day}
                   </div>
 
                   {day.isToday ? (
@@ -173,8 +177,8 @@ const DailyCalendar = ({ days, selectedDay, onSelectDay, accessSettings = null }
             onClick={handleScrollRight}
             disabled={startIndex + visibleDaysCount >= days.length}
             className={`w-8 h-8 bg-white rounded-full shadow-md flex items-center justify-center text-gray-500 z-10 transition-all duration-200 ${startIndex + visibleDaysCount >= days.length
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer hover:bg-orange-50 hover:text-orange-500 hover:shadow-lg"
+              ? "opacity-50 cursor-not-allowed"
+              : "cursor-pointer hover:bg-orange-50 hover:text-orange-500 hover:shadow-lg"
               }`}
             aria-label="Next days"
           >
