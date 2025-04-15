@@ -86,7 +86,7 @@ const LoginPopup = ({ isOpen, setIsOpen }) => {
           onClick={handleOverlayClick}
         >
           {/* Popup Container */}
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all animate-bounce-in">
+          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all animate-bounce-in overflow-y-auto max-h-[90vh]">
             {/* Kapatma Butonu */}
             <button
               onClick={() => {
