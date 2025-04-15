@@ -7,12 +7,12 @@ const features = [
   {
     icon: "ogjpwrxe", // digital icon
     title: "Bilfen Dijital",
-    description: "Çocuklarınız, Bilfen’in özel online portalında kaliteli ve dopdolu içeriklerle öğrenmenin keyfini çıkarıyor.",
+    description: "Çocuklarınız, Bilfen'in özel online portalında kaliteli ve dopdolu içeriklerle öğrenmenin keyfini çıkarıyor.",
   },
   {
     icon: "xmaezqzk", // contents icon
     title: "Hazır İçerikler",
-    description: "Bilfen’in dijital portalında ödevler ve ek materyaller her zaman erişilebilir ve eğitim sürecine tam entegre şekilde sunulur.",
+    description: "Bilfen'in dijital portalında ödevler ve ek materyaller her zaman erişilebilir ve eğitim sürecine tam entegre şekilde sunulur.",
   },
   {
     icon: "vvyxyrur", // school icon
@@ -68,24 +68,24 @@ const FeatureSection = () => {
         </h2>
 
         {/* Features */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-14 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 max-w-6xl mx-auto">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="flex flex-col items-center text-center transition transform hover:scale-105 hover:shadow-2xl duration-300 p-6 rounded-xl"
+              className="flex flex-col items-center text-center transition transform hover:scale-105 hover:shadow-2xl duration-300 p-3 sm:p-4 rounded-xl"
             >
               {/* Lordicon using web component */}
-              <div className="w-24 h-24 mb-6 flex items-center justify-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 mb-2 sm:mb-3 flex items-center justify-center">
                 <lord-icon
                   src={`https://cdn.lordicon.com/${feature.icon}.json`}
                   trigger="hover"
                   stroke="bold"
                   colors="primary:#ffffff,secondary:#fb5c38"
-                  style={{ width: "100px", height: "100px" }}
+                  style={{ width: "60px", height: "60px" }}
                 ></lord-icon>
               </div>
-              <h3 className="text-2xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-sm text-gray-200 max-w-xs">
+              <h3 className="text-lg sm:text-xl font-semibold mb-1">{feature.title}</h3>
+              <p className="text-xs text-gray-200 max-w-xs">
                 {feature.description}
               </p>
             </div>
