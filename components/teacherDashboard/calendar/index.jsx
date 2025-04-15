@@ -32,7 +32,12 @@ function generateCalendarDays(centerDate = new Date(), range = 14) {
 }
 
 const Calendar = ({ visibleDays, onSelect }) => {
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    return t;
+  });
+
   const scrollRef = useRef(null);
   const [mounted, setMounted] = useState(false);
   const days = useMemo(() => generateCalendarDays(), []);
@@ -42,6 +47,7 @@ const Calendar = ({ visibleDays, onSelect }) => {
 
   useEffect(() => {
     setMounted(true);
+    onSelect?.(selectedDate);
   }, []);
 
   useEffect(() => {

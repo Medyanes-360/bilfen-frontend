@@ -19,6 +19,8 @@ export default function Home() {
   // archiveMaterials will be soon altered
   const [archiveMaterials, setArchiveMaterials] = useState([]);
 
+  const [futureMaterials, setFutureMaterials] = useState([]);
+
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
 
@@ -46,6 +48,7 @@ export default function Home() {
           fetchVisibleDays(),
           fetchMaterials(false, setMaterials),
           fetchMaterials(true, setExtraMaterials),
+          fetchFutureMaterials(),
         ]);
 
         setAppReady(true);
@@ -77,7 +80,7 @@ export default function Home() {
     });
     setCurrentDate(formattedDate);
 
-    return session.user
+    return session.user;
   };
 
   const fetchVisibleDays = async () => {
@@ -112,6 +115,24 @@ export default function Home() {
 
       const data = await res.json();
       setter(data);
+    } catch (error) {
+      console.error("Error fetching materials:", error.message);
+      setError(error.message);
+    }
+  }
+
+  async function fetchFutureMaterials() {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
+      const res = await fetch(url, { cache: "no-store" });
+
+      if (!res.ok) {
+        setError(res.status);
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setFutureMaterials(data);
     } catch (error) {
       console.error("Error fetching materials:", error.message);
       setError(error.message);
