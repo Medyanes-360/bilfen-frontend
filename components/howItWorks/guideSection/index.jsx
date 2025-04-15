@@ -13,6 +13,11 @@ const GuideSection = () => {
   const [playVideo, setPlayVideo] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  // Video oynatma durumuna göre iframe src'sini güncelle
+  const videoSrc = playVideo
+    ? "https://player.vimeo.com/video/386232261?autoplay=1&dnt=1"
+    : "https://player.vimeo.com/video/386232261?autoplay=1&muted=1&loop=1&background=1&dnt=1";
+
   // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -73,7 +78,7 @@ const GuideSection = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 place-items-center">
             {/* Image */}
-            <div className="relative md:col-span-2 z-20 order-2 lg:order-1">
+            <div className="relative md:col-span-2 sm:col-span-2 z-20 order-2 lg:order-1 mt-8 sm:mt-12 md:mt-12 lg:mt-0">
               <Image
                 src="/images/kid-w-laptop.png"
                 width={492}
@@ -83,61 +88,33 @@ const GuideSection = () => {
               />
             </div>
 
-            {/* ReactPlayer Video */}
-            <div className="md:col-span-3 w-full h-full max-h-[350px] order-1 lg:order-2">
-              <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full ">
-                <div className="relative pb-[56.25%] h-0 overflow-hidden w-full">
-                  <iframe
-                    src="https://player.vimeo.com/video/386232261?autoplay=1&muted=1&loop=1&background=1"
-                    className="absolute top-0 left-0 w-full h-full"
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent w-full h-full"></div>
-                <div className="absolute top-4 left-4 md:top-6 lg:top-8 sm:left-6 lg:left-8">
-                  <div
-                    onClick={() => setIsOpen(true)}
-                    className="w-12 h-12 sm:w-14 sm:h-14 lg:w-24 lg:h-24 rounded-full cursor-pointer hover:scale-110 transition-transform duration-300 flex items-center justify-center"
-                  >
-                    <Icons.Play className="w-full h-full" />
-                  </div>
-                </div>
+            {/* Video Container */}
+            <div className="md:col-span-3 w-full h-full order-1 lg:order-2">
+              <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full aspect-video">
+                <iframe
+                  src={videoSrc}
+                  className="absolute top-0 left-0 w-full h-full"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+                {!playVideo && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent w-full h-full"></div>
+                    <div className="absolute top-4 left-4 md:top-6 lg:top-8 sm:left-6 lg:left-8">
+                      <div
+                        onClick={() => setPlayVideo(true)}
+                        className="w-12 h-12 sm:w-14 sm:h-14 lg:w-24 lg:h-24 rounded-full cursor-pointer hover:scale-110 transition-transform duration-300 flex items-center justify-center"
+                      >
+                        <Icons.Play className="w-full h-full" />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
       </PageContainer>
-
-      {/* Custom Video Modal */}
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/80"
-            onClick={() => setIsOpen(false)}
-          ></div>
-          <div className="relative z-10 w-full max-w-xs xs:max-w-sm sm:max-w-md md:max-w-xl lg:max-w-3xl xl:max-w-4xl bg-black rounded-xl overflow-hidden">
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-2 right-2 z-10 bg-white text-black p-1 rounded-full hover:bg-white/80 transition-colors"
-              aria-label="Close video"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-              <iframe
-                src="https://player.vimeo.com/video/386232261?autoplay=1"
-                className="absolute top-0 left-0 w-full h-full"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
