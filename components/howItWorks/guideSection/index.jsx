@@ -3,8 +3,7 @@ import PageContainer from "@/containers/pageContainer";
 import { Parallax } from "@/globalElements/Parallax";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useState, useEffect } from "react";
 import Icons from "@/public/icons/Icons";
 
 // Prevent hydration mismatch warning
@@ -13,6 +12,23 @@ const ReactPlayer = dynamic(() => import("react-player/lazy"), { ssr: false });
 const GuideSection = () => {
   const [playVideo, setPlayVideo] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  // Video oynatma durumuna göre iframe src'sini güncelle
+  const videoSrc = playVideo
+    ? "https://player.vimeo.com/video/386232261?autoplay=1&dnt=1&byline=0&title=0&portrait=0"
+    : "https://player.vimeo.com/video/386232261?autoplay=1&muted=1&background=1&dnt=1";
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   return (
     <div className="bg-[#fff6e9]">
@@ -62,7 +78,7 @@ const GuideSection = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 place-items-center">
             {/* Image */}
-            <div className="relative md:col-span-2 z-20 order-2 lg:order-1">
+            <div className="relative md:col-span-2 sm:col-span-2 z-20 order-2 lg:order-1 mt-8 sm:mt-12 md:mt-12 lg:mt-0">
               <Image
                 src="/images/kid-w-laptop.png"
                 width={492}
@@ -72,72 +88,33 @@ const GuideSection = () => {
               />
             </div>
 
-            {/* ReactPlayer Video */}
-            <div className="md:col-span-3 w-full h-full max-h-[350px] order-1 lg:order-2">
-              <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full ">
-                <div className="relative pb-[56.25%] h-0 overflow-hidden w-full">
-                  <iframe
-                    src="https://player.vimeo.com/video/386232261?autoplay=1&muted=1&loop=1&background=1"
-                    className="absolute top-0 left-0 w-full h-full"
-                    allow="autoplay; fullscreen; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent w-full h-full"></div>
-                <div className="absolute top-4 left-4 md:top-6 lg:top-8 sm:left-6 lg:left-8">
-                  <div
-                    onClick={() => setIsOpen(true)}
-                    className="w-12 h-12 sm:w-14 sm:h-14 lg:w-24 lg:h-24 rounded-full cursor-pointer hover:scale-110 transition-transform duration-300 flex items-center justify-center"
-                  >
-                    <Icons.Play className="w-full h-full" />
-                  </div>
-                </div>
+            {/* Video Container */}
+            <div className="md:col-span-3 w-full h-full order-1 lg:order-2">
+              <div className="relative rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden w-full aspect-video">
+                <iframe
+                  src={videoSrc}
+                  className="absolute top-0 left-0 w-full h-full"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+                {!playVideo && (
+                  <>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-black/90 to-transparent w-full h-full"></div>
+                    <div className="absolute top-4 left-4 md:top-6 lg:top-8 sm:left-6 lg:left-8">
+                      <div
+                        onClick={() => setPlayVideo(true)}
+                        className="w-12 h-12 sm:w-14 sm:h-14 lg:w-24 lg:h-24 rounded-full cursor-pointer hover:scale-110 transition-transform duration-300 flex items-center justify-center"
+                      >
+                        <Icons.Play className="w-full h-full" />
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
-
-              {/* <div className="relative pt-[56.25%] overflow-hidden rounded-xl shadow-lg bg-black">
-                <ReactPlayer
-                  url="/example-video.mp4"
-                  playing={playVideo}
-                  light="/images/thumbnail.webp"
-                  controls
-                  width="100%"
-                  height="100%"
-                  onClickPreview={() => setPlayVideo(true)}
-                  className="absolute top-0 left-0"
-                  config={{
-                    file: {
-                      attributes: {
-                        controlsList: "nodownload",
-                        disablePictureInPicture: true,
-                        playsInline: true,
-                        preload: "auto",
-                      },
-                    },
-                  }}
-                />
-              </div> */}
             </div>
           </div>
         </div>
       </PageContainer>
-
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-[90vw] md:max-w-4xl p-0 bg-transparent border-none">
-          <DialogTitle className="hidden">Modal</DialogTitle>
-          <div className="relative pb-[56.25%] h-0 overflow-hidden">
-            <iframe
-              src={
-                isOpen
-                  ? "https://player.vimeo.com/video/386232261?autoplay=1"
-                  : "#"
-              }
-              className="absolute top-0 left-0 w-full h-full"
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

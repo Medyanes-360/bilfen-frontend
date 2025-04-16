@@ -162,7 +162,7 @@ export default function ArchiveModal({ onClose, materials, accessSettings, isMob
           {selectedDate && <div className="text-sm font-medium text-gray-500">{getMonthLabel(selectedDate)}</div>}
           <button
             onClick={() => onClose()}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer "
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <X className="h-5 w-5 text-gray-500" />
           </button>
@@ -279,10 +279,10 @@ export default function ArchiveModal({ onClose, materials, accessSettings, isMob
           </div>
         </div>
 
-        <div className="p-5 border-t flex justify-end">
+        <div className="border-t flex justify-end p-[10px] md:p-4px]">
           <button
             onClick={() => onClose()}
-            className="cursor-pointer px-4 py-2 rounded-md text-sm bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+            className="cursor-pointer px-4 py-0.5 md:py-2 rounded-md text-sm bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
           >
             Kapat
           </button>
