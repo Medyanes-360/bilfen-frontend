@@ -30,6 +30,8 @@ export default function Home() {
   const [appReady, setAppReady] = useState(false);
   const [archiveLoadingStatus, setArchiveLoadingStatus] = useState("idle");
 
+  const [testMaterials, setTestMaterials] = useState([]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -42,6 +44,7 @@ export default function Home() {
           fetchMaterials(false, setMaterials, user),
           fetchMaterials(true, setExtraMaterials, user),
           fetchPastAndFutureMaterials(user),
+          fetchDailyMaterials(user),
         ]);
 
         setAppReady(true);
@@ -114,35 +117,59 @@ export default function Home() {
     }
   }
 
-  async function fetchPastAndFutureMaterials(user) {
-    // queries are not working here
-    try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
-      const res = await fetch(url, { cache: "no-store" });
+  async function fetchDailyMaterials(user) {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
 
-      if (!res.ok) {
-        setError(res.status);
-        throw new Error(`HTTP error! Status: ${res.status}`);
-      }
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+
+    console.log(start.toISOString());
+    console.log(end.toISOString());
+
+    try {
+      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
+        isExtra: false,
+        branch: user?.branch,
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      });
+
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       const data = await res.json();
-      setPastAndFutureMaterials(data);
+      console.log(data);
+      setTestMaterials(data);
     } catch (error) {
       console.error("Error fetching materials:", error.message);
       setError(error.message);
     }
   }
 
-  const filterMaterialsByDate = (date, source = materials) => {
-    const formattedDate = formatDate(date);
+  async function fetchPastAndFutureMaterials(user) {
+    // queries are not working here
+    // if visibleDays are fetched fetch the data
+    if (visibleDays) {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
+        const res = await fetch(url, { cache: "no-store" });
 
-    const filtered = source.filter((material) => {
-      const materialDate = new Date(material?.publishDateTeacher);
-      const materialFormatted = formatDate(materialDate);
-      return materialFormatted === formattedDate;
-    });
-    setDailyMaterials(filtered);
-  };
+        if (!res.ok) {
+          setError(res.status);
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const data = await res.json();
+        setPastAndFutureMaterials(data);
+      } catch (error) {
+        console.error("Error fetching materials:", error.message);
+        setError(error.message);
+      }
+    }
+
+    return [];
+  }
 
   const fetchArchiveMaterials = async (user) => {
     try {
@@ -169,7 +196,6 @@ export default function Home() {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       const data = await res.json();
-      console.log(data);
       setArchiveMaterials(data);
       setArchiveLoadingStatus("success");
     } catch (error) {
@@ -177,6 +203,17 @@ export default function Home() {
       setError(error.message);
       setArchiveLoadingStatus("error");
     }
+  };
+
+  const filterMaterialsByDate = (date, source = materials) => {
+    const formattedDate = formatDate(date);
+
+    const filtered = source.filter((material) => {
+      const materialDate = new Date(material?.publishDateTeacher);
+      const materialFormatted = formatDate(materialDate);
+      return materialFormatted === formattedDate;
+    });
+    setDailyMaterials(filtered);
   };
 
   const formatDate = (date) => {
