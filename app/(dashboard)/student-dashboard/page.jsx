@@ -59,7 +59,7 @@ export default function Home() {
     } catch (error) {
       console.error("Error completing task:", error);
     }
-  }, []);  
+  }, []);
 
   // modalCompletion hook with memoized callback
   const { onOpen, onClose } = useModalCompletion(
@@ -437,18 +437,22 @@ export default function Home() {
 
         <BottomNavigation />
       </div>
-
+      
       <AnimatePresence>
         {isTaskPopupOpen && selectedTask && (
-          <TaskModal
-            task={selectedTask}
-            onClose={handleTaskModalClose}
-            onCompleteTask={handleCompleteTask}
-            onMaterialClick={handleMaterialClick}
-            isMobile={isMobile}
-          />
+        <TaskModal
+          task={selectedTask}
+          onClose={handleTaskModalClose}
+          onCompleteTask={handleCompleteTask}
+          onMaterialClick={handleMaterialClick}
+          isMobile={isMobile}
+          setSelectedDayContents={setSelectedDayContents}
+          setContents={setContents}
+          setIsTaskPopupOpen={setIsTaskPopupOpen}
+        />
         )}
       </AnimatePresence>
+
 
       <AnimatePresence>
         {isMaterialPreviewOpen && selectedMaterial && (
