@@ -1,10 +1,74 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { ExternalLink, Download, X } from "lucide-react"
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { motion } from "framer-motion";
+import { ExternalLink, Download, X } from "lucide-react";
 
-export default function TaskModal({ task, onClose, onCompleteTask, onMaterialClick, isMobile }) {
-  if (!task) return null
+export default function TaskModal({
+  task,
+  onClose,
+  onCompleteTask,
+  onMaterialClick,
+  isMobile,
+  completedTasks,
+  setCompletedTasks,
+  setSelectedDayContents,
+  setContents,
+  setIsTaskPopupOpen
+}) {
+  if (!task) return null;
+
+  const markTaskAsCompleted = async (taskId) => {
+    try {
+      // send completed info to backend
+      await fetch(`/api/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ completed: true }),
+      });
+    } catch (error) {
+      console.error("Görev tamamlanamadı:", error);
+    }
+  };
+
+  const handleCompleteTask = useCallback(async (taskId) => {
+    try {
+      console.log('Marking task as completed:', taskId);
+
+      // Update the selected day contents
+      setSelectedDayContents((prevContents) => {
+        const updatedContents = prevContents.map((content) => {
+          if (content._id === taskId) {
+            console.log('Updating selected day contents:', content);
+            return { ...content, completed: true };
+          }
+          return content;
+        });
+        console.log('Updated selected day contents:', updatedContents);
+        return updatedContents;
+      });
+
+      // Update the main contents state as well
+      setContents((prevContents) => {
+        const updatedContents = prevContents.map((content) => {
+          if (content._id === taskId) {
+            console.log('Updating main contents:', content);
+            return { ...content, completed: true };
+          }
+          return content;
+        });
+        console.log('Updated main contents:', updatedContents);
+        return updatedContents;
+      });
+
+      setIsTaskPopupOpen(false);
+    } catch (error) {
+      console.error("Error completing task:", error);
+    }
+  }, [setSelectedDayContents, setContents]);
+
 
   return (
     <motion.div
@@ -75,7 +139,7 @@ export default function TaskModal({ task, onClose, onCompleteTask, onMaterialCli
         {!task.completed && (
           <div className="mb-5">
             <button
-              onClick={() => onCompleteTask(task._id)}
+              onClick={() => handleCompleteTask(task._id)}
               className="cursor-pointer w-full py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-bold hover:from-green-600 hover:to-green-700 transition-all shadow-sm hover:shadow"
             >
               Görevi Tamamla
@@ -93,5 +157,5 @@ export default function TaskModal({ task, onClose, onCompleteTask, onMaterialCli
         </div>
       </motion.div>
     </motion.div>
-  )
+  );
 }
