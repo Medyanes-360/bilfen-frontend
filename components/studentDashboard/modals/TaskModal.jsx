@@ -1,12 +1,10 @@
-"use client";
-
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useModalCompletion } from "@/hooks/useModalCompletion";
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from "framer-motion";
 import { ExternalLink, Download, X } from "lucide-react";
 
 export default function TaskModal({
   task,
-  onClose,
   onCompleteTask,
   onMaterialClick,
   isMobile,
@@ -14,61 +12,112 @@ export default function TaskModal({
   setCompletedTasks,
   setSelectedDayContents,
   setContents,
-  setIsTaskPopupOpen
+  setIsTaskPopupOpen,
+  setIsModalOpen,
 }) {
   if (!task) return null;
 
-  const markTaskAsCompleted = async (taskId) => {
-    try {
-      // send completed info to backend
-      await fetch(`/api/tasks/${taskId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ completed: true }),
-      });
-    } catch (error) {
-      console.error("Görev tamamlanamadı:", error);
+
+
+  /*   const markTaskAsCompleted = async (taskId) => {
+      try {
+        await fetch(`/api/contents/${taskId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ completed: true }),
+        });
+  
+        setIsCompleted(true);
+      } catch (error) {
+        console.error("Görev tamamlanamadı:", error);
+      }
+    }; */
+
+  /*   const handleCompleteTask = useCallback(async (taskId) => {
+      try {
+        console.log('Marking task as completed:', taskId);
+  
+        // Update the selected day contents
+        setSelectedDayContents((prevContents) => {
+          const updatedContents = prevContents.map((content) => {
+            if (content.id === taskId) {
+              return { ...content, isCompleted: true };
+            }
+            return content;
+          });
+          return updatedContents;
+        });
+  
+        // update the main contents state
+        setContents((prevContents) => {
+          const updatedContents = prevContents.map((content) => {
+            if (content.id === taskId) {
+              return { ...content, isCompleted: true };
+            }
+            return content;
+          });
+          return updatedContents;
+        });
+  
+        setIsTaskPopupOpen(false); // close the modal
+      } catch (error) {
+        console.error("Error completing task:", error);
+      }
+    }, [setSelectedDayContents, setContents, setIsTaskPopupOpen]); */
+
+  /*   useEffect(() => {
+      if (timerStarted) {
+        const timer = setTimeout(() => {
+          if (!isCompleted) {
+            markTaskAsCompleted(task._id); // auto complete task after 30 seconds
+            handleCompleteTask(task._id); // update state
+          }
+        }, materialCheckTime);
+  
+        return () => clearTimeout(timer); // clean up timeout
+      }
+    }, [timerStarted, task._id, isCompleted, markTaskAsCompleted, handleCompleteTask]); */
+
+  const [timerStarted, setTimerStarted] = useState(false); // timer control 
+  const [isCompleted, setIsCompleted] = useState(task?.completed); // track completion 
+  const materialCheckTime = 30_000;
+
+  // Modal completion logic
+  const { onOpen, onClose } = useModalCompletion(
+    materialCheckTime,
+    async () => {
+      if (!isCompleted) {
+        try {
+          const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task?.id}`;
+          await fetch(url, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ completed: true }),
+          });
+
+          setIsCompleted(true); // update completion status
+        } catch (error) {
+          console.log("Hata: ", error);
+        }
+      }
+
+      return null;
     }
+  );
+
+  const handleOpenModal = async () => {
+    setIsModalOpen(true); // Ensure this is passed correctly
+    onOpen();
   };
 
-  const handleCompleteTask = useCallback(async (taskId) => {
-    try {
-      console.log('Marking task as completed:', taskId);
-
-      // Update the selected day contents
-      setSelectedDayContents((prevContents) => {
-        const updatedContents = prevContents.map((content) => {
-          if (content._id === taskId) {
-            console.log('Updating selected day contents:', content);
-            return { ...content, completed: true };
-          }
-          return content;
-        });
-        console.log('Updated selected day contents:', updatedContents);
-        return updatedContents;
-      });
-
-      // Update the main contents state as well
-      setContents((prevContents) => {
-        const updatedContents = prevContents.map((content) => {
-          if (content._id === taskId) {
-            console.log('Updating main contents:', content);
-            return { ...content, completed: true };
-          }
-          return content;
-        });
-        console.log('Updated main contents:', updatedContents);
-        return updatedContents;
-      });
-
-      setIsTaskPopupOpen(false);
-    } catch (error) {
-      console.error("Error completing task:", error);
-    }
-  }, [setSelectedDayContents, setContents]);
-
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Ensure this is passed correctly
+    onClose();
+  };
 
   return (
     <motion.div
@@ -89,7 +138,7 @@ export default function TaskModal({
         <div className="flex items-start justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800">{task.title}</h2>
           <button
-            onClick={onClose}
+            onClick={handleCloseModal}
             className="p-1 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
           >
             <X className="h-5 w-5" />
@@ -98,45 +147,8 @@ export default function TaskModal({
 
         <p className="text-gray-700 mb-6 leading-relaxed">{task.description}</p>
 
-        {task.materials?.length > 0 && (
-          <>
-            <h3 className="font-bold text-lg mb-3 text-gray-800 flex items-center gap-2">
-              <span className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center text-sm text-orange-600">
-                📚
-              </span>
-              Materyaller
-            </h3>
-            <ul className="space-y-2 mb-6 bg-gray-50 p-3 rounded-lg border border-gray-100">
-              {task.materials.map((material, index) => (
-                <li
-                  key={index}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-white transition-colors border border-transparent hover:border-gray-200 hover:shadow-sm"
-                >
-                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-lg">
-                    {material.url && (material.url.endsWith(".mp4") || material.url.endsWith(".webm")) ? "🎬" : "📄"}
-                  </div>
-                  <button
-                    onClick={() => onMaterialClick(material)}
-                    className="flex-1 text-left text-blue-600 hover:text-blue-700 transition-colors cursor-pointer font-medium"
-                  >
-                    {material.name}
-                  </button>
-                  <div className="text-gray-400 hover:text-orange-500 transition-colors">
-                    {(material.url && (material.url.endsWith(".mp4") || material.url.endsWith(".webm"))) ||
-                      !isMobile ? (
-                      <ExternalLink className="h-4 w-4" />
-                    ) : (
-                      <Download className="h-4 w-4" />
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-
         {/* Complete Task Button - Only show if task is not completed */}
-        {!task.completed && (
+        {/* {!isCompleted && (
           <div className="mb-5">
             <button
               onClick={() => handleCompleteTask(task._id)}
@@ -145,12 +157,12 @@ export default function TaskModal({
               Görevi Tamamla
             </button>
           </div>
-        )}
+        )} */}
 
         <div className="flex justify-end">
           <button
             className="cursor-pointer bg-gray-100 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-            onClick={onClose}
+            onClick={handleCloseModal}
           >
             Kapat
           </button>

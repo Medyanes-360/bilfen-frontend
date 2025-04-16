@@ -286,8 +286,9 @@ export default function Home() {
   const handleTaskClick = useCallback(
     async (task) => {
       try {
+        const fileUrl = task?.fileUrl;
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task._id}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${encodeURIComponent(fileUrl)}`
         );
 
         if (response.ok) {
