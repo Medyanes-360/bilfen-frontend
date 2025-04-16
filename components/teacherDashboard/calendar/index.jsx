@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-// /access-settings get req
-
 function generateCalendarDays(centerDate = new Date(), range = 14) {
   const days = [];
 
@@ -154,10 +152,10 @@ const Calendar = ({ visibleDays, onSelect }) => {
           today.setHours(0, 0, 0, 0);
 
           const start = new Date(today);
-          start.setDate(today.getDate() - visibleDays);
+          start.setDate(today.getDate() - visibleDays.past);
 
           const end = new Date(today);
-          end.setDate(today.getDate() + visibleDays);
+          end.setDate(today.getDate() + visibleDays.future);
 
           const isClickable = day.fullDate >= start && day.fullDate <= end;
 

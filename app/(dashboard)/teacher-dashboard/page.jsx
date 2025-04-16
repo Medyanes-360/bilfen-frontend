@@ -11,31 +11,24 @@ import { getSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  // const [selectedDate, setSelectedDate] = useState(null);
-
   const [materials, setMaterials] = useState([]);
   const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
-  // archiveMaterials will be soon altered
   const [archiveMaterials, setArchiveMaterials] = useState([]);
-
-  const [futureMaterials, setFutureMaterials] = useState([]);
+  const [pastAndFutureMaterials, setPastAndFutureMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
 
-  const [visibleDays, setVisibleDays] = useState(0);
-  const [mode, setMode] = useState("future"); // "past" | "future"
+  const [visibleDays, setVisibleDays] = useState(null);
 
   const [isOpen, setIsOpen] = useState(true);
   const [isExtraOpen, setIsExtraOpen] = useState(true);
+  const [showArchive, setShowArchive] = useState(false);
 
   const [error, setError] = useState(null);
   const [appReady, setAppReady] = useState(false);
-
-  const [showArchive, setShowArchive] = useState(false);
-
-  const today = new Date();
+  const [archiveLoadingStatus, setArchiveLoadingStatus] = useState("idle");
 
   useEffect(() => {
     (async () => {
@@ -48,7 +41,7 @@ export default function Home() {
           fetchVisibleDays(),
           fetchMaterials(false, setMaterials, user),
           fetchMaterials(true, setExtraMaterials, user),
-          // fetchFutureMaterials(),
+          fetchPastAndFutureMaterials(user),
         ]);
 
         setAppReady(true);
@@ -57,11 +50,6 @@ export default function Home() {
         setError("Bir hata oluştu");
       }
     })();
-  }, []);
-
-  useEffect(() => {
-    // setSelectedDate(today);
-    updateMaterialsForDate(today);
   }, []);
 
   const fetchSession = async () => {
@@ -85,7 +73,7 @@ export default function Home() {
 
   const fetchVisibleDays = async () => {
     try {
-      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {}, "api/access-settings");
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/access-settings`;
       const res = await fetch(url);
 
       if (!res.ok) {
@@ -94,7 +82,12 @@ export default function Home() {
       }
 
       const data = await res.json();
-      setVisibleDays(data.teacherDays);
+      setVisibleDays({
+        past: data.teacherDays,
+        future: data.teacherDaysFuture,
+        archiveStart: data.startedDate,
+        archiveEnd: data.endDate,
+      });
     } catch (error) {
       console.log("Hata: ", error.message);
     }
@@ -121,29 +114,69 @@ export default function Home() {
     }
   }
 
-  // async function fetchFutureMaterials() {
-  //   try {
-  //     const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
-  //     const res = await fetch(url, { cache: "no-store" });
+  async function fetchPastAndFutureMaterials(user) {
+    // queries are not working here
+    try {
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
+      const res = await fetch(url, { cache: "no-store" });
 
-  //     if (!res.ok) {
-  //       setError(res.status);
-  //       throw new Error(`HTTP error! Status: ${res.status}`);
-  //     }
+      if (!res.ok) {
+        setError(res.status);
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
 
-  //     const data = await res.json();
-  //     setFutureMaterials(data);
-  //   } catch (error) {
-  //     console.error("Error fetching materials:", error.message);
-  //     setError(error.message);
-  //   }
-  // }
+      const data = await res.json();
+      setPastAndFutureMaterials(data);
+    } catch (error) {
+      console.error("Error fetching materials:", error.message);
+      setError(error.message);
+    }
+  }
 
-  const updateMaterialsForDate = (date) => {
+  const filterMaterialsByDate = (date, source = materials) => {
     const formattedDate = formatDate(date);
 
-    const filtered = materials.filter((material) => material?.publishDateTeacher === formattedDate);
+    const filtered = source.filter((material) => {
+      const materialDate = new Date(material?.publishDateTeacher);
+      const materialFormatted = formatDate(materialDate);
+      return materialFormatted === formattedDate;
+    });
     setDailyMaterials(filtered);
+  };
+
+  const fetchArchiveMaterials = async (user) => {
+    try {
+      const start = new Date(visibleDays.archiveStart);
+      const end = new Date(visibleDays.archiveEnd);
+      end.setHours(23, 59, 59, 999);
+
+      setArchiveLoadingStatus("pending");
+
+      const timeoutId = setTimeout(() => {
+        setArchiveLoadingStatus("error");
+      }, 10000);
+
+      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
+        isExtra: false,
+        branch: user?.branch,
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      });
+
+      const res = await fetch(url, { cache: "no-store" });
+      clearTimeout(timeoutId);
+
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+      const data = await res.json();
+      console.log(data);
+      setArchiveMaterials(data);
+      setArchiveLoadingStatus("success");
+    } catch (error) {
+      console.error("Error fetching materials:", error.message);
+      setError(error.message);
+      setArchiveLoadingStatus("error");
+    }
   };
 
   const formatDate = (date) => {
@@ -156,7 +189,7 @@ export default function Home() {
   const handleOpenArchive = () => {
     setShowArchive(true);
     if (archiveMaterials.length === 0) {
-      fetchMaterials(false, setArchiveMaterials);
+      fetchArchiveMaterials(user);
     }
   };
 
@@ -167,7 +200,13 @@ export default function Home() {
 
   // Error state
   if (error) {
-    return <ErrorState role="teacher" error={error} onRetry={() => window.location.reload()} />;
+    return (
+      <ErrorState
+        role="teacher"
+        error={error}
+        onRetry={() => window.location.reload()}
+      />
+    );
   }
 
   return (
@@ -193,14 +232,26 @@ export default function Home() {
                 <div className="flex items-center p-4 border-b border-gray-100">
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📅</span>
-                    <h2 className="text-lg font-semibold text-gray-800">Takvim</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Takvim
+                    </h2>
                   </div>
                 </div>
 
                 <Calendar
                   visibleDays={visibleDays}
                   onSelect={(date) => {
-                    updateMaterialsForDate(date);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    const selected = new Date(date);
+                    selected.setHours(0, 0, 0, 0);
+
+                    if (selected.getTime() === today.getTime()) {
+                      filterMaterialsByDate(selected, materials);
+                    } else {
+                      filterMaterialsByDate(selected, pastAndFutureMaterials);
+                    }
                   }}
                 />
               </div>
@@ -208,7 +259,8 @@ export default function Home() {
               <div className="flex justify-end gap-4 mb-4">
                 <button
                   onClick={handleOpenArchive}
-                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition">
+                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
+                >
                   Arşiv
                 </button>
               </div>
@@ -218,18 +270,22 @@ export default function Home() {
                 <button
                   onClick={() => setIsOpen(!isOpen)}
                   className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                  aria-label="Toggle extra materials">
+                  aria-label="Toggle extra materials"
+                >
                   {/* Sabit Başlık */}
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📚</span>
-                    <h2 className="text-lg font-semibold text-gray-800">Dijital Materyaller</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">
+                      Dijital Materyaller
+                    </h2>
                   </div>
 
                   <div className="text-gray-400 transition">
                     <span
                       className={`inline-block transform transition-transform duration-300 ${
                         isOpen ? "rotate-180" : "rotate-0"
-                      }`}>
+                      }`}
+                    >
                       ▼
                     </span>
                   </div>
@@ -243,7 +299,8 @@ export default function Home() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="overflow-hidden">
+                      className="overflow-hidden"
+                    >
                       <div className="p-4">
                         <MaterialList materials={dailyMaterials} />
                       </div>
@@ -258,18 +315,22 @@ export default function Home() {
                   <button
                     onClick={() => setIsExtraOpen(!isExtraOpen)}
                     className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                    aria-label="Toggle extra materials">
+                    aria-label="Toggle extra materials"
+                  >
                     {/* Sabit Başlık */}
                     <div className="flex items-center">
                       <span className="text-blue-600 mr-2">➕</span>
-                      <h2 className="text-lg font-semibold text-gray-800">Extra Materyaller</h2>
+                      <h2 className="text-lg font-semibold text-gray-800">
+                        Extra Materyaller
+                      </h2>
                     </div>
 
                     <div className="text-gray-400 transition">
                       <span
                         className={`inline-block transform transition-transform duration-300 ${
                           isExtraOpen ? "rotate-180" : "rotate-0"
-                        }`}>
+                        }`}
+                      >
                         ▼
                       </span>
                     </div>
@@ -283,7 +344,8 @@ export default function Home() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.4, ease: "easeInOut" }}
-                        className="overflow-hidden">
+                        className="overflow-hidden"
+                      >
                         <div className="p-4">
                           <MaterialList materials={extraMaterials} />
                         </div>
@@ -299,10 +361,13 @@ export default function Home() {
 
       {showArchive && (
         <ArchiveModal
-          onClose={() => setShowArchive(false)}
-          visibleDays={visibleDays}
-          mode={mode}
+          archiveStart={visibleDays.archiveStart}
+          archiveEnd={visibleDays.archiveEnd}
           materials={archiveMaterials}
+          isLoading={archiveLoadingStatus === "pending"}
+          isError={archiveLoadingStatus === "error"}
+          onRetry={() => fetchArchiveMaterials(user)}
+          onClose={() => setShowArchive(false)}
         />
       )}
     </>
