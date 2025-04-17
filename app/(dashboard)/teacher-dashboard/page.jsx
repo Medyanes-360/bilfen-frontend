@@ -5,6 +5,7 @@ import ArchiveModal from "@/components/modal/archiveModal";
 import Calendar from "@/components/teacherDashboard/calendar";
 import Header from "@/components/teacherDashboard/header";
 import MaterialList from "@/components/teacherDashboard/materialList";
+import { buildUrl } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { getSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
@@ -85,11 +86,8 @@ export default function Home() {
 
   const fetchVisibleDays = async () => {
     try {
-      const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL.endsWith("/")
-        ? process.env.NEXT_PUBLIC_BACKEND_URL.slice(0, -1)
-        : process.env.NEXT_PUBLIC_BACKEND_URL;
+      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {}, "api/access-settings");
 
-      const url = `${baseURL}/api/access-settings`;
       const res = await fetch(url);
 
       if (!res.ok) {
@@ -121,7 +119,17 @@ export default function Home() {
     const endDate = formatDate(nextDay);
 
     try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true&isExtra=false&branch=${user?.branch}&startDate=${startDate}&endDate=${endDate}`;
+      const url = buildUrl(
+        process.env.NEXT_PUBLIC_BACKEND_URL,
+        {
+          isPublished: true,
+          isExtra: false,
+          branch: user?.branch,
+          startDate: startDate,
+          endDate: endDate,
+        },
+        "api/contents"
+      );
 
       const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
@@ -137,9 +145,17 @@ export default function Home() {
 
   const fetchExtraMaterials = async (user) => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true&isExtra=true&branch=${user?.branch}`;
-      const res = await fetch(url, { cache: "no-store" });
+      const url = buildUrl(
+        process.env.NEXT_PUBLIC_BACKEND_URL,
+        {
+          isPublished: true,
+          isExtra: true,
+          branch: user?.branch,
+        },
+        "api/contents"
+      );
 
+      const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) {
         setError(res.status);
         throw new Error(`HTTP error! Status: ${res.status}`);
@@ -171,7 +187,17 @@ export default function Home() {
       }, 10000);
 
       try {
-        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true&isExtra=false&branch=${user?.branch}&rangeStartDate=${formattedStart}&rangeEndDate=${formattedEnd}`;
+        const url = buildUrl(
+          process.env.NEXT_PUBLIC_BACKEND_URL,
+          {
+            isPublished: true,
+            isExtra: false,
+            branch: user?.branch,
+            rangeStartDate: formattedStart,
+            rangeEndDate: formattedEnd,
+          },
+          "api/contents"
+        );
 
         const res = await fetch(url, { cache: "no-store" });
         clearTimeout(timeoutId);
