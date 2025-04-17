@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Download, X } from "lucide-react";
 
@@ -14,7 +14,7 @@ export default function TaskModal({
   setCompletedTasks,
   setSelectedDayContents,
   setContents,
-  setIsTaskPopupOpen
+  setIsTaskPopupOpen,
 }) {
   if (!task) return null;
 
@@ -33,42 +33,44 @@ export default function TaskModal({
     }
   };
 
-  const handleCompleteTask = useCallback(async (taskId) => {
-    try {
-      console.log('Marking task as completed:', taskId);
+  const handleCompleteTask = useCallback(
+    async (taskId) => {
+      try {
+        console.log("Marking task as completed:", taskId);
 
-      // Update the selected day contents
-      setSelectedDayContents((prevContents) => {
-        const updatedContents = prevContents.map((content) => {
-          if (content._id === taskId) {
-            console.log('Updating selected day contents:', content);
-            return { ...content, completed: true };
-          }
-          return content;
+        // Update the selected day contents
+        setSelectedDayContents((prevContents) => {
+          const updatedContents = prevContents.map((content) => {
+            if (content._id === taskId) {
+              console.log("Updating selected day contents:", content);
+              return { ...content, completed: true };
+            }
+            return content;
+          });
+          console.log("Updated selected day contents:", updatedContents);
+          return updatedContents;
         });
-        console.log('Updated selected day contents:', updatedContents);
-        return updatedContents;
-      });
 
-      // Update the main contents state as well
-      setContents((prevContents) => {
-        const updatedContents = prevContents.map((content) => {
-          if (content._id === taskId) {
-            console.log('Updating main contents:', content);
-            return { ...content, completed: true };
-          }
-          return content;
+        // Update the main contents state as well
+        setContents((prevContents) => {
+          const updatedContents = prevContents.map((content) => {
+            if (content._id === taskId) {
+              console.log("Updating main contents:", content);
+              return { ...content, completed: true };
+            }
+            return content;
+          });
+          console.log("Updated main contents:", updatedContents);
+          return updatedContents;
         });
-        console.log('Updated main contents:', updatedContents);
-        return updatedContents;
-      });
 
-      setIsTaskPopupOpen(false);
-    } catch (error) {
-      console.error("Error completing task:", error);
-    }
-  }, [setSelectedDayContents, setContents]);
-
+        setIsTaskPopupOpen(false);
+      } catch (error) {
+        console.error("Error completing task:", error);
+      }
+    },
+    [setSelectedDayContents, setContents]
+  );
 
   return (
     <motion.div
@@ -113,7 +115,11 @@ export default function TaskModal({
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-white transition-colors border border-transparent hover:border-gray-200 hover:shadow-sm"
                 >
                   <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-lg">
-                    {material.url && (material.url.endsWith(".mp4") || material.url.endsWith(".webm")) ? "🎬" : "📄"}
+                    {material.url &&
+                    (material.url.endsWith(".mp4") ||
+                      material.url.endsWith(".webm"))
+                      ? "🎬"
+                      : "📄"}
                   </div>
                   <button
                     onClick={() => onMaterialClick(material)}
@@ -122,8 +128,10 @@ export default function TaskModal({
                     {material.name}
                   </button>
                   <div className="text-gray-400 hover:text-orange-500 transition-colors">
-                    {(material.url && (material.url.endsWith(".mp4") || material.url.endsWith(".webm"))) ||
-                      !isMobile ? (
+                    {(material.url &&
+                      (material.url.endsWith(".mp4") ||
+                        material.url.endsWith(".webm"))) ||
+                    !isMobile ? (
                       <ExternalLink className="h-4 w-4" />
                     ) : (
                       <Download className="h-4 w-4" />
@@ -144,6 +152,20 @@ export default function TaskModal({
             >
               Görevi Tamamla
             </button>
+          </div>
+        )}
+
+        {task?.fileBlobUrl && (
+          <div className="mb-6">
+            <h3 className="font-bold text-lg mb-2 text-gray-800">
+              Dosya Önizleme
+            </h3>
+            <iframe
+              src={task.fileBlobUrl}
+              width="100%"
+              height="500px"
+              className="rounded-lg border"
+            />
           </div>
         )}
 

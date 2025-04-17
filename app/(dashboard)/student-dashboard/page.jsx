@@ -286,12 +286,19 @@ export default function Home() {
   const handleTaskClick = useCallback(
     async (task) => {
       try {
+        console.log(task,'task')
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task._id}`
-        );
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${task.fileUrl}`
+        ,{cache:"no-store"});
 
         if (response.ok) {
-          const updatedTask = await response.json();
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+
+          const updatedTask = {
+            ...task,
+            fileBlobUrl: blobUrl,
+          }
           setSelectedTask(updatedTask);
         } else {
           setSelectedTask(task);
