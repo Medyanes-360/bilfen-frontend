@@ -8,80 +8,15 @@ export default function TaskModal({
   onCompleteTask,
   onMaterialClick,
   isMobile,
-  completedTasks,
-  setCompletedTasks,
   setSelectedDayContents,
   setContents,
   setIsTaskPopupOpen,
-  setIsModalOpen,
 }) {
-  if (!task) return null;
+  if (!task || !task._id) return null;
 
-
-
-  /*   const markTaskAsCompleted = async (taskId) => {
-      try {
-        await fetch(`/api/contents/${taskId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ completed: true }),
-        });
-  
-        setIsCompleted(true);
-      } catch (error) {
-        console.error("Görev tamamlanamadı:", error);
-      }
-    }; */
-
-  /*   const handleCompleteTask = useCallback(async (taskId) => {
-      try {
-        console.log('Marking task as completed:', taskId);
-  
-        // Update the selected day contents
-        setSelectedDayContents((prevContents) => {
-          const updatedContents = prevContents.map((content) => {
-            if (content.id === taskId) {
-              return { ...content, isCompleted: true };
-            }
-            return content;
-          });
-          return updatedContents;
-        });
-  
-        // update the main contents state
-        setContents((prevContents) => {
-          const updatedContents = prevContents.map((content) => {
-            if (content.id === taskId) {
-              return { ...content, isCompleted: true };
-            }
-            return content;
-          });
-          return updatedContents;
-        });
-  
-        setIsTaskPopupOpen(false); // close the modal
-      } catch (error) {
-        console.error("Error completing task:", error);
-      }
-    }, [setSelectedDayContents, setContents, setIsTaskPopupOpen]); */
-
-  /*   useEffect(() => {
-      if (timerStarted) {
-        const timer = setTimeout(() => {
-          if (!isCompleted) {
-            markTaskAsCompleted(task._id); // auto complete task after 30 seconds
-            handleCompleteTask(task._id); // update state
-          }
-        }, materialCheckTime);
-  
-        return () => clearTimeout(timer); // clean up timeout
-      }
-    }, [timerStarted, task._id, isCompleted, markTaskAsCompleted, handleCompleteTask]); */
-
-  const [timerStarted, setTimerStarted] = useState(false); // timer control 
-  const [isCompleted, setIsCompleted] = useState(task?.completed); // track completion 
+  const [timerStarted, setTimerStarted] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(task?.completed);
+  const [fileUrl, setFileUrl] = useState(null);
   const materialCheckTime = 30_000;
 
   // Modal completion logic
@@ -90,8 +25,8 @@ export default function TaskModal({
     async () => {
       if (!isCompleted) {
         try {
-          const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task?.id}`;
-          await fetch(url, {
+          const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task?._id}`;
+          const response = await fetch(url, {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
@@ -99,24 +34,78 @@ export default function TaskModal({
             body: JSON.stringify({ completed: true }),
           });
 
-          setIsCompleted(true); // update completion status
+          if (!response.ok) {
+            throw new Error('Failed to update task');
+          }
+
+          setIsCompleted(true);
+          onCompleteTask(task._id);
+          
+          // Update the selected day contents
+          setSelectedDayContents((prevContents) => {
+            return prevContents.map((content) => {
+              if (content._id === task._id) {
+                return { ...content, completed: true };
+              }
+              return content;
+            });
+          });
+
+          // Update the main contents state
+          setContents((prevContents) => {
+            return prevContents.map((content) => {
+              if (content._id === task._id) {
+                return { ...content, completed: true };
+              }
+              return content;
+            });
+          });
         } catch (error) {
-          console.log("Hata: ", error);
+          console.error("Error updating task:", error);
+          setTimerStarted(false);
         }
       }
-
-      return null;
     }
   );
 
-  const handleOpenModal = async () => {
-    setIsModalOpen(true); // Ensure this is passed correctly
-    onOpen();
-  };
+  // Fetch file when modal opens
+  useEffect(() => {
+    const fetchFile = async () => {
+      if (task?.fileUrl) {
+        try {
+          // take the filename from the URL
+          const filename = task.fileUrl.split('/').pop();
+          console.log("Extracted filename:", filename);
+
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${filename}`
+          );
+
+          if (response.ok) {
+            const blob = await response.blob();
+            const fileURL = URL.createObjectURL(blob);
+            setFileUrl(fileURL);
+          } else {
+            console.error("File fetch response status:", response.status);
+            console.error("File fetch response text:", await response.text());
+          }
+        } catch (error) {
+          console.error("Error fetching file:", error);
+        }
+      }
+    };
+
+    if (!timerStarted) {
+      onOpen();
+      setTimerStarted(true);
+      fetchFile();
+    }
+  }, [onOpen, timerStarted, task?.fileUrl]);
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Ensure this is passed correctly
     onClose();
+    setIsTaskPopupOpen(false);
+    setFileUrl(null);
   };
 
   return (
@@ -145,19 +134,27 @@ export default function TaskModal({
           </button>
         </div>
 
-        <p className="text-gray-700 mb-6 leading-relaxed">{task.description}</p>
+        <div className="space-y-4">
+          <p className="text-gray-700 mb-4 leading-relaxed">{task.description}</p>
 
-        {/* Complete Task Button - Only show if task is not completed */}
-        {/* {!isCompleted && (
-          <div className="mb-5">
-            <button
-              onClick={() => handleCompleteTask(task._id)}
-              className="cursor-pointer w-full py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-bold hover:from-green-600 hover:to-green-700 transition-all shadow-sm hover:shadow"
-            >
-              Görevi Tamamla
-            </button>
-          </div>
-        )} */}
+          {fileUrl && (
+            <div className="w-full">
+              {task.type === "video" ? (
+                <video
+                  src={fileUrl}
+                  controls
+                  className="w-full rounded-lg"
+                />
+              ) : (
+                <iframe
+                  src={fileUrl}
+                  className="w-full h-[600px] rounded-lg"
+                  title={task.title}
+                />
+              )}
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-end">
           <button

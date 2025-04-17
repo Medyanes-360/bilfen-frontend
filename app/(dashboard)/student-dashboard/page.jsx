@@ -288,7 +288,7 @@ export default function Home() {
       try {
         const fileUrl = task?.fileUrl;
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${encodeURIComponent(fileUrl)}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${fileUrl}`
         );
 
         if (response.ok) {
