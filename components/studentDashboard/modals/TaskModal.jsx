@@ -185,7 +185,7 @@ export default function TaskModal({
         )}
 
         {/* Complete Task Button - Only show if task is not completed */}
-        {!task.completed && (
+        {/* {!task.completed && (
           <div className="mb-5">
             <button
               onClick={() => handleCompleteTask(task._id)}
@@ -194,7 +194,7 @@ export default function TaskModal({
               Görevi Tamamla
             </button>
           </div>
-        )}
+        )} */}
 
         {task?.fileBlobUrl && (
           <div className="mb-6">
