@@ -1,111 +1,95 @@
-import { useModalCompletion } from "@/hooks/useModalCompletion";
-import React, { useState, useEffect, useCallback } from 'react';
+"use client";
+
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Download, X } from "lucide-react";
 
 export default function TaskModal({
   task,
+  onClose,
   onCompleteTask,
   onMaterialClick,
   isMobile,
+  completedTasks,
+  setCompletedTasks,
   setSelectedDayContents,
   setContents,
   setIsTaskPopupOpen,
 }) {
-  if (!task || !task._id) return null;
+  if (!task) return null;
 
-  const [timerStarted, setTimerStarted] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(task?.completed);
-  const [fileUrl, setFileUrl] = useState(null);
-  const materialCheckTime = 30_000;
-
-  // Modal completion logic
-  const { onOpen, onClose } = useModalCompletion(
-    materialCheckTime,
-    async () => {
-      if (!isCompleted) {
-        try {
-          const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${task?._id}`;
-          const response = await fetch(url, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ completed: true }),
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to update task');
-          }
-
-          setIsCompleted(true);
-          onCompleteTask(task._id);
-          
-          // Update the selected day contents
-          setSelectedDayContents((prevContents) => {
-            return prevContents.map((content) => {
-              if (content._id === task._id) {
-                return { ...content, completed: true };
-              }
-              return content;
-            });
-          });
-
-          // Update the main contents state
-          setContents((prevContents) => {
-            return prevContents.map((content) => {
-              if (content._id === task._id) {
-                return { ...content, completed: true };
-              }
-              return content;
-            });
-          });
-        } catch (error) {
-          console.error("Error updating task:", error);
-          setTimerStarted(false);
-        }
-      }
-    }
-  );
-
-  // Fetch file when modal opens
   useEffect(() => {
-    const fetchFile = async () => {
-      if (task?.fileUrl) {
-        try {
-          // take the filename from the URL
-          const filename = task.fileUrl.split('/').pop();
-          console.log("Extracted filename:", filename);
-
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${filename}`
-          );
-
-          if (response.ok) {
-            const blob = await response.blob();
-            const fileURL = URL.createObjectURL(blob);
-            setFileUrl(fileURL);
-          } else {
-            console.error("File fetch response status:", response.status);
-            console.error("File fetch response text:", await response.text());
-          }
-        } catch (error) {
-          console.error("Error fetching file:", error);
-        }
+    return () => {
+      if (task?.fileBlobUrl) {
+        URL.revokeObjectURL(task.fileBlobUrl);
       }
     };
+  },[task])
 
-    if (!timerStarted) {
-      onOpen();
-      setTimerStarted(true);
-      fetchFile();
+  const markTaskAsCompleted = async (taskId) => {
+    try {
+      // send completed info to backend
+      await fetch(`/api/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ completed: true }),
+      });
+    } catch (error) {
+      console.error("Görev tamamlanamadı:", error);
     }
-  }, [onOpen, timerStarted, task?.fileUrl]);
+  };
 
-  const handleCloseModal = () => {
-    onClose();
-    setIsTaskPopupOpen(false);
-    setFileUrl(null);
+  const handleCompleteTask = useCallback(
+    async (taskId) => {
+      try {
+        console.log("Marking task as completed:", taskId);
+
+        // Update the selected day contents
+        setSelectedDayContents((prevContents) => {
+          const updatedContents = prevContents.map((content) => {
+            if (content._id === taskId) {
+              console.log("Updating selected day contents:", content);
+              return { ...content, completed: true };
+            }
+            return content;
+          });
+          console.log("Updated selected day contents:", updatedContents);
+          return updatedContents;
+        });
+
+        // Update the main contents state
+        setContents((prevContents) => {
+          const updatedContents = prevContents.map((content) => {
+            if (content._id === taskId) {
+              console.log("Updating main contents:", content);
+              return { ...content, completed: true };
+            }
+            return content;
+          });
+          console.log("Updated main contents:", updatedContents);
+          return updatedContents;
+        });
+
+        setIsTaskPopupOpen(false);
+      } catch (error) {
+        console.error("Error completing task:", error);
+      }
+    },
+    [setSelectedDayContents, setContents]
+  );
+
+  // Function to handle file download on mobile
+  const handleMobileDownload = () => {
+    if (task?.fileBlobUrl) {
+      const link = document.createElement('a');
+      link.href = task.fileBlobUrl;
+      link.download = task.title || 'task-file';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -115,51 +99,109 @@ export default function TaskModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="fixed inset-0 flex items-center justify-center z-50 p-4 overflow-y-auto"
+      className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto bg-black/50"
     >
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 20, opacity: 0 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md md:max-w-lg m-auto border border-gray-100"
+        className="bg-white p-4 sm:p-4 md:p-6 rounded-xl shadow-xl w-full max-w-[90%] sm:max-w-[600px] md:max-w-[700px] m-auto border border-gray-100 overflow-y-auto h-[90vh] sm:h-[90vh] md:h-[80vh] max-h-[90vh] flex flex-col"
       >
         <div className="flex items-start justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800">{task.title}</h2>
           <button
-            onClick={handleCloseModal}
+            onClick={onClose}
             className="p-1 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="space-y-4">
-          <p className="text-gray-700 mb-4 leading-relaxed">{task.description}</p>
+        <p className="text-gray-700 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base overflow-y-auto flex-grow">{task.description}</p>
 
-          {fileUrl && (
-            <div className="w-full">
-              {task.type === "video" ? (
-                <video
-                  src={fileUrl}
-                  controls
-                  className="w-full rounded-lg"
-                />
-              ) : (
-                <iframe
-                  src={fileUrl}
-                  className="w-full h-[600px] rounded-lg"
-                  title={task.title}
-                />
-              )}
-            </div>
-          )}
-        </div>
+        {task.materials?.length > 0 && (
+          <>
+            <h3 className="font-bold text-lg mb-3 text-gray-800 flex items-center gap-2">
+              <span className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center text-sm text-orange-600">
+                📚
+              </span>
+              Materyaller
+            </h3>
+            <ul className="space-y-2 mb-6 bg-gray-50 p-3 rounded-lg border border-gray-100">
+              {task.materials.map((material, index) => (
+                <li
+                  key={index}
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-white transition-colors border border-transparent hover:border-gray-200 hover:shadow-sm"
+                >
+                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-lg">
+                    {material.url &&
+                    (material.url.endsWith(".mp4") ||
+                      material.url.endsWith(".webm"))
+                      ? "🎬"
+                      : "📄"}
+                  </div>
+                  <button
+                    onClick={() => onMaterialClick(material)}
+                    className="flex-1 text-left text-blue-600 hover:text-blue-700 transition-colors cursor-pointer font-medium"
+                  >
+                    {material.name}
+                  </button>
+                  <div className="text-gray-400 hover:text-orange-500 transition-colors">
+                    {(material.url &&
+                      (material.url.endsWith(".mp4") ||
+                        material.url.endsWith(".webm"))) ||
+                    !isMobile ? (
+                      <ExternalLink className="h-4 w-4" />
+                    ) : (
+                      <Download className="h-4 w-4" />
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {/* Complete Task Button - Only show if task is not completed */}
+{/*         {!task.completed && (
+          <div className="mb-5">
+            <button
+              onClick={() => handleCompleteTask(task._id)}
+              className="cursor-pointer w-full py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg font-bold hover:from-green-600 hover:to-green-700 transition-all shadow-sm hover:shadow"
+            >
+              Görevi Tamamla
+            </button>
+          </div>
+        )} */}
+
+        {task?.fileBlobUrl && (
+          <div className="mb-6 w-full">
+            <h3 className="font-bold text-lg mb-2 text-gray-800">
+              Dosya Önizleme
+            </h3>
+            {!isMobile ? (
+      <iframe
+        src={task.fileBlobUrl}
+        width="100%"
+        height="100%"
+        className="rounded-lg border h-[400px] sm:h-[500px] md:h-[600px] w-full"
+      />
+    ) : (
+      <button
+        onClick={handleMobileDownload}
+        className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+      >
+        Dosyayı İndir
+      </button>
+    )}
+  </div>
+)}
 
         <div className="flex justify-end">
           <button
             className="cursor-pointer bg-gray-100 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-200 transition-colors font-medium"
-            onClick={handleCloseModal}
+            onClick={onClose}
           >
             Kapat
           </button>

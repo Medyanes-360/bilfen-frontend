@@ -45,16 +45,25 @@ export default function Home() {
   // Memoize the task completion callback
   const handleCompleteTask = useCallback(async (taskId) => {
     try {
-      // update the selected day contents only
+      // First make the API call to mark as completed
+      await fetch(`/api/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ completed: true }),
+      });
+  
+      // Then update the local state
       setSelectedDayContents((prevContents) =>
         prevContents.map((content) => {
           if (content._id === taskId) {
-            // completed this specific task
             return { ...content, completed: true };
           }
           return content;
         })
       );
+  
       setIsTaskPopupOpen(false);
     } catch (error) {
       console.error("Error completing task:", error);
@@ -66,7 +75,10 @@ export default function Home() {
     30000,
     useCallback(() => {
       if (selectedTask) {
-        handleCompleteTask(selectedTask._id);
+        handleCompleteTask(selectedTask._id).then(() => {
+          // Close the modal after task is completed
+          setIsTaskPopupOpen(false);
+        });
       }
     }, [selectedTask, handleCompleteTask])
   );
@@ -286,13 +298,19 @@ export default function Home() {
   const handleTaskClick = useCallback(
     async (task) => {
       try {
-        const fileUrl = task?.fileUrl;
+        console.log(task,'task')
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${fileUrl}`
-        );
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${task.fileUrl}`
+        ,{cache:"no-store"});
 
         if (response.ok) {
-          const updatedTask = await response.json();
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+
+          const updatedTask = {
+            ...task,
+            fileBlobUrl: blobUrl,
+          }
           setSelectedTask(updatedTask);
         } else {
           setSelectedTask(task);
