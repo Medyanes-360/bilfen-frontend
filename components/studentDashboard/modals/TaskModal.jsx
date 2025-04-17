@@ -18,6 +18,14 @@ export default function TaskModal({
 }) {
   if (!task) return null;
 
+  useEffect(() => {
+    return () => {
+      if (task?.fileBlobUrl) {
+        URL.revokeObjectURL(task.fileBlobUrl);
+      }
+    };
+  },[task])
+
   const markTaskAsCompleted = async (taskId) => {
     try {
       // send completed info to backend
