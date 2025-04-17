@@ -5,17 +5,19 @@ import ArchiveModal from "@/components/modal/archiveModal";
 import Calendar from "@/components/teacherDashboard/calendar";
 import Header from "@/components/teacherDashboard/header";
 import MaterialList from "@/components/teacherDashboard/materialList";
-import { buildUrl } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { getSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Home() {
-  const [materials, setMaterials] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    return t;
+  });
   const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
   const [archiveMaterials, setArchiveMaterials] = useState([]);
-  const [pastAndFutureMaterials, setPastAndFutureMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
@@ -30,8 +32,6 @@ export default function Home() {
   const [appReady, setAppReady] = useState(false);
   const [archiveLoadingStatus, setArchiveLoadingStatus] = useState("idle");
 
-  const [testMaterials, setTestMaterials] = useState([]);
-
   useEffect(() => {
     (async () => {
       try {
@@ -39,13 +39,7 @@ export default function Home() {
         const user = await fetchSession();
 
         // Fetch all data
-        await Promise.all([
-          fetchVisibleDays(),
-          fetchMaterials(false, setMaterials, user),
-          fetchMaterials(true, setExtraMaterials, user),
-          fetchPastAndFutureMaterials(user),
-          fetchDailyMaterials(user),
-        ]);
+        await Promise.all([fetchVisibleDays(), fetchExtraMaterials(user)]);
 
         setAppReady(true);
       } catch (err) {
@@ -54,6 +48,21 @@ export default function Home() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (!user || !selectedDate) return;
+
+    const runFetch = async () => {
+      try {
+        await fetchDailyMaterials(user, selectedDate);
+      } catch (err) {
+        console.error("App yüklenirken hata: ", err);
+        setError("Bir hata oluştu");
+      }
+    };
+
+    runFetch();
+  }, [user, selectedDate]);
 
   const fetchSession = async () => {
     const session = await getSession();
@@ -96,12 +105,35 @@ export default function Home() {
     }
   };
 
-  async function fetchMaterials(isExtra = false, setter, user) {
+  const fetchDailyMaterials = async (user, date) => {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setHours(0, 0, 0, 0);
+
+    const startDate = formatDate(start);
+    const endDate = formatDate(nextDay);
+
     try {
-      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
-        isExtra,
-        branch: user?.branch,
-      });
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true&isExtra=false&branch=${user?.branch}&startDate=${startDate}&endDate=${endDate}`;
+
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+      const data = await res.json();
+      console.log(data)
+      setDailyMaterials(data);
+    } catch (error) {
+      console.error("Error fetching daily materials:", error.message);
+      setError(error.message);
+    }
+  };
+
+  const fetchExtraMaterials = async (user) => {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true&isExtra=true&branch=${user?.branch}`;
       const res = await fetch(url, { cache: "no-store" });
 
       if (!res.ok) {
@@ -110,72 +142,23 @@ export default function Home() {
       }
 
       const data = await res.json();
-      setter(data);
+      setExtraMaterials(data);
     } catch (error) {
       console.error("Error fetching materials:", error.message);
       setError(error.message);
     }
   }
 
-  async function fetchDailyMaterials(user) {
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
+  const fetchArchiveMaterials = useCallback(
+    async (user) => {
+      if (!visibleDays?.archiveStart || !visibleDays?.archiveEnd) return;
 
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-
-    console.log(start.toISOString());
-    console.log(end.toISOString());
-
-    try {
-      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
-        isExtra: false,
-        branch: user?.branch,
-        startDate: start.toISOString(),
-        endDate: end.toISOString(),
-      });
-
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-
-      const data = await res.json();
-      console.log(data);
-      setTestMaterials(data);
-    } catch (error) {
-      console.error("Error fetching materials:", error.message);
-      setError(error.message);
-    }
-  }
-
-  async function fetchPastAndFutureMaterials(user) {
-    // queries are not working here
-    // if visibleDays are fetched fetch the data
-    if (visibleDays) {
-      try {
-        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
-        const res = await fetch(url, { cache: "no-store" });
-
-        if (!res.ok) {
-          setError(res.status);
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-
-        const data = await res.json();
-        setPastAndFutureMaterials(data);
-      } catch (error) {
-        console.error("Error fetching materials:", error.message);
-        setError(error.message);
-      }
-    }
-
-    return [];
-  }
-
-  const fetchArchiveMaterials = async (user) => {
-    try {
       const start = new Date(visibleDays.archiveStart);
       const end = new Date(visibleDays.archiveEnd);
       end.setHours(23, 59, 59, 999);
+
+      const formattedStart = formatDate(start);
+      const formattedEnd = formatDate(end);
 
       setArchiveLoadingStatus("pending");
 
@@ -183,38 +166,25 @@ export default function Home() {
         setArchiveLoadingStatus("error");
       }, 10000);
 
-      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
-        isExtra: false,
-        branch: user?.branch,
-        startDate: start.toISOString(),
-        endDate: end.toISOString(),
-      });
+      try {
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents?isPublished=true&isExtra=false&branch=${user?.branch}&rangeStartDate=${formattedStart}&rangeEndDate=${formattedEnd}`;
 
-      const res = await fetch(url, { cache: "no-store" });
-      clearTimeout(timeoutId);
+        const res = await fetch(url, { cache: "no-store" });
+        clearTimeout(timeoutId);
 
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
-      const data = await res.json();
-      setArchiveMaterials(data);
-      setArchiveLoadingStatus("success");
-    } catch (error) {
-      console.error("Error fetching materials:", error.message);
-      setError(error.message);
-      setArchiveLoadingStatus("error");
-    }
-  };
-
-  const filterMaterialsByDate = (date, source = materials) => {
-    const formattedDate = formatDate(date);
-
-    const filtered = source.filter((material) => {
-      const materialDate = new Date(material?.publishDateTeacher);
-      const materialFormatted = formatDate(materialDate);
-      return materialFormatted === formattedDate;
-    });
-    setDailyMaterials(filtered);
-  };
+        const data = await res.json();
+        setArchiveMaterials(data);
+        setArchiveLoadingStatus("success");
+      } catch (error) {
+        console.error("Error fetching archive materials:", error.message);
+        setError(error.message);
+        setArchiveLoadingStatus("error");
+      }
+    },
+    [visibleDays, user?.branch]
+  );
 
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -225,9 +195,7 @@ export default function Home() {
 
   const handleOpenArchive = () => {
     setShowArchive(true);
-    if (archiveMaterials.length === 0) {
-      fetchArchiveMaterials(user);
-    }
+    fetchArchiveMaterials(user);
   };
 
   // Loading state
@@ -276,20 +244,9 @@ export default function Home() {
                 </div>
 
                 <Calendar
+                  selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate}
                   visibleDays={visibleDays}
-                  onSelect={(date) => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-
-                    const selected = new Date(date);
-                    selected.setHours(0, 0, 0, 0);
-
-                    if (selected.getTime() === today.getTime()) {
-                      filterMaterialsByDate(selected, materials);
-                    } else {
-                      filterMaterialsByDate(selected, pastAndFutureMaterials);
-                    }
-                  }}
                 />
               </div>
 

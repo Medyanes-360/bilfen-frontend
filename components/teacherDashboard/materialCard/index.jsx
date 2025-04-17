@@ -3,7 +3,7 @@ import { Modal } from "@/components/modal";
 import { useModalCompletion } from "@/hooks/useModalCompletion";
 import { getFileExtension } from "@/lib/utils";
 import { IconByTypeInfo } from "@/public/icons/TeacherMaterialIcons";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { RingLoader } from "react-spinners";
 
@@ -47,12 +47,14 @@ const MaterialCard = ({ material }) => {
     }
   );
 
-  const viewMaterialContent = async () => {
+  const viewMaterialContent = useCallback(async () => {
     try {
       setPreviewStatus("pending");
 
       const fileUrl = material?.fileUrl;
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${fileUrl}`;
+      const url = `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/api/file/view?fileUrl=${encodeURIComponent(fileUrl)}`;
 
       const response = await fetch(url);
       if (!response.ok) {
@@ -71,7 +73,7 @@ const MaterialCard = ({ material }) => {
       setPreviewStatus("error");
       return null;
     }
-  };
+  });
 
   const handleOpenModal = async () => {
     setIsModalOpen(true);
@@ -142,7 +144,7 @@ const MaterialCard = ({ material }) => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 gap-3 sm:gap-0">
               <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 gap-4 group-hover:text-gray-700 transition-colors duration-300">
                 <span className="flex items-center whitespace-nowrap">
-                  📅 {material?.endDateTeacher}
+                  📅 {material?.publishDateTeacher}
                 </span>
               </div>
 
