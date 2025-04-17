@@ -85,7 +85,11 @@ export default function Home() {
 
   const fetchVisibleDays = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/access-settings`;
+      const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL.endsWith("/")
+        ? process.env.NEXT_PUBLIC_BACKEND_URL.slice(0, -1)
+        : process.env.NEXT_PUBLIC_BACKEND_URL;
+
+      const url = `${baseURL}/api/access-settings`;
       const res = await fetch(url);
 
       if (!res.ok) {
@@ -123,7 +127,7 @@ export default function Home() {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       const data = await res.json();
-      console.log(data)
+      console.log(data);
       setDailyMaterials(data);
     } catch (error) {
       console.error("Error fetching daily materials:", error.message);
@@ -147,7 +151,7 @@ export default function Home() {
       console.error("Error fetching materials:", error.message);
       setError(error.message);
     }
-  }
+  };
 
   const fetchArchiveMaterials = useCallback(
     async (user) => {
@@ -205,13 +209,7 @@ export default function Home() {
 
   // Error state
   if (error) {
-    return (
-      <ErrorState
-        role="teacher"
-        error={error}
-        onRetry={() => window.location.reload()}
-      />
-    );
+    return <ErrorState role="teacher" error={error} onRetry={() => window.location.reload()} />;
   }
 
   return (
@@ -237,9 +235,7 @@ export default function Home() {
                 <div className="flex items-center p-4 border-b border-gray-100">
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📅</span>
-                    <h2 className="text-lg font-semibold text-gray-800">
-                      Takvim
-                    </h2>
+                    <h2 className="text-lg font-semibold text-gray-800">Takvim</h2>
                   </div>
                 </div>
 
@@ -253,8 +249,7 @@ export default function Home() {
               <div className="flex justify-end gap-4 mb-4">
                 <button
                   onClick={handleOpenArchive}
-                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
-                >
+                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition">
                   Arşiv
                 </button>
               </div>
@@ -264,22 +259,18 @@ export default function Home() {
                 <button
                   onClick={() => setIsOpen(!isOpen)}
                   className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                  aria-label="Toggle extra materials"
-                >
+                  aria-label="Toggle extra materials">
                   {/* Sabit Başlık */}
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📚</span>
-                    <h2 className="text-lg font-semibold text-gray-800">
-                      Dijital Materyaller
-                    </h2>
+                    <h2 className="text-lg font-semibold text-gray-800">Dijital Materyaller</h2>
                   </div>
 
                   <div className="text-gray-400 transition">
                     <span
                       className={`inline-block transform transition-transform duration-300 ${
                         isOpen ? "rotate-180" : "rotate-0"
-                      }`}
-                    >
+                      }`}>
                       ▼
                     </span>
                   </div>
@@ -293,8 +284,7 @@ export default function Home() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
+                      className="overflow-hidden">
                       <div className="p-4">
                         <MaterialList materials={dailyMaterials} />
                       </div>
@@ -309,22 +299,18 @@ export default function Home() {
                   <button
                     onClick={() => setIsExtraOpen(!isExtraOpen)}
                     className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                    aria-label="Toggle extra materials"
-                  >
+                    aria-label="Toggle extra materials">
                     {/* Sabit Başlık */}
                     <div className="flex items-center">
                       <span className="text-blue-600 mr-2">➕</span>
-                      <h2 className="text-lg font-semibold text-gray-800">
-                        Extra Materyaller
-                      </h2>
+                      <h2 className="text-lg font-semibold text-gray-800">Extra Materyaller</h2>
                     </div>
 
                     <div className="text-gray-400 transition">
                       <span
                         className={`inline-block transform transition-transform duration-300 ${
                           isExtraOpen ? "rotate-180" : "rotate-0"
-                        }`}
-                      >
+                        }`}>
                         ▼
                       </span>
                     </div>
@@ -338,8 +324,7 @@ export default function Home() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.4, ease: "easeInOut" }}
-                        className="overflow-hidden"
-                      >
+                        className="overflow-hidden">
                         <div className="p-4">
                           <MaterialList materials={extraMaterials} />
                         </div>
