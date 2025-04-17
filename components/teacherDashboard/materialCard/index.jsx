@@ -1,7 +1,7 @@
 "use client";
 import { Modal } from "@/components/modal";
 import { useModalCompletion } from "@/hooks/useModalCompletion";
-import { getFileExtension } from "@/lib/utils";
+import { buildUrl, getFileExtension } from "@/lib/utils";
 import { IconByTypeInfo } from "@/public/icons/TeacherMaterialIcons";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
@@ -46,11 +46,12 @@ const MaterialCard = ({ material }) => {
       setPreviewStatus("pending");
 
       const fileUrl = material?.fileUrl;
-      const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL.endsWith("/")
-        ? process.env.NEXT_PUBLIC_BACKEND_URL.slice(0, -1)
-        : process.env.NEXT_PUBLIC_BACKEND_URL;
 
-      const viewUrl = `${baseURL}/api/file/view?fileUrl=${encodeURIComponent(fileUrl)}`;
+      const viewUrl = buildUrl(
+        process.env.NEXT_PUBLIC_BACKEND_URL,
+        { fileUrl: fileUrl },
+        "api/file/view"
+      );
 
       const response = await fetch(viewUrl);
       if (!response.ok) {
