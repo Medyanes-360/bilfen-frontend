@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Download, X } from "lucide-react";
 
@@ -59,7 +60,7 @@ export default function TaskModal({
           return updatedContents;
         });
 
-        // Update the main contents state
+        // Update the main contents state as well
         setContents((prevContents) => {
           const updatedContents = prevContents.map((content) => {
             if (content._id === taskId) {
@@ -80,18 +81,6 @@ export default function TaskModal({
     [setSelectedDayContents, setContents]
   );
 
-  // Function to handle file download on mobile
-  const handleMobileDownload = () => {
-    if (task?.fileBlobUrl) {
-      const link = document.createElement('a');
-      link.href = task.fileBlobUrl;
-      link.download = task.title || 'task-file';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-
   return (
     <motion.div
       key="task-popup"
@@ -99,14 +88,14 @@ export default function TaskModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="fixed inset-0 flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto bg-black/50"
+      className="fixed inset-0 flex items-center justify-center z-50 p-4 overflow-y-auto"
     >
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 20, opacity: 0 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="bg-white p-4 sm:p-4 md:p-6 rounded-xl shadow-xl w-full max-w-[90%] sm:max-w-[600px] md:max-w-[700px] m-auto border border-gray-100 overflow-y-auto h-[90vh] sm:h-[90vh] md:h-[80vh] max-h-[90vh] flex flex-col"
+        className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md md:max-w-lg m-auto border border-gray-100"
       >
         <div className="flex items-start justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800">{task.title}</h2>
@@ -118,7 +107,7 @@ export default function TaskModal({
           </button>
         </div>
 
-        <p className="text-gray-700 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base overflow-y-auto flex-grow">{task.description}</p>
+        <p className="text-gray-700 mb-6 leading-relaxed">{task.description}</p>
 
         {task.materials?.length > 0 && (
           <>
@@ -164,7 +153,7 @@ export default function TaskModal({
         )}
 
         {/* Complete Task Button - Only show if task is not completed */}
-{/*         {!task.completed && (
+        {!task.completed && (
           <div className="mb-5">
             <button
               onClick={() => handleCompleteTask(task._id)}
@@ -173,30 +162,21 @@ export default function TaskModal({
               Görevi Tamamla
             </button>
           </div>
-        )} */}
+        )}
 
         {task?.fileBlobUrl && (
-          <div className="mb-6 w-full">
+          <div className="mb-6">
             <h3 className="font-bold text-lg mb-2 text-gray-800">
               Dosya Önizleme
             </h3>
-            {!isMobile ? (
-      <iframe
-        src={task.fileBlobUrl}
-        width="100%"
-        height="100%"
-        className="rounded-lg border h-[400px] sm:h-[500px] md:h-[600px] w-full"
-      />
-    ) : (
-      <button
-        onClick={handleMobileDownload}
-        className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        Dosyayı İndir
-      </button>
-    )}
-  </div>
-)}
+            <iframe
+              src={task.fileBlobUrl}
+              width="100%"
+              height="500px"
+              className="rounded-lg border"
+            />
+          </div>
+        )}
 
         <div className="flex justify-end">
           <button

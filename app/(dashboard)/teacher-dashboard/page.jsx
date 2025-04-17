@@ -8,14 +8,17 @@ import MaterialList from "@/components/teacherDashboard/materialList";
 import { buildUrl } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { getSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Home() {
-  const [materials, setMaterials] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    return t;
+  });
   const [dailyMaterials, setDailyMaterials] = useState([]);
   const [extraMaterials, setExtraMaterials] = useState([]);
   const [archiveMaterials, setArchiveMaterials] = useState([]);
-  const [pastAndFutureMaterials, setPastAndFutureMaterials] = useState([]);
 
   const [user, setUser] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
@@ -37,12 +40,7 @@ export default function Home() {
         const user = await fetchSession();
 
         // Fetch all data
-        await Promise.all([
-          fetchVisibleDays(),
-          fetchMaterials(false, setMaterials, user),
-          fetchMaterials(true, setExtraMaterials, user),
-          fetchPastAndFutureMaterials(user),
-        ]);
+        await Promise.all([fetchVisibleDays(), fetchExtraMaterials(user)]);
 
         setAppReady(true);
       } catch (err) {
@@ -51,6 +49,21 @@ export default function Home() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (!user || !selectedDate) return;
+
+    const runFetch = async () => {
+      try {
+        await fetchDailyMaterials(user, selectedDate);
+      } catch (err) {
+        console.error("App yüklenirken hata: ", err);
+        setError("Bir hata oluştu");
+      }
+    };
+
+    runFetch();
+  }, [user, selectedDate]);
 
   const fetchSession = async () => {
     const session = await getSession();
@@ -73,7 +86,8 @@ export default function Home() {
 
   const fetchVisibleDays = async () => {
     try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/access-settings`;
+      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {}, "api/access-settings");
+
       const res = await fetch(url);
 
       if (!res.ok) {
@@ -93,62 +107,78 @@ export default function Home() {
     }
   };
 
-  async function fetchMaterials(isExtra = false, setter, user) {
-    try {
-      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
-        isExtra,
-        branch: user?.branch,
-      });
-      const res = await fetch(url, { cache: "no-store" });
+  const fetchDailyMaterials = async (user, date) => {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
 
-      if (!res.ok) {
-        setError(res.status);
-        throw new Error(`HTTP error! Status: ${res.status}`);
-      }
+    const nextDay = new Date(date);
+    nextDay.setDate(nextDay.getDate() + 1);
+    nextDay.setHours(0, 0, 0, 0);
+
+    const startDate = formatDate(start);
+    const endDate = formatDate(nextDay);
+
+    try {
+      const url = buildUrl(
+        process.env.NEXT_PUBLIC_BACKEND_URL,
+        {
+          isPublished: true,
+          isExtra: false,
+          branch: user?.branch,
+          startDate: startDate,
+          endDate: endDate,
+        },
+        "api/contents"
+      );
+
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       const data = await res.json();
-      setter(data);
+      console.log(data);
+      setDailyMaterials(data);
     } catch (error) {
-      console.error("Error fetching materials:", error.message);
+      console.error("Error fetching daily materials:", error.message);
       setError(error.message);
     }
-  }
-
-  async function fetchPastAndFutureMaterials(user) {
-    // queries are not working here
-    try {
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/filtered/teacher?isPublished=true&isExtra=false&branch=${user?.branch}`;
-      const res = await fetch(url, { cache: "no-store" });
-
-      if (!res.ok) {
-        setError(res.status);
-        throw new Error(`HTTP error! Status: ${res.status}`);
-      }
-
-      const data = await res.json();
-      setPastAndFutureMaterials(data);
-    } catch (error) {
-      console.error("Error fetching materials:", error.message);
-      setError(error.message);
-    }
-  }
-
-  const filterMaterialsByDate = (date, source = materials) => {
-    const formattedDate = formatDate(date);
-
-    const filtered = source.filter((material) => {
-      const materialDate = new Date(material?.publishDateTeacher);
-      const materialFormatted = formatDate(materialDate);
-      return materialFormatted === formattedDate;
-    });
-    setDailyMaterials(filtered);
   };
 
-  const fetchArchiveMaterials = async (user) => {
+  const fetchExtraMaterials = async (user) => {
     try {
+      const url = buildUrl(
+        process.env.NEXT_PUBLIC_BACKEND_URL,
+        {
+          isPublished: true,
+          isExtra: true,
+          branch: user?.branch,
+        },
+        "api/contents"
+      );
+
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) {
+        setError(res.status);
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      setExtraMaterials(data);
+    } catch (error) {
+      console.error("Error fetching materials:", error.message);
+      setError(error.message);
+    }
+  };
+
+  const fetchArchiveMaterials = useCallback(
+    async (user) => {
+      if (!visibleDays?.archiveStart || !visibleDays?.archiveEnd) return;
+
       const start = new Date(visibleDays.archiveStart);
       const end = new Date(visibleDays.archiveEnd);
       end.setHours(23, 59, 59, 999);
+
+      const formattedStart = formatDate(start);
+      const formattedEnd = formatDate(end);
 
       setArchiveLoadingStatus("pending");
 
@@ -156,28 +186,35 @@ export default function Home() {
         setArchiveLoadingStatus("error");
       }, 10000);
 
-      const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
-        isExtra: false,
-        branch: user?.branch,
-        startDate: start.toISOString(),
-        endDate: end.toISOString(),
-      });
+      try {
+        const url = buildUrl(
+          process.env.NEXT_PUBLIC_BACKEND_URL,
+          {
+            isPublished: true,
+            isExtra: false,
+            branch: user?.branch,
+            rangeStartDate: formattedStart,
+            rangeEndDate: formattedEnd,
+          },
+          "api/contents"
+        );
 
-      const res = await fetch(url, { cache: "no-store" });
-      clearTimeout(timeoutId);
+        const res = await fetch(url, { cache: "no-store" });
+        clearTimeout(timeoutId);
 
-      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
-      const data = await res.json();
-      console.log(data);
-      setArchiveMaterials(data);
-      setArchiveLoadingStatus("success");
-    } catch (error) {
-      console.error("Error fetching materials:", error.message);
-      setError(error.message);
-      setArchiveLoadingStatus("error");
-    }
-  };
+        const data = await res.json();
+        setArchiveMaterials(data);
+        setArchiveLoadingStatus("success");
+      } catch (error) {
+        console.error("Error fetching archive materials:", error.message);
+        setError(error.message);
+        setArchiveLoadingStatus("error");
+      }
+    },
+    [visibleDays, user?.branch]
+  );
 
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -188,9 +225,7 @@ export default function Home() {
 
   const handleOpenArchive = () => {
     setShowArchive(true);
-    if (archiveMaterials.length === 0) {
-      fetchArchiveMaterials(user);
-    }
+    fetchArchiveMaterials(user);
   };
 
   // Loading state
@@ -200,13 +235,7 @@ export default function Home() {
 
   // Error state
   if (error) {
-    return (
-      <ErrorState
-        role="teacher"
-        error={error}
-        onRetry={() => window.location.reload()}
-      />
-    );
+    return <ErrorState role="teacher" error={error} onRetry={() => window.location.reload()} />;
   }
 
   return (
@@ -232,35 +261,21 @@ export default function Home() {
                 <div className="flex items-center p-4 border-b border-gray-100">
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📅</span>
-                    <h2 className="text-lg font-semibold text-gray-800">
-                      Takvim
-                    </h2>
+                    <h2 className="text-lg font-semibold text-gray-800">Takvim</h2>
                   </div>
                 </div>
 
                 <Calendar
+                  selectedDate={selectedDate}
+                  setSelectedDate={setSelectedDate}
                   visibleDays={visibleDays}
-                  onSelect={(date) => {
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-
-                    const selected = new Date(date);
-                    selected.setHours(0, 0, 0, 0);
-
-                    if (selected.getTime() === today.getTime()) {
-                      filterMaterialsByDate(selected, materials);
-                    } else {
-                      filterMaterialsByDate(selected, pastAndFutureMaterials);
-                    }
-                  }}
                 />
               </div>
 
               <div className="flex justify-end gap-4 mb-4">
                 <button
                   onClick={handleOpenArchive}
-                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
-                >
+                  className="cursor-pointer px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition">
                   Arşiv
                 </button>
               </div>
@@ -270,22 +285,18 @@ export default function Home() {
                 <button
                   onClick={() => setIsOpen(!isOpen)}
                   className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                  aria-label="Toggle extra materials"
-                >
+                  aria-label="Toggle extra materials">
                   {/* Sabit Başlık */}
                   <div className="flex items-center">
                     <span className="text-blue-600 mr-2">📚</span>
-                    <h2 className="text-lg font-semibold text-gray-800">
-                      Dijital Materyaller
-                    </h2>
+                    <h2 className="text-lg font-semibold text-gray-800">Dijital Materyaller</h2>
                   </div>
 
                   <div className="text-gray-400 transition">
                     <span
                       className={`inline-block transform transition-transform duration-300 ${
                         isOpen ? "rotate-180" : "rotate-0"
-                      }`}
-                    >
+                      }`}>
                       ▼
                     </span>
                   </div>
@@ -299,8 +310,7 @@ export default function Home() {
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="overflow-hidden"
-                    >
+                      className="overflow-hidden">
                       <div className="p-4">
                         <MaterialList materials={dailyMaterials} />
                       </div>
@@ -315,22 +325,18 @@ export default function Home() {
                   <button
                     onClick={() => setIsExtraOpen(!isExtraOpen)}
                     className="cursor-pointer flex items-center justify-between p-4 border-b border-gray-100 w-full"
-                    aria-label="Toggle extra materials"
-                  >
+                    aria-label="Toggle extra materials">
                     {/* Sabit Başlık */}
                     <div className="flex items-center">
                       <span className="text-blue-600 mr-2">➕</span>
-                      <h2 className="text-lg font-semibold text-gray-800">
-                        Extra Materyaller
-                      </h2>
+                      <h2 className="text-lg font-semibold text-gray-800">Extra Materyaller</h2>
                     </div>
 
                     <div className="text-gray-400 transition">
                       <span
                         className={`inline-block transform transition-transform duration-300 ${
                           isExtraOpen ? "rotate-180" : "rotate-0"
-                        }`}
-                      >
+                        }`}>
                         ▼
                       </span>
                     </div>
@@ -344,8 +350,7 @@ export default function Home() {
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.4, ease: "easeInOut" }}
-                        className="overflow-hidden"
-                      >
+                        className="overflow-hidden">
                         <div className="p-4">
                           <MaterialList materials={extraMaterials} />
                         </div>

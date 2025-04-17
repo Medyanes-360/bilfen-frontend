@@ -24,7 +24,7 @@ export default function ArchiveModal({
     const dates = [];
 
     for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
-      dates.push(new Date(d)); // clone the date
+      dates.push(new Date(d));
     }
 
     return dates;
