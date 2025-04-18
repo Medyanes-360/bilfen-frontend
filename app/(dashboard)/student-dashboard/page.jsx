@@ -41,19 +41,34 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [accessSettings, setAccessSettings] = useState(null);
   const [selectedDayContents, setSelectedDayContents] = useState([]);
+  const [taskProgress, setTaskProgress] = useState({}); // task progress states
 
   // Memoize the task completion callback
   const handleCompleteTask = useCallback(async (taskId) => {
     try {
-      // update the selected day contents only
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isCompleted: true }),
+        cache: "no-store"
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update task");
+      }
+  
+      // Update local state
       setSelectedDayContents((prevContents) =>
-        prevContents.map((content) => {
-          if (content._id === taskId) {
-            // completed this specific task
-            return { ...content, completed: true };
-          }
-          return content;
-        })
+        prevContents.map((content) =>
+          content.id === taskId ? { ...content, isCompleted: true } : content
+        )
+      );
+      setContents((prevContents) =>
+        prevContents.map((content) =>
+          content.id === taskId ? { ...content, isCompleted: true } : content
+        )
       );
       setIsTaskPopupOpen(false);
     } catch (error) {
@@ -61,18 +76,50 @@ export default function Home() {
     }
   }, []);
 
+  // Memoize the task progress callback
+  const handleTaskProgress = useCallback((taskId) => {
+    setSelectedDayContents((prevContents) =>
+      prevContents.map((content) => {
+        if (content.id === taskId) {
+          return { ...content, inProgress: true };
+        }
+        return content;
+      })
+    );
+
+    setContents((prevContents) =>
+      prevContents.map((content) => {
+        if (content.id === taskId) {
+          return { ...content, inProgress: true };
+        }
+        return content;
+      })
+    );
+
+    setIsTaskPopupOpen(false);
+  }, []);
+
   // modalCompletion hook with memoized callback
   const { onOpen, onClose } = useModalCompletion(
     30000,
     useCallback(() => {
       if (selectedTask) {
-        handleCompleteTask(selectedTask._id);
+        handleCompleteTask(selectedTask.id);
       }
     }, [selectedTask, handleCompleteTask])
   );
 
+  // Handle modal close
+  const handleCloseModal = useCallback(() => {
+    if (selectedTask && !selectedTask.completed) {
+      handleTaskProgress(selectedTask.id);
+    }
+    setIsTaskPopupOpen(false);
+  }, [selectedTask, handleTaskProgress]);
+
   // memoize derived values
   const learningPath = useMemo(() => {
+    if (!Array.isArray(contents)) return [];
     return contents.filter((content) => {
       const contentDate = new Date(content.publishDateStudent);
       const today = new Date();
@@ -200,7 +247,7 @@ export default function Home() {
           if (todayDay) {
             const todayContents = contents.filter((content) => {
               const contentDate = new Date(content.publishDateStudent);
-              return contentDate.toDateString() === todayDay.date.toDateString()
+              return contentDate.toDateString() === todayDay.date.toDateString();
             });
 
             setSelectedDayContents(todayContents);
@@ -212,9 +259,7 @@ export default function Home() {
       }
     };
 
-    if (contents.length > 0) {
-      generateCalendarData();
-    }
+    generateCalendarData();
   }, [contents, selectedDay]);
 
   // Fetch all contents

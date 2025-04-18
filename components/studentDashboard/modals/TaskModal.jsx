@@ -24,25 +24,10 @@ export default function TaskModal({
         URL.revokeObjectURL(task.fileBlobUrl);
       }
     };
-  },[task])
-
-  const markTaskAsCompleted = async (taskId) => {
-    try {
-      // send completed info to backend
-      await fetch(`/api/tasks/${taskId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ completed: true }),
-      });
-    } catch (error) {
-      console.error("Görev tamamlanamadı:", error);
-    }
-  };
+  }, [task]);
 
   const handleCompleteTask = useCallback(
-    async (taskId) => {
+    (taskId) => {
       try {
         console.log("Marking task as completed:", taskId);
 
@@ -80,6 +65,54 @@ export default function TaskModal({
     [setSelectedDayContents, setContents]
   );
 
+  const handleTaskProgress = useCallback(() => {
+    try {
+      console.log("Marking task as in progress:", task._id);
+
+      // Update the selected day contents
+      setSelectedDayContents((prevContents) => {
+        const updatedContents = prevContents.map((content) => {
+          if (content._id === task._id) {
+            console.log("Updating selected day contents:", content);
+            return { ...content, inProgress: true };
+          }
+          return content;
+        });
+        console.log("Updated selected day contents:", updatedContents);
+        return updatedContents;
+      });
+
+      // Update the main contents state as well
+      setContents((prevContents) => {
+        const updatedContents = prevContents.map((content) => {
+          if (content._id === task._id) {
+            console.log("Updating main contents:", content);
+            return { ...content, inProgress: true };
+          }
+          return content;
+        });
+        console.log("Updated main contents:", updatedContents);
+        return updatedContents;
+      });
+    } catch (error) {
+      console.error("Error marking task as in progress:", error);
+    }
+  }, [setSelectedDayContents, setContents]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      handleCompleteTask(task._id);
+    }, 30000);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [handleCompleteTask, task._id]);
+
+  useEffect(() => {
+    handleTaskProgress();
+  }, [handleTaskProgress]);
+
   return (
     <motion.div
       key="task-popup"
@@ -87,14 +120,14 @@ export default function TaskModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="fixed inset-0 flex items-center justify-center z-50 p-4 overflow-y-auto"
+      className="fixed inset-0 flex items-center justify-center z-50 bg-black/30 p-2 sm:p-4"
     >
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 20, opacity: 0 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
-        className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md md:max-w-lg m-auto border border-gray-100"
+        className="bg-white w-full max-w-[92vw] sm:max-w-lg md:max-w-xl m-auto rounded-2xl shadow-2xl border border-gray-200 p-4 sm:p-8 max-h-[90vh] overflow-y-auto transition-all"
       >
         <div className="flex items-start justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800">{task.title}</h2>
@@ -152,7 +185,7 @@ export default function TaskModal({
         )}
 
         {/* Complete Task Button - Only show if task is not completed */}
-        {!task.completed && (
+        {/* {!task.completed && (
           <div className="mb-5">
             <button
               onClick={() => handleCompleteTask(task._id)}
@@ -161,7 +194,7 @@ export default function TaskModal({
               Görevi Tamamla
             </button>
           </div>
-        )}
+        )} */}
 
         {task?.fileBlobUrl && (
           <div className="mb-6">
