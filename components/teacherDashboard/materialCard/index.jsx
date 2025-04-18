@@ -26,6 +26,7 @@ const MaterialCard = ({ material }) => {
         const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contents/${material?.id}`;
         await fetch(url, {
           method: "PUT",
+          cache:"no-store",
           headers: {
             "Content-Type": "application/json",
           },
@@ -40,8 +41,7 @@ const MaterialCard = ({ material }) => {
 
     return null;
   });
-
-  const viewMaterialContent = useCallback(async () => {
+  const viewMaterialContent = async () => {
     try {
       setPreviewStatus("pending");
 
@@ -53,7 +53,9 @@ const MaterialCard = ({ material }) => {
         "api/file/view"
       );
 
-      const response = await fetch(viewUrl);
+      console.log('file,',material.fileUrl)
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${ material?.fileUrl}`,{cache:"no-store"});
       if (!response.ok) {
         throw new Error("Yüklenemedi");
       }
@@ -70,7 +72,7 @@ const MaterialCard = ({ material }) => {
       setPreviewStatus("error");
       return null;
     }
-  });
+  }
 
   const handleOpenModal = async () => {
     setIsModalOpen(true);

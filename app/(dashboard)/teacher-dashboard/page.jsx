@@ -90,7 +90,7 @@ export default function Home() {
     try {
       const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {}, "api/access-settings");
 
-      const res = await fetch(url);
+      const res = await fetch(url,{cache:"no-store"});
 
       if (!res.ok) {
         setError(res.status);
