@@ -52,18 +52,20 @@ export default function Home() {
 
   useEffect(() => {
     if (!user || !selectedDate) return;
-
+  
     const runFetch = async () => {
       try {
         await fetchDailyMaterials(user, selectedDate);
+        await fetchExtraMaterials(user); // Gün değişince extra'ları da çek
       } catch (err) {
         console.error("App yüklenirken hata: ", err);
         setError("Bir hata oluştu");
       }
     };
-
+  
     runFetch();
   }, [user, selectedDate]);
+  
 
   const fetchSession = async () => {
     const session = await getSession();
@@ -135,7 +137,7 @@ export default function Home() {
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
       const data = await res.json();
-      console.log(data);
+      console.log("Fetched daily materials:",data);
       setDailyMaterials(data);
     } catch (error) {
       console.error("Error fetching daily materials:", error.message);
@@ -162,6 +164,7 @@ export default function Home() {
       }
 
       const data = await res.json();
+      console.log("Fetched extra materials:", data); 
       setExtraMaterials(data);
     } catch (error) {
       console.error("Error fetching materials:", error.message);

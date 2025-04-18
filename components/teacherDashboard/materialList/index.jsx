@@ -1,7 +1,7 @@
 import MaterialCard from "../materialCard";
 
 const MaterialList = ({ materials }) => {
-  if (materials.length === 0) {
+  if (!materials?.data || materials.data.length === 0) {
     return (
       <div className="py-10 text-center text-gray-500">
         <p>Materyaller bulunamadı.</p>
@@ -11,12 +11,12 @@ const MaterialList = ({ materials }) => {
 
   return (
     <div className="space-y-4">
-    {materials?.data?.map((material) => {
-      return <MaterialCard key={material.id} material={material} />;
-    })}
-  </div>
-  
+      {materials.data.map((material) => (
+        <MaterialCard key={material.id} material={material} />
+      ))}
+    </div>
   );
 };
+
 
 export default MaterialList;
