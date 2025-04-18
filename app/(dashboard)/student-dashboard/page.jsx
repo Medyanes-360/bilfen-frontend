@@ -266,38 +266,51 @@ export default function Home() {
   useEffect(() => {
     const fetchContents = async () => {
       if (!session) return;
-
+  
       try {
         setIsLoading(true);
-
+  
         const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
           isPublished: true,
           ageGroup: "3-4 yaş",
           isExtra: false,
         });
-
+  
         const response = await fetch(url);
-
+  
         if (!response.ok) {
           throw new Error("Failed to fetch contents");
         }
+  
+        const result = await response.json();
+        console.log("API response:", result); 
+  
+        let contents = [];
+  
+        if (Array.isArray(result)) {
+          contents = result;
+        }
 
-        const data = await response.json();
+        else if (Array.isArray(result?.data)) {
+          contents = result.data;
+        } else {
+          console.warn("Unexpected response format:", result);
+        }
+  
+        setContents(contents);
+  
 
-        setContents(data);
-
-        // archive materials -- include ALL past materials
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
-        const archive = data.filter((item) => {
+  
+        const archive = contents.filter((item) => {
           const itemDate = new Date(item.publishDateStudent);
           itemDate.setHours(0, 0, 0, 0);
           return itemDate < today;
         });
-
+  
         setArchiveMaterials(archive);
-        console.log("Archive: ", archiveMaterials);
+        console.log("Archive materials:", archive);
       } catch (error) {
         console.error("Error fetching contents:", error);
         setError("Failed to load contents");
@@ -305,9 +318,12 @@ export default function Home() {
         setIsLoading(false);
       }
     };
-
+  
     fetchContents();
   }, [session]);
+  
+  
+  
 
   // Memoize the day selection handler
   const handleDaySelect = useCallback(
