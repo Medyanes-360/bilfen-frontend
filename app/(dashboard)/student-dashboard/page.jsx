@@ -4,7 +4,7 @@ import { buildUrl } from "@/lib/utils";
 import { AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 // Dashboard Components
 import DailyCalendar from "@/components/DailyCalendar";
@@ -52,13 +52,13 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ isCompleted: true }),
-        cache: "no-store"
+        cache: "no-store",
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to update task");
       }
-  
+
       // Update local state
       setSelectedDayContents((prevContents) =>
         prevContents.map((content) =>
@@ -196,9 +196,8 @@ export default function Home() {
   useEffect(() => {
     const fetchAccessSettings = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/access-settings`
-        );
+        const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {}, "api/access-settings");
+        const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
           setAccessSettings(data);
@@ -266,49 +265,46 @@ export default function Home() {
   useEffect(() => {
     const fetchContents = async () => {
       if (!session) return;
-  
+
       try {
         setIsLoading(true);
-  
+
         const url = buildUrl(process.env.NEXT_PUBLIC_BACKEND_URL, {
           isPublished: true,
           ageGroup: "3-4 yaş",
           isExtra: false,
         });
-  
+
         const response = await fetch(url);
-  
+
         if (!response.ok) {
           throw new Error("Failed to fetch contents");
         }
-  
+
         const result = await response.json();
-        console.log("API response:", result); 
-  
+        console.log("API response:", result);
+
         let contents = [];
-  
+
         if (Array.isArray(result)) {
           contents = result;
-        }
-
-        else if (Array.isArray(result?.data)) {
+        } else if (Array.isArray(result?.data)) {
           contents = result.data;
         } else {
           console.warn("Unexpected response format:", result);
         }
-  
+
         setContents(contents);
-  
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-  
+
         const archive = contents.filter((item) => {
           const itemDate = new Date(item.publishDateStudent);
           itemDate.setHours(0, 0, 0, 0);
           return itemDate < today;
         });
-  
+
         setArchiveMaterials(archive);
         console.log("Archive materials:", archive);
       } catch (error) {
@@ -318,12 +314,9 @@ export default function Home() {
         setIsLoading(false);
       }
     };
-  
+
     fetchContents();
   }, [session]);
-  
-  
-  
 
   // Memoize the day selection handler
   const handleDaySelect = useCallback(
@@ -347,10 +340,11 @@ export default function Home() {
   const handleTaskClick = useCallback(
     async (task) => {
       try {
-        console.log(task,'task')
+        console.log(task, "task");
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${task.fileUrl}`
-        ,{cache:"no-store"});
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/file/view?fileUrl=${task.fileUrl}`,
+          { cache: "no-store" }
+        );
 
         if (response.ok) {
           const blob = await response.blob();
@@ -359,7 +353,7 @@ export default function Home() {
           const updatedTask = {
             ...task,
             fileBlobUrl: blobUrl,
-          }
+          };
           setSelectedTask(updatedTask);
         } else {
           setSelectedTask(task);
@@ -455,9 +449,7 @@ export default function Home() {
 
   // Error state
   if (error) {
-    return (
-      <ErrorState error={error} onRetry={() => window.location.reload()} />
-    );
+    return <ErrorState error={error} onRetry={() => window.location.reload()} />;
   }
 
   // pass accessSettings to the ArchiveModal
@@ -505,22 +497,21 @@ export default function Home() {
 
         <BottomNavigation />
       </div>
-      
+
       <AnimatePresence>
         {isTaskPopupOpen && selectedTask && (
-        <TaskModal
-          task={selectedTask}
-          onClose={handleTaskModalClose}
-          onCompleteTask={handleCompleteTask}
-          onMaterialClick={handleMaterialClick}
-          isMobile={isMobile}
-          setSelectedDayContents={setSelectedDayContents}
-          setContents={setContents}
-          setIsTaskPopupOpen={setIsTaskPopupOpen}
-        />
+          <TaskModal
+            task={selectedTask}
+            onClose={handleTaskModalClose}
+            onCompleteTask={handleCompleteTask}
+            onMaterialClick={handleMaterialClick}
+            isMobile={isMobile}
+            setSelectedDayContents={setSelectedDayContents}
+            setContents={setContents}
+            setIsTaskPopupOpen={setIsTaskPopupOpen}
+          />
         )}
       </AnimatePresence>
-
 
       <AnimatePresence>
         {isMaterialPreviewOpen && selectedMaterial && (
